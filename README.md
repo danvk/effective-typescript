@@ -9,7 +9,7 @@ and others. Here are the items with associated code samples:
 
 | :memo: | Item
 | ---- | ------
-| **Chapter 1: Getting to Know TypeScript** |
+| | **Chapter 1: Getting to Know TypeScript**
 | :memo: | Item 1: Understand the Relationship Between TypeScript and JavaScript
 | :memo: | Item 2: Know Which TypeScript Options You’re Using
 | :memo: | Item 3: Understand That Code Generation Is Independent of Types
