@@ -1,0 +1,1 @@
+type AorB = 'a' | 'b';

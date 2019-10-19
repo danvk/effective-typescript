@@ -1,0 +1,1 @@
+const paragraphs: (readonly string[])[] = [];

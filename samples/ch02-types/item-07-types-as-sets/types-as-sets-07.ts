@@ -1,0 +1,3 @@
+interface Identified {
+  id: string;
+}

@@ -1,0 +1,1 @@
+interface Vector3D {}
