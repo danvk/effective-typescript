@@ -1,3 +1,5 @@
+<img src="/cover.png" width="280" title="Cover Image" align="right">
+
 # Effective Typescript
 
 This is the code sample repo for _Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_. The book is available through:
