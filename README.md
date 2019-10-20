@@ -5,7 +5,13 @@ This is the code sample repo for _Effective TypeScript: 62 Specific Ways to Impr
 - [O'Reilly][o]
 - [Amazon][a]
 
-and others. Here are the items with associated code samples:
+and others.
+
+## Code Samples
+
+Below you'll find a complete table of contents with links to standalone code samples for each item. All code samples should produce the expected errors (and no others) and expected types.
+
+Unless otherwise noted in a comment at the top of the code sample, the samples are run with TypeScript's `strict` setting. These were produced and checked using [literate-ts][] and TypeScript 3.7.0-beta. You may want to copy/paste them into the [TypeScript playground][play].
 
 - **Chapter 1: Getting to Know TypeScript**
   - [:memo: Item 1][Item 1]: Understand the Relationship Between TypeScript and JavaScript
@@ -87,6 +93,8 @@ and others. Here are the items with associated code samples:
 
 [o]: https://www.oreilly.com/library/view/effective-typescript/9781492053736/
 [a]: https://www.amazon.com/Effective-TypeScript-Specific-JavaScript-Scales/dp/1492053740
+[literate-ts]: https://github.com/danvk/literate-ts
+[play]: https://www.typescriptlang.org/play/
 
 [Item 1]: /samples/ch01-intro/item-01-ts-vs-js
 [Item 2]: /samples/ch01-intro/item-02-which-ts
@@ -154,4 +162,3 @@ and others. Here are the items with associated code samples:
 [Item 59]: /samples/ch08-migrate/item-59-jsdoc-tscheck
 [Item 61]: /samples/ch08-migrate/item-61-convert-up-the-graph
 [Item 62]: /samples/ch08-migrate/item-62-start-loose
-
