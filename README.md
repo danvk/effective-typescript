@@ -62,8 +62,8 @@ and others. Here are the items with associated code samples:
   - [:memo: Item 44][Item 44]: Track Your Type Coverage to Prevent Regressions in Type Safety
 
 - **Chapter 6: Types Declarations and @types**
-  - [:memo: Item 45][Item 45]: Put TypeScript and @types in devDependencies
-  - [:memo: Item 46][Item 46]: Understand the Three Versions Involved in Type Declarations
+  - :memo: Item 45: Put TypeScript and @types in devDependencies
+  - :memo: Item 46: Understand the Three Versions Involved in Type Declarations
   - [:memo: Item 47][Item 47]: Export All Types That Appear in Public APIs
   - [:memo: Item 48][Item 48]: Use TSDoc for API Comments
   - [:memo: Item 49][Item 49]: Provide a Type for this in Callbacks
@@ -81,7 +81,7 @@ and others. Here are the items with associated code samples:
 - **Chapter 8. Migrating to TypeScript**
   - [:memo: Item 58][Item 58]: Write Modern JavaScript
   - [:memo: Item 59][Item 59]: Use @ts-check and JSDoc to Experiment with TypeScript
-  - [:memo: Item 60][Item 60]: Use allowJs to Mix TypeScript and JavaScript
+  - :memo: Item 60: Use allowJs to Mix TypeScript and JavaScript
   - [:memo: Item 61][Item 61]: Convert Module by Module Up Your Dependency Graph
   - [:memo: Item 62][Item 62]: Don’t Consider Migration Complete Until You Enable noImplicitAny
 
