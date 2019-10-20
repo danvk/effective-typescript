@@ -89,8 +89,22 @@ and others. Here are the items with associated code samples:
 [a]: https://www.amazon.com/Effective-TypeScript-Specific-JavaScript-Scales/dp/1492053740
 
 [Item 1]: /samples/ch01-intro/item-01-ts-vs-js
-[Item 2]: samples/ch01-intro/item-02-which-ts
-[Item 3]: samples/ch01-intro/item-03-independent
-[Item 4]: samples/ch01-intro/item-04-structural
-[Item 5]: samples/ch01-intro/item-05-any
+[Item 2]: /samples/ch01-intro/item-02-which-ts
+[Item 3]: /samples/ch01-intro/item-03-independent
+[Item 4]: /samples/ch01-intro/item-04-structural
+[Item 5]: /samples/ch01-intro/item-05-any
+
+[Item 6]: /samples/ch02-types/item-06-editor
+[Item 7]: /samples/ch02-types/item-07-types-as-sets
+[Item 8]: /samples/ch02-types/item-08-type-value-space
+[Item 9]: /samples/ch02-types/item-09-prefer-declarations-to-assertions
+[Item 10]: /samples/ch02-types/item-10-avoid-object-wrapper-types
+[Item 11]: /samples/ch02-types/item-11-excess-property-checking
+[Item 12]: /samples/ch02-types/item-12-type-entire-functions
+[Item 13]: /samples/ch02-types/item-13-type-vs-interface
+[Item 14]: /samples/ch02-types/item-14-map-between-types
+[Item 15]: /samples/ch02-types/item-15-index-for-dynamic
+[Item 16]: /samples/ch02-types/item-16-number-index
+[Item 17]: /samples/ch02-types/item-17-readonly
+[Item 18]: /samples/ch02-types/item-18-values-in-sync
 
