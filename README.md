@@ -8,11 +8,11 @@ This is the code sample repo for _Effective TypeScript: 62 Specific Ways to Impr
 and others. Here are the items with associated code samples:
 
 - **Chapter 1: Getting to Know TypeScript**
-  - [:memo:][Item 1] Item 1: Understand the Relationship Between TypeScript and JavaScript
-  - [:memo:][Item 2] Item 2: Know Which TypeScript Options You’re Using
-  - [:memo:][Item 3] Item 3: Understand That Code Generation Is Independent of Types
-  - [:memo:][Item 4] Item 4: Get Comfortable with Structural Typing
-  - [:memo:][Item 5] Item 5: Limit Use of the any Type
+  - [:memo: Item 1][Item 1]: Understand the Relationship Between TypeScript and JavaScript
+  - [:memo: Item 2][Item 2]: Know Which TypeScript Options You’re Using
+  - [:memo: Item 3][Item 3]: Understand That Code Generation Is Independent of Types
+  - [:memo: Item 4][Item 4]: Get Comfortable with Structural Typing
+  - [:memo: Item 5][Item 5]: Limit Use of the any Type
 
 - **Chapter 2: TypeScript’s Type System**
   - [:memo:][Item 6] Item 6: Use Your Editor to Interrogate and Explore the Type System
