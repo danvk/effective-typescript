@@ -1,10 +1,474 @@
-<!doctype html>
-<head>
-  <title>Effective TypeScript</title>
-</head>
 
-<body>
-  <h2>Effective TypeScript</h2>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+            <title>Effective TypeScript &rsaquo; The Book</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <p>It's a book!</p>
-</body>
+            <script type="text/javascript" src="//use.typekit.net/wsb2ykq.js"></script>
+            <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+            <link href="https://effectivetypescript.com/theme/css/bootstrap.min.css" rel="stylesheet" />
+            <link href="https://effectivetypescript.com/theme/css/customize.css" rel="stylesheet" />
+
+            <link rel="icon" type="image/jpg" href="https://effectivetypescript.com/images/favicon.jpg">
+
+            <meta name="description" content=".">
+
+            <meta name="twitter:card" content="summary">
+            <meta name="twitter:creator" content="@danvdk">
+            <meta name="twitter:domain" content="effectivetypescript.com">
+            <meta name="twitter:title" content="Effective TypeScript &rsaquo; The Book">
+            <meta name="twitter:description" content="Effective TypeScript…">
+            <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+            <meta property="og:title" content="Effective Python &rsaquo; The Book">
+            <meta property="og:description" content="Effective Python...">
+            <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+            <meta property="og:url" content="https://effectivetypescript.com/">
+
+            <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective Python Atom Feed" />
+
+            <meta name="google-site-verification" content="...">
+
+        <!--<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53888969-1"></script>-->
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          // TODO(danvk): enable this
+          // gtag('config', 'UA-53888969-1');
+
+          // var trackOutboundLink = function(category, url) {
+          //     gtag('event', 'click', {
+          //         'event_category': category,
+          //         'event_label': url,
+          //         'transport_type': 'beacon',
+          //         'event_callback': function() { document.location = url; }
+          //     });
+          // }
+        </script>
+    </head>
+
+    <body class="second-edition">
+        <div class="header">
+            <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="site-title">
+                              <a href="https://effectivetypescript.com/">
+                                <span class="effective-type">Effective</span>
+                                <span class="python-p-type">T</span><span class="python-rest-type">ype</span>
+                                <span class="python-p-type">S</span><span class="python-rest-type">cript</span>
+                              </a>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+<section id="the-book" class="content">
+
+
+<div class="title-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>The Book</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="page-content">
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col-md-12">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+
+
+<section id="preface" class="content">
+
+
+<div class="page-content">
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Preface</h2>
+<div>
+    <a href="https://amzn.to/30fJtiG" onclick="trackOutboundLink('cover image', 'https://amzn.to/30fJtiG'); return false;"><img src="https://effectivetypescript.com/images/cover_2ed.jpg" class="cover-photo" alt="Effective Python Book Cover"></a>
+</div>
+
+<p>
+  TypeScript is a typed superset of JavaScript with the potential to solve many of the headaches for which JavaScript is famous. But TypeScript has a learning curve of its own, and understanding how to use it effectively can take time.
+</p>
+<p>
+  <i>Effective TypeScript</i> guides you through 62 specific ways to improve your use of TypeScript, following the format popularized by <i>Effective C++</i> and <i>Effective Java</i> (both from Addison-Wesley). You’ll advance from a beginning or intermediate user familiar with the basics to an advanced user who knows how to use the language well.
+</p>
+<p><a target="_blank" href="https://amzn.to/30fJtiG" onclick="trackOutboundLink('preface', 'https://amzn.to/30fJtiG'); return false;" class="btn btn-info btn-lg primary">Buy the Book on Amazon</a>
+<a target="_blank" href="https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762" onclick="trackOutboundLink('preface', 'https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762'); return false;" class="btn btn-info btn-lg">Buy the <span class="caps">DRM</span>-free eBook</a></p>
+<h2>Already Have the Book?</h2>
+<p><a href="https://github.com/bslatkin/effectivepython" onclick="trackOutboundLink('already have book', 'https://github.com/danvk/effectivetypescript'); return false;">Visit the GitHub project</a> to see all of the code snippets from the book in one place. Run and modify the example code yourself to confirm your understanding. You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" onclick="trackOutboundLink('report any errors', 'https://github.com/bslatkin/effectivepython/issues/new'); return false;">report any errors</a> you&#8217;ve found.</p>
+<p>For future updates about the book, related videos, translations, conference presentations, and more, choose one of these ways to stay in touch:</p>
+<div>
+    <a target="_blank" href="https://eepurl.com/4laun" onclick="trackOutboundLink('get emailed', 'https://eepurl.com/4laun'); return false;" class="btn btn-info btn-lg">Get Emailed</a>
+    <a target="_blank" href="https://twitter.com/effectivepython" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;" class="btn btn-info btn-lg">Follow @danvdk</a>
+    <a class="btn btn-info btn-lg" href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;"><span class="caps">RSS</span></a>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+
+
+<section id="more-info" class="content">
+
+
+<div class="title-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>More Info</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="page-content">
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>What This Book Covers</h2>
+<p>Each chapter in <em>Effective Python: Second Edition</em> contains a broad but related set of items. Feel free to jump between all 90 items and follow your interest. Each item contains concise and specific guidance explaining how you can write Python programs more effectively. Items include advice on what to do, what to avoid, how to strike the right balance, and why this is the best choice. Items reference each other to make it easier to fill in the gaps as you read.</p>
+<p>This second edition is focused exclusively on Python 3, up to and including version 3.8. It contains 30+ completely new items with additional best practices. Most of the original items from the first edition have been revised and included, but many have undergone substantial updates. For some items my advice has completely changed between the two editions of the book due best practices evolving as Python has matured.</p>
+<p>If, for whatever reason, you&#8217;re still primarily using Python 2, despite its end-of-life on January 1st, 2020, <a href="/first-edition" onclick="trackOutboundLink('what this book covers', '/first-edition'); return false;">the previous edition of the book</a> (and its translations) may be more useful to you.</p>
+<h3>Chapter 1: Pythonic Thinking</h3>
+<p>The Python community has come to use the adjective <em>Pythonic</em> to describe code that follows a particular style. The idioms of Python have emerged over time through experience using the language and working with others. This chapter covers the best way to do the most common things in Python.</p>
+<ol start="1">
+<li>Know Which Version of Python You&#8217;re Using</li>
+<li>Follow the <span class="caps">PEP</span> 8 Style Guide</li>
+<li>Know the Differences Between <code>bytes</code> and <code>str</code></li>
+<li>Prefer Interpolated F-Strings Over C-style Format Strings and <code>str.format</code></li>
+<li>Write Helper Functions Instead of Complex Expressions</li>
+<li>Prefer Multiple Assignment Unpacking Over Indexing</li>
+<li>Prefer <code>enumerate</code> Over range</li>
+<li>Use <code>zip</code> to Process Iterators in Parallel</li>
+<li>Avoid <code>else</code> Blocks After <code>for</code> and <code>while</code> Loops</li>
+<li><a href="/2020/02/02/prevent-repetition-with-assignment-expressions">Prevent Repetition with Assignment Expressions</a></li>
+</ol>
+
+<h3>Chapter 2: Lists and Dictionaries</h3>
+<p>In Python, the most common way to organize information is in a sequence of values stored in a <code>list</code>. A <code>list</code><span class="quo">&#8216;</span>s natural complement is the <code>dict</code> that stores lookup keys mapped to corresponding values. This chapter covers how to build programs with these versatile building blocks.</p>
+<ol start="11">
+<li>Know How to Slice Sequences</li>
+<li>Avoid Striding and Slicing in a Single Expression</li>
+<li>Prefer Catch-All Unpacking Over Slicing</li>
+<li>Sort by Complex Criteria Using the <code>key</code> Parameter</li>
+<li>Be Cautious When Relying on <code>dict</code> Insertion Ordering</li>
+<li>Prefer <code>get</code> Over <code>in</code> and <code>KeyError</code> to Handle Missing Dictionary Keys</li>
+<li>Prefer <code>defaultdict</code> Over <code>setdefault</code> to Handle Missing Items in Internal State</li>
+<li>Know How to Construct Key-Dependent Default Values with <code>__missing__</code></li>
+</ol>
+
+<h3>Chapter 3: Functions</h3>
+<p>Functions in Python have a variety of extra features that make a programmer&#8217;s life easier. Some are similar to capabilities in other programming languages, but many are unique to Python. This chapter covers how to use functions to clarify intention, promote reuse, and reduce bugs.</p>
+<ol start="19">
+<li>Never Unpack More Than Three Variables When Functions Return Multiple Values</li>
+<li>Prefer Raising Exceptions to Returning <code>None</code></li>
+<li>Know How Closures Interact with Variable Scope</li>
+<li>Reduce Visual Noise with Variable Positional Arguments</li>
+<li>Provide Optional Behavior with Keyword Arguments</li>
+<li>Use <code>None</code> and Docstrings to Specify Dynamic Default Arguments</li>
+<li>Enforce Clarity with Keyword-Only and Position-Only Arguments</li>
+<li>Define Function Decorators with <code>functools.wraps</code></li>
+</ol>
+
+<h3>Chapter 4: Comprehensions and Generators</h3>
+<p>Python has special syntax for quickly iterating through lists, dictionaries, and sets to generate derivative data structures. It also allows for a stream of iterable values to be incrementally returned by a function. This chapter covers how these features can provide better performance, reduced memory usage, and improved readability.</p>
+<ol start="27">
+<li>Use Comprehensions Instead of <code>map</code> and <code>filter</code></li>
+<li>Avoid More Than Two Control Subexpressions in Comprehensions</li>
+<li>Avoid Repeated Work in Comprehensions by Using Assignment Expressions</li>
+<li>Consider Generators Instead of Returning Lists</li>
+<li>Be Defensive When Iterating Over Arguments</li>
+<li>Consider Generator Expressions for Large List Comprehensions</li>
+<li>Compose Multiple Generators with <code>yield from</code></li>
+<li>Avoid Injecting Data into Generators with <code>send</code></li>
+<li>Avoid Causing State Transitions in Generators with <code>throw</code></li>
+<li>Consider <code>itertools</code> for Working with Iterators and Generators</li>
+</ol>
+
+<h3>Chapter 5: Classes and Interfaces</h3>
+<p>Python is an object-oriented language. Getting things done in Python often requires writing new classes and defining how they interact through their interfaces and hierarchies. This chapter covers how to use classes to express your intended behaviors with objects.</p>
+<ol start="37">
+<li>Compose Classes Instead of Nesting Many Levels of Built-in Types</li>
+<li>Accept Functions Instead of Classes for Simple Interfaces</li>
+<li>Use <code>@classmethod</code> Polymorphism to Construct Objects Generically</li>
+<li>Initialize Parent Classes with <code>super</code></li>
+<li>Consider Composing Functionality with Mix-in Classes</li>
+<li>Prefer Public Attributes Over Private Ones</li>
+<li>Inherit from <code>collections.abc</code> for Custom Container Types</li>
+</ol>
+
+<h3>Chapter 6: Metaclasses and Attributes</h3>
+<p>Metaclasses and dynamic attributes are powerful Python features. However, they also enable you to implement extremely bizarre and unexpected behaviors. This chapter covers the common idioms for using these mechanisms to ensure that you follow the <em>rule of least surprise</em>.</p>
+<ol start="44">
+<li>Use Plain Attributes Instead of Setter and Getter Methods</li>
+<li>Consider <code>@property</code> Instead of Refactoring Attributes</li>
+<li>Use Descriptors for Reusable <code>@property</code> Methods</li>
+<li>Use <code>__getattr__</code>, <code>__getattribute__</code>, and <code>__setattr__</code> for Lazy Attributes</li>
+<li>Validate Subclasses with <code>__init_subclass__</code></li>
+<li>Register Class Existence with <code>__init_subclass__</code></li>
+<li>Annotate Class Attributes with <code>__set_name__</code></li>
+<li><a href="/2019/12/18/prefer-class-decorators-over-metaclasses/">Prefer Class Decorators Over Metaclasses for Composable Class Extensions</a></li>
+</ol>
+
+<h3>Chapter 7: Concurrency and Parallelism</h3>
+<p>Python makes it easy to write concurrent programs that do many different things seemingly at the same time. Python can also be used to do parallel work through system calls, subprocesses, and C extensions. This chapter covers how to best utilize Python in these subtly different situations.</p>
+<ol start="52">
+<li>Use <code>subprocess</code> to Manage Child Processes</li>
+<li>Use Threads for Blocking I/O, Avoid for Parallelism</li>
+<li>Use <code>Lock</code> to Prevent Data Races in Threads</li>
+<li>Use <code>Queue</code> to Coordinate Work Between Threads</li>
+<li>Know How to Recognize When Concurrency Is Necessary</li>
+<li>Avoid Creating New <code>Thread</code> Instances for On-demand Fan-out</li>
+<li>Understand How Using <code>Queue</code> for Concurrency Requires Refactoring</li>
+<li>Consider <code>ThreadPoolExecutor</code> When Threads Are Necessary for Concurrency</li>
+<li>Achieve Highly Concurrent I/O with Coroutines</li>
+<li>Know How to Port Threaded I/O to <code>asyncio</code></li>
+<li>Mix Threads and Coroutines to Ease the Transition to <code>asyncio</code></li>
+<li>Avoid Blocking the <code>asyncio</code> Event Loop to Maximize Responsiveness</li>
+<li>Consider <code>concurrent.futures</code> for True Parallelism</li>
+</ol>
+
+<h3>Chapter 8: Robustness and Performance</h3>
+<p>Python has built-in features and modules that aid in hardening your programs so they are dependable. Python also includes tools to help you achieve higher performance with minimal effort. This chapter covers how to use Python to optimize your programs to maximize their reliability and efficiency in production.</p>
+<ol start="65">
+<li>Take Advantage of Each Block in <code>try</code>/<code>except</code>/<code>else</code>/<code>finally</code></li>
+<li>Consider <code>contextlib</code> and <code>with</code> Statements for Reusable <code>try</code>/<code>finally</code> Behavior</li>
+<li>Use <code>datetime</code> Instead of <code>time</code> for Local Clocks</li>
+<li>Make <code>pickle</code> Reliable with <code>copyreg</code></li>
+<li>Use <code>decimal</code> When Precision Is Paramount</li>
+<li>Profile Before Optimizing</li>
+<li>Prefer <code>deque</code> for Producer–Consumer Queues</li>
+<li>Consider Searching Sorted Sequences with <code>bisect</code></li>
+<li>Know How to Use <code>heapq</code> for Priority Queues</li>
+<li><a href="/2019/10/22/memoryview-bytearray-zero-copy-interactions/">Consider <code>memoryview</code> and <code>bytearray</code> for Zero-Copy Interactions with bytes</a></li>
+</ol>
+
+<h3>Chapter 9: Testing and Debugging</h3>
+<p>You should always test your code, regardless of what language it&#8217;s written in. However, Python&#8217;s dynamic features can increase the risk of runtime errors in unique ways. Luckily, they also make it easier to write tests and diagnose malfunctioning programs. This chapter covers Python&#8217;s built-in tools for testing and debugging.</p>
+<ol start="75">
+<li>Use <code>repr</code> Strings for Debugging Output</li>
+<li>Verify Related Behaviors in <code>TestCase</code> Subclasses</li>
+<li>Isolate Tests from Each Other with <code>setUp</code>, <code>tearDown</code>, <code>setUpModule</code>, and <code>tearDownModule</code></li>
+<li>Use Mocks to Test Code with Complex Dependencies</li>
+<li>Encapsulate Dependencies to Facilitate Mocking and Testing</li>
+<li>Consider Interactive Debugging with <code>pdb</code></li>
+<li>Use <code>tracemalloc</code> to Understand Memory Usage and Leaks</li>
+</ol>
+
+<h3>Chapter 10: Collaboration</h3>
+<p>Collaborating on Python programs requires you to be deliberate about how you write your code. Even if you&#8217;re working alone, you&#8217;ll want to understand how to use modules written by others. This chapter covers the standard tools and best practices that enable people to work together on Python programs.</p>
+<ol start="82">
+<li>Know Where to Find Community-Built Modules</li>
+<li>Use Virtual Environments for Isolated and Reproducible Dependencies</li>
+<li>Write Docstrings for Every Function, Class, and Module</li>
+<li>Use Packages to Organize Modules and Provide Stable APIs</li>
+<li>Consider Module-Scoped Code to Configure Deployment Environments</li>
+<li>Define a Root <code>Exception</code> to Insulate Callers from APIs</li>
+<li>Know How to Break Circular Dependencies</li>
+<li>Consider <code>warnings</code> to Refactor and Migrate Usage</li>
+<li>Consider Static Analysis via <code>typing</code> to Obviate Bugs</li>
+</ol>
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+
+
+<section id="about-the-author" class="content">
+
+
+<div class="title-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>About the Author</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="page-content">
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Dan Vanderkam</h2>
+<div>
+    <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
+</div>
+
+<p>
+  Dan Vanderkam is a principal software engineer at Sidewalk Labs...
+</p>
+<p>
+  Outside of his day job...
+</p>
+
+<div class="clear-images">
+    <a target="_blank" href="https://twitter.com/danvdk" onclick="trackOutboundLink('about the author', 'https://twitter.com/danvdk'); return false;" class="btn btn-info btn-lg">Follow @danvdk</a>
+    <a href="http://danvk.org" onclick="trackOutboundLink('about the author', 'http://danvk.org'); return false;" class="btn btn-info btn-lg">Visit Personal Site</a>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+
+
+<section id="updates" class="content">
+
+
+<div class="title-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Updates</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="page-content">
+    <div class="container">
+
+
+        <div class="row">
+            <div class="col-md-12">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</section>
+
+
+<section id="posts" class="content">
+    <div class="container">
+
+        <div class="row hentry" id="prevent-repetition-with-assignment-expressions">
+            <div class="col-md-12">
+                <h2 class="entry-title"><a href="https://effectivetypescript.com/2020/02/02/prevent-repetition-with-assignment-expressions/">Item 10: Prevent Repetition with Assignment Expressions</a></h2>
+
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2020-02-02T22:00:00-08:00">Sun 02 February 2020</abbr>
+                </div>
+
+                    <div class="entry-content">
+
+<p>An assignment expression—also known as the <em>walrus operator</em>—is a new syntax introduced in Python 3.8 to solve a long-standing problem with the language that can cause code duplication. Whereas normal assignment statements are written <code>a = b</code> and pronounced &#8220;a equals b&#8221;, these assignments are written <code>a := b</code> and pronounced &#8220;a <em>walrus</em> b&#8221; (because <code>:=</code> looks like a pair of eyeballs and tusks).
+                        <a class="read-more" href="https://effectivetypescript.com/2020/02/02/prevent-repetition-with-assignment-expressions/">Continue&nbsp;reading&nbsp;&raquo;</a>
+                    </div>
+
+            </div>
+        </div>
+        <div class="row hentry" id="prefer-class-decorators-over-metaclasses">
+            <div class="col-md-12">
+                <h2 class="entry-title"><a href="https://effectivetypescript.com/2019/12/18/prefer-class-decorators-over-metaclasses/">Item 51: Prefer Class Decorators Over Metaclasses for Composable Class Extensions</a></h2>
+
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2019-12-18T23:00:00-08:00">Wed 18 December 2019</abbr>
+                </div>
+
+                    <div class="entry-content">
+
+<p>Although metaclasses allow you to customize class creation in multiple ways (see Item 48: “Validate Subclasses with <code>__init_subclass__</code>” and Item 49: “Register Class Existence with <code>__init_subclass__</code>”), they still fall short of handling every situation that may arise.
+                        <a class="read-more" href="https://effectivetypescript.com/2019/12/18/prefer-class-decorators-over-metaclasses/">Continue&nbsp;reading&nbsp;&raquo;</a>
+                    </div>
+
+            </div>
+        </div>
+        <div class="row hentry" id="digital-second-edition-available">
+            <div class="col-md-12">
+                <h2 class="entry-title"><a href="https://effectivetypescript.com/2019/11/06/digital-second-edition-available/">Digital Versions of the 2nd Edition are Now Available</a></h2>
+
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2019-11-06T12:00:00-08:00">Wed 06 November 2019</abbr>
+                </div>
+
+                    <div class="entry-content"><p>You can immediately read the second edition of <em>Effective Python</em> as a <a target="_blank" href="https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762" onclick="trackOutboundLink('post', 'https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762'); return false;"><span class="caps">DRM</span>-free eBook</a>, <a target="_blank" href="https://amzn.to/2pQOqy2" onclick="trackOutboundLink('post', 'https://amzn.to/2pQOqy2'); return false;">on Kindle</a>, <a target="_blank" href="https://play.google.com/store/books/details/Brett_Slatkin_Effective_Python?id=9kG4DwAAQBAJ" onclick="trackOutboundLink('post', 'https://play.google.com/store/books/details/Brett_Slatkin_Effective_Python?id=9kG4DwAAQBAJ'); return false;">on Google Play</a>, and on <a href="https://learning.oreilly.com/library/view/effective-python-90/9780134854717/" onclick="trackOutboundLink('post', 'https://learning.oreilly.com/library/view/effective-python-90/9780134854717/'); return false;">O&#8217;Reilly Online Learning</a>.</p></div>
+
+            </div>
+        </div>
+        <div class="row hentry" id="memoryview-bytearray-zero-copy-interactions">
+            <div class="col-md-12">
+                <h2 class="entry-title"><a href="https://effectivetypescript.com/2019/10/22/memoryview-bytearray-zero-copy-interactions/">Item 74: Consider <code>memoryview</code> and <code>bytearray</code> for Zero-Copy Interactions with <code>bytes</code></a></h2>
+
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2019-10-22T05:00:00-07:00">Tue 22 October 2019</abbr>
+                </div>
+
+                    <div class="entry-content">
+
+<p>Though Python isn’t able to parallelize <span class="caps">CPU</span>-bound computation without extra effort (see Item 64: “Consider <code>concurrent.futures</code> for True Parallelism”), it is able to support high-throughput, parallel I/O in a variety of ways (see Item 53: “Use Threads for Blocking I/O, Avoid for Parallelism” and Item 60: “Achieve Highly Concurrent I/O with Coroutines” for details). That said, it’s surprisingly easy to use these I/O tools the wrong way and reach the conclusion that the language is too slow for even I/O-bound workloads.
+                        <a class="read-more" href="https://effectivetypescript.com/2019/10/22/memoryview-bytearray-zero-copy-interactions/">Continue&nbsp;reading&nbsp;&raquo;</a>
+                    </div>
+
+            </div>
+        </div>
+        <div class="row hentry" id="preorder-second-edition">
+            <div class="col-md-12">
+                <h2 class="entry-title"><a href="https://effectivetypescript.com/2019/10/21/preorder-second-edition/">Preorder the Second Edition</a></h2>
+
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2019-10-21T23:00:00-07:00">Mon 21 October 2019</abbr>
+                </div>
+
+                    <div class="entry-content"><p><em>Effective Python: Second Edition</em> is now available for preorder. <a target="_blank" href="https://amzn.to/30fJtiG" onclick="trackOutboundLink('post', 'https://amzn.to/30fJtiG'); return false;">Follow this link to buy your copy in advance</a>. It will ship in mid-November (2019) once the book has finished printing and is stocked in the warehouse. <a target="_blank" href="https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762" onclick="trackOutboundLink('post', 'https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762'); return false;" >Digital editions will become available</a> when the physical book ships or sooner.</p></div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+        <footer id="contentinfo" class="footer">
+            <div class="container">
+                <address id="about" class="vcard body">
+                    &copy; 2014 - 2020 <a class="url fn" href="https://onebigfluke.com" onclick="trackOutboundLink('footer', 'https://onebigfluke.com'); return false;">Brett Slatkin</a>
+                    <div class="footer-attribution">Powered by <a href="https://getpelican.com/" onclick="trackOutboundLink('footer', 'https://getpelican.com/'); return false;" rel="nofollow">Pelican</a></div>
+                </address>
+            </div>
+        </footer>
+    </body>
+</html>
