@@ -53,7 +53,7 @@ a:hover,
 a:visited,
 a:active,
 a:focus {
-    color: #005f9d;
+    color: rgb(167,0,2);
 }
 
 .first-edition a,
@@ -128,7 +128,7 @@ a:focus {
 }
 
 .title-bar {
-    background-color: #005f9d;
+    background-color: rgb(167,0,2);
     margin: 20px 0 0 0;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
 }
@@ -334,7 +334,7 @@ p + .highlight {
 
 .btn-lg.primary {
     color: rgb(255, 255, 255) !important;
-    background-color: #005f9d !important;
+    background-color: rgb(167,0,2) !important;
 }
 
 .first-edition .btn-lg.primary {
