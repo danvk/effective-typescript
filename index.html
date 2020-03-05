@@ -164,18 +164,22 @@
 
 <h3>Chapter 1: Getting to Know TypeScript</h3>
 
-<p>...</p>
+<p>
+  Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What's this about `any`? And ducks?
+</p>
+
 <ol start="1">
   <li>Understand the Relationship Between TypeScript and JavaScript</li>
   <li>Know Which TypeScript Options You’re Using</li>
   <li>Understand That Code Generation Is Independent of Types</li>
   <li>Get Comfortable with Structural Typing</li>
-  <li>Limit Use of the any Type</li>
+  <li>Limit Use of the <code>any</code> Type</li>
 </ol>
 
 <h3>Chapter 2: TypeScript’s Type System</h3>
 
-<p>...</p>
+<p>This chapter walks you through the nuts and bolts of TypeScript's type system: how to think about it, how to use it, choices you'll need to make, and features you should avoid. TypeScript's type system is surprisingly powerful and able to express things you might not expect a type system to be able to. The items in this chapter will give you a solid foundation to build upon as you write TypeScript and read the rest of this book.</p>
+
 <ol start="6">
   <li>Use Your Editor to Interrogate and Explore the Type System</li>
   <li>Think of Types as Sets of Values</li>
@@ -184,7 +188,7 @@
   <li>Avoid Object Wrapper Types (String, Number, Boolean, Symbol, BigInt)</li>
   <li>Recognize the Limits of Excess Property Checking</li>
   <li>Apply Types to Entire Function Expressions When Possible</li>
-  <li>Know the Differences Between type and interface</li>
+  <li>Know the Differences Between <code>type</code> and <code>interface</code></li>
   <li>Use Type Operations and Generics to Avoid Repeating Yourself</li>
   <li>Use Index Signatures for Dynamic Data</li>
   <li>Prefer Arrays, Tuples, and ArrayLike to number Index Signatures</li>
@@ -194,7 +198,10 @@
 
 <h3>Chapter 3: Type Inference</h3>
 
-<p>...</p>
+<p>
+  This chapter shows you some of the problems that can arise with type inference and how to fix them. After reading it, you should have a good understanding of how TypeScript infers types, when you still need to write type declarations, and when it's a good idea to write type declarations even when a type can be inferred.
+</p>
+
 <ol start="19">
   <li>Avoid Cluttering Your Code with Inferable Types</li>
   <li>Use Different Variables for Different Types</li>
@@ -202,14 +209,17 @@
   <li>Understand Type Narrowing</li>
   <li>Create Objects All at Once</li>
   <li>Be Consistent in Your Use of Aliases</li>
-  <li>Use async Functions Instead of Callbacks for Asynchronous Code</li>
+  <li>Use <code>async</code> Functions Instead of Callbacks for Asynchronous Code</li>
   <li>Understand How Context Is Used in Type Inference</li>
   <li>Use Functional Constructs and Libraries to Help Types Flow</li>
 </ol>
 
 <h3>Chapter 4: Type Design</h3>
 
-<p>...</p>
+<p>
+  Code is difficult to understand if you can't see the data or data types on which it operates. This is one of the great advantages of a type system: by writing out types, you make them visible to readers of your code. And this makes your code understandable. Other chapters cover the nuts and bolts of TypeScript types: using them, inferring them, and writing declarations with them. This chapter discusses the design of the types themselves. The examples in this chapter are all written with TypeScript in mind, but most of the ideas are more broadly applicable.
+</p>
+
 <ol start="28">
   <li>Prefer Types That Always Represent Valid States</li>
   <li>Be Liberal in What You Accept and Strict in What You Produce</li>
@@ -223,28 +233,34 @@
   <li>Consider “Brands” for Nominal Typing</li>
 </ol>
 
-<h3>Chapter 5: Working with any</h3>
+<h3>Chapter 5: Working with <code>any</code></h3>
 
-<p>...</p>
+<p>
+  Type systems were traditionally binary affairs: either a language had a fully static type system or a fully dynamic one. TypeScript blurs the line, because its type system is <em>optional</em> and <em>gradual</em>. You can add types to parts of your program but not others. This is essential for migrating existing JavaScript codebases to TypeScript bit by bit. Key to this is the <code>any</code> type,  which effectively disables type checking for parts of your code. It is both powerful and prone to abuse. Learning to use <code>any</code> wisely is essential for writing effective TypeScript. This chapter walks you through how to limit the downsides of <code>any</code> while still retaining its benefits.
+</p>
+
 <ol start="38">
-  <li>Use the Narrowest Possible Scope for any Types</li>
-  <li>Prefer More Precise Variants of any to Plain any</li>
+  <li>Use the Narrowest Possible Scope for <code>any</code> Types</li>
+  <li>Prefer More Precise Variants of <code>any</code> to Plain <code>any</code></li>
   <li>Hide Unsafe Type Assertions in Well-Typed Functions</li>
-  <li>Understand Evolving any</li>
-  <li>Use unknown Instead of any for Values with an Unknown Type</li>
+  <li>Understand Evolving <code>any</code></li>
+  <li>Use <code>unknown</code> Instead of <code>any</code> for Values with an Unknown Type</li>
   <li>Prefer Type-Safe Approaches to Monkey Patching</li>
   <li>Track Your Type Coverage to Prevent Regressions in Type Safety</li>
 </ol>
 
-<h3>Chapter 6: Types Declarations and @types</h3>
+<h3>Chapter 6: Types Declarations and <code>@types</code></h3>
 
-<p>...</p>
+<p>
+  Dependency management can be confusing in any language, and TypeScript is no exception. This chapter will help you build a mental model for how dependencies work in TypeScript and show you how to work through some of the issues that can come up with them. It will also help you craft your own type declaration files to publish and share with others. By writing great type declarations, you can help not just your own project but the entire TypeScript community.
+</p>
+
 <ol start="45">
-  <li>Put TypeScript and @types in devDependencies</li>
+  <li>Put TypeScript and <code>@types</code> in <code>devDependencies</code></li>
   <li>Understand the Three Versions Involved in Type Declarations</li>
   <li>Export All Types That Appear in Public APIs</li>
   <li>Use TSDoc for API Comments</li>
-  <li>Provide a Type for this in Callbacks</li>
+  <li>Provide a Type for <code>this</code> in Callbacks</li>
   <li>Prefer Conditional Types to Overloaded Declarations</li>
   <li>Mirror Types to Sever Dependencies</li>
   <li>Be Aware of the Pitfalls of Testing Types</li>
@@ -252,7 +268,10 @@
 
 <h3>Chapter 7: Writing and Running Your Code</h3>
 
-<p>...</p>
+<p>
+  This chapter is a bit of a grab bag: it covers some issues that come up in writing code (not types) as well as issues you may run into when you run your code.
+</p>
+
 <ol start="53">
   <li>Prefer ECMAScript Features to TypeScript Features</li>
   <li>Know How to Iterate Over Objects</li>
@@ -263,13 +282,16 @@
 
 <h3>Chapter 8. Migrating to TypeScript</h3>
 
-<p>...</p>
+<p>
+  You've heard that TypeScript is great. You also know from painful experience that maintaining your 15-year-old, 100,000-line JavaScript library isn't. If only it could become a TypeScript library! This chapter offers some advice about migrating your JavaScript project to TypeScript without losing your sanity and abandoning the effort.
+</p>
+
 <ol start="58">
   <li>Write Modern JavaScript</li>
-  <li>Use @ts-check and JSDoc to Experiment with TypeScript</li>
-  <li>Use allowJs to Mix TypeScript and JavaScript</li>
+  <li>Use <code>@ts-check</code> and JSDoc to Experiment with TypeScript</li>
+  <li>Use <code>allowJs</code> to Mix TypeScript and JavaScript</li>
   <li>Convert Module by Module Up Your Dependency Graph</li>
-  <li>Don’t Consider Migration Complete Until You Enable noImplicitAny</li>
+  <li>Don’t Consider Migration Complete Until You Enable <code>noImplicitAny</code></li>
 </ol>
 
             </div>
