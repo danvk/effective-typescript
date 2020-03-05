@@ -160,148 +160,118 @@
         <div class="row">
             <div class="col-md-12">
                 <h2>What This Book Covers</h2>
-<p>Each chapter in <em>Effective Python: Second Edition</em> contains a broad but related set of items. Feel free to jump between all 90 items and follow your interest. Each item contains concise and specific guidance explaining how you can write Python programs more effectively. Items include advice on what to do, what to avoid, how to strike the right balance, and why this is the best choice. Items reference each other to make it easier to fill in the gaps as you read.</p>
-<p>This second edition is focused exclusively on Python 3, up to and including version 3.8. It contains 30+ completely new items with additional best practices. Most of the original items from the first edition have been revised and included, but many have undergone substantial updates. For some items my advice has completely changed between the two editions of the book due best practices evolving as Python has matured.</p>
-<p>If, for whatever reason, you&#8217;re still primarily using Python 2, despite its end-of-life on January 1st, 2020, <a href="/first-edition" onclick="trackOutboundLink('what this book covers', '/first-edition'); return false;">the previous edition of the book</a> (and its translations) may be more useful to you.</p>
-<h3>Chapter 1: Pythonic Thinking</h3>
-<p>The Python community has come to use the adjective <em>Pythonic</em> to describe code that follows a particular style. The idioms of Python have emerged over time through experience using the language and working with others. This chapter covers the best way to do the most common things in Python.</p>
+<p>Each chapter in <em>Effective TypeScript</em> contains a broad but related set of items. ...</p>
+
+<h3>Chapter 1: Getting to Know TypeScript</h3>
+
+<p>...</p>
 <ol start="1">
-<li>Know Which Version of Python You&#8217;re Using</li>
-<li>Follow the <span class="caps">PEP</span> 8 Style Guide</li>
-<li>Know the Differences Between <code>bytes</code> and <code>str</code></li>
-<li>Prefer Interpolated F-Strings Over C-style Format Strings and <code>str.format</code></li>
-<li>Write Helper Functions Instead of Complex Expressions</li>
-<li>Prefer Multiple Assignment Unpacking Over Indexing</li>
-<li>Prefer <code>enumerate</code> Over range</li>
-<li>Use <code>zip</code> to Process Iterators in Parallel</li>
-<li>Avoid <code>else</code> Blocks After <code>for</code> and <code>while</code> Loops</li>
-<li><a href="/2020/02/02/prevent-repetition-with-assignment-expressions">Prevent Repetition with Assignment Expressions</a></li>
+  <li>Understand the Relationship Between TypeScript and JavaScript</li>
+  <li>Know Which TypeScript Options You’re Using</li>
+  <li>Understand That Code Generation Is Independent of Types</li>
+  <li>Get Comfortable with Structural Typing</li>
+  <li>Limit Use of the any Type</li>
 </ol>
 
-<h3>Chapter 2: Lists and Dictionaries</h3>
-<p>In Python, the most common way to organize information is in a sequence of values stored in a <code>list</code>. A <code>list</code><span class="quo">&#8216;</span>s natural complement is the <code>dict</code> that stores lookup keys mapped to corresponding values. This chapter covers how to build programs with these versatile building blocks.</p>
-<ol start="11">
-<li>Know How to Slice Sequences</li>
-<li>Avoid Striding and Slicing in a Single Expression</li>
-<li>Prefer Catch-All Unpacking Over Slicing</li>
-<li>Sort by Complex Criteria Using the <code>key</code> Parameter</li>
-<li>Be Cautious When Relying on <code>dict</code> Insertion Ordering</li>
-<li>Prefer <code>get</code> Over <code>in</code> and <code>KeyError</code> to Handle Missing Dictionary Keys</li>
-<li>Prefer <code>defaultdict</code> Over <code>setdefault</code> to Handle Missing Items in Internal State</li>
-<li>Know How to Construct Key-Dependent Default Values with <code>__missing__</code></li>
+<h3>Chapter 2: TypeScript’s Type System</h3>
+
+<p>...</p>
+<ol start="6">
+  <li>Use Your Editor to Interrogate and Explore the Type System</li>
+  <li>Think of Types as Sets of Values</li>
+  <li>Know How to Tell Whether a Symbol Is in the Type Space or Value Space</li>
+  <li>Prefer Type Declarations to Type Assertions</li>
+  <li>Avoid Object Wrapper Types (String, Number, Boolean, Symbol, BigInt)</li>
+  <li>Recognize the Limits of Excess Property Checking</li>
+  <li>Apply Types to Entire Function Expressions When Possible</li>
+  <li>Know the Differences Between type and interface</li>
+  <li>Use Type Operations and Generics to Avoid Repeating Yourself</li>
+  <li>Use Index Signatures for Dynamic Data</li>
+  <li>Prefer Arrays, Tuples, and ArrayLike to number Index Signatures</li>
+  <li>Use readonly to Avoid Errors Associated with Mutation</li>
+  <li>Use Mapped Types to Keep Values in Sync</li>
 </ol>
 
-<h3>Chapter 3: Functions</h3>
-<p>Functions in Python have a variety of extra features that make a programmer&#8217;s life easier. Some are similar to capabilities in other programming languages, but many are unique to Python. This chapter covers how to use functions to clarify intention, promote reuse, and reduce bugs.</p>
+<h3>Chapter 3: Type Inference</h3>
+
+<p>...</p>
 <ol start="19">
-<li>Never Unpack More Than Three Variables When Functions Return Multiple Values</li>
-<li>Prefer Raising Exceptions to Returning <code>None</code></li>
-<li>Know How Closures Interact with Variable Scope</li>
-<li>Reduce Visual Noise with Variable Positional Arguments</li>
-<li>Provide Optional Behavior with Keyword Arguments</li>
-<li>Use <code>None</code> and Docstrings to Specify Dynamic Default Arguments</li>
-<li>Enforce Clarity with Keyword-Only and Position-Only Arguments</li>
-<li>Define Function Decorators with <code>functools.wraps</code></li>
+  <li>Avoid Cluttering Your Code with Inferable Types</li>
+  <li>Use Different Variables for Different Types</li>
+  <li>Understand Type Widening</li>
+  <li>Understand Type Narrowing</li>
+  <li>Create Objects All at Once</li>
+  <li>Be Consistent in Your Use of Aliases</li>
+  <li>Use async Functions Instead of Callbacks for Asynchronous Code</li>
+  <li>Understand How Context Is Used in Type Inference</li>
+  <li>Use Functional Constructs and Libraries to Help Types Flow</li>
 </ol>
 
-<h3>Chapter 4: Comprehensions and Generators</h3>
-<p>Python has special syntax for quickly iterating through lists, dictionaries, and sets to generate derivative data structures. It also allows for a stream of iterable values to be incrementally returned by a function. This chapter covers how these features can provide better performance, reduced memory usage, and improved readability.</p>
-<ol start="27">
-<li>Use Comprehensions Instead of <code>map</code> and <code>filter</code></li>
-<li>Avoid More Than Two Control Subexpressions in Comprehensions</li>
-<li>Avoid Repeated Work in Comprehensions by Using Assignment Expressions</li>
-<li>Consider Generators Instead of Returning Lists</li>
-<li>Be Defensive When Iterating Over Arguments</li>
-<li>Consider Generator Expressions for Large List Comprehensions</li>
-<li>Compose Multiple Generators with <code>yield from</code></li>
-<li>Avoid Injecting Data into Generators with <code>send</code></li>
-<li>Avoid Causing State Transitions in Generators with <code>throw</code></li>
-<li>Consider <code>itertools</code> for Working with Iterators and Generators</li>
+<h3>Chapter 4: Type Design</h3>
+
+<p>...</p>
+<ol start="28">
+  <li>Prefer Types That Always Represent Valid States</li>
+  <li>Be Liberal in What You Accept and Strict in What You Produce</li>
+  <li>Don’t Repeat Type Information in Documentation</li>
+  <li>Push Null Values to the Perimeter of Your Types</li>
+  <li>Prefer Unions of Interfaces to Interfaces of Unions</li>
+  <li>Prefer More Precise Alternatives to String Types</li>
+  <li>Prefer Incomplete Types to Inaccurate Types</li>
+  <li>Generate Types from APIs and Specs, Not Data</li>
+  <li>Name Types Using the Language of Your Problem Domain</li>
+  <li>Consider “Brands” for Nominal Typing</li>
 </ol>
 
-<h3>Chapter 5: Classes and Interfaces</h3>
-<p>Python is an object-oriented language. Getting things done in Python often requires writing new classes and defining how they interact through their interfaces and hierarchies. This chapter covers how to use classes to express your intended behaviors with objects.</p>
-<ol start="37">
-<li>Compose Classes Instead of Nesting Many Levels of Built-in Types</li>
-<li>Accept Functions Instead of Classes for Simple Interfaces</li>
-<li>Use <code>@classmethod</code> Polymorphism to Construct Objects Generically</li>
-<li>Initialize Parent Classes with <code>super</code></li>
-<li>Consider Composing Functionality with Mix-in Classes</li>
-<li>Prefer Public Attributes Over Private Ones</li>
-<li>Inherit from <code>collections.abc</code> for Custom Container Types</li>
+<h3>Chapter 5: Working with any</h3>
+
+<p>...</p>
+<ol start="38">
+  <li>Use the Narrowest Possible Scope for any Types</li>
+  <li>Prefer More Precise Variants of any to Plain any</li>
+  <li>Hide Unsafe Type Assertions in Well-Typed Functions</li>
+  <li>Understand Evolving any</li>
+  <li>Use unknown Instead of any for Values with an Unknown Type</li>
+  <li>Prefer Type-Safe Approaches to Monkey Patching</li>
+  <li>Track Your Type Coverage to Prevent Regressions in Type Safety</li>
 </ol>
 
-<h3>Chapter 6: Metaclasses and Attributes</h3>
-<p>Metaclasses and dynamic attributes are powerful Python features. However, they also enable you to implement extremely bizarre and unexpected behaviors. This chapter covers the common idioms for using these mechanisms to ensure that you follow the <em>rule of least surprise</em>.</p>
-<ol start="44">
-<li>Use Plain Attributes Instead of Setter and Getter Methods</li>
-<li>Consider <code>@property</code> Instead of Refactoring Attributes</li>
-<li>Use Descriptors for Reusable <code>@property</code> Methods</li>
-<li>Use <code>__getattr__</code>, <code>__getattribute__</code>, and <code>__setattr__</code> for Lazy Attributes</li>
-<li>Validate Subclasses with <code>__init_subclass__</code></li>
-<li>Register Class Existence with <code>__init_subclass__</code></li>
-<li>Annotate Class Attributes with <code>__set_name__</code></li>
-<li><a href="/2019/12/18/prefer-class-decorators-over-metaclasses/">Prefer Class Decorators Over Metaclasses for Composable Class Extensions</a></li>
+<h3>Chapter 6: Types Declarations and @types</h3>
+
+<p>...</p>
+<ol start="45">
+  <li>Put TypeScript and @types in devDependencies</li>
+  <li>Understand the Three Versions Involved in Type Declarations</li>
+  <li>Export All Types That Appear in Public APIs</li>
+  <li>Use TSDoc for API Comments</li>
+  <li>Provide a Type for this in Callbacks</li>
+  <li>Prefer Conditional Types to Overloaded Declarations</li>
+  <li>Mirror Types to Sever Dependencies</li>
+  <li>Be Aware of the Pitfalls of Testing Types</li>
 </ol>
 
-<h3>Chapter 7: Concurrency and Parallelism</h3>
-<p>Python makes it easy to write concurrent programs that do many different things seemingly at the same time. Python can also be used to do parallel work through system calls, subprocesses, and C extensions. This chapter covers how to best utilize Python in these subtly different situations.</p>
-<ol start="52">
-<li>Use <code>subprocess</code> to Manage Child Processes</li>
-<li>Use Threads for Blocking I/O, Avoid for Parallelism</li>
-<li>Use <code>Lock</code> to Prevent Data Races in Threads</li>
-<li>Use <code>Queue</code> to Coordinate Work Between Threads</li>
-<li>Know How to Recognize When Concurrency Is Necessary</li>
-<li>Avoid Creating New <code>Thread</code> Instances for On-demand Fan-out</li>
-<li>Understand How Using <code>Queue</code> for Concurrency Requires Refactoring</li>
-<li>Consider <code>ThreadPoolExecutor</code> When Threads Are Necessary for Concurrency</li>
-<li>Achieve Highly Concurrent I/O with Coroutines</li>
-<li>Know How to Port Threaded I/O to <code>asyncio</code></li>
-<li>Mix Threads and Coroutines to Ease the Transition to <code>asyncio</code></li>
-<li>Avoid Blocking the <code>asyncio</code> Event Loop to Maximize Responsiveness</li>
-<li>Consider <code>concurrent.futures</code> for True Parallelism</li>
+<h3>Chapter 7: Writing and Running Your Code</h3>
+
+<p>...</p>
+<ol start="53">
+  <li>Prefer ECMAScript Features to TypeScript Features</li>
+  <li>Know How to Iterate Over Objects</li>
+  <li>Understand the DOM hierarchy</li>
+  <li>Don’t Rely on Private to Hide Information</li>
+  <li>Use Source Maps to Debug TypeScript</li>
 </ol>
 
-<h3>Chapter 8: Robustness and Performance</h3>
-<p>Python has built-in features and modules that aid in hardening your programs so they are dependable. Python also includes tools to help you achieve higher performance with minimal effort. This chapter covers how to use Python to optimize your programs to maximize their reliability and efficiency in production.</p>
-<ol start="65">
-<li>Take Advantage of Each Block in <code>try</code>/<code>except</code>/<code>else</code>/<code>finally</code></li>
-<li>Consider <code>contextlib</code> and <code>with</code> Statements for Reusable <code>try</code>/<code>finally</code> Behavior</li>
-<li>Use <code>datetime</code> Instead of <code>time</code> for Local Clocks</li>
-<li>Make <code>pickle</code> Reliable with <code>copyreg</code></li>
-<li>Use <code>decimal</code> When Precision Is Paramount</li>
-<li>Profile Before Optimizing</li>
-<li>Prefer <code>deque</code> for Producer–Consumer Queues</li>
-<li>Consider Searching Sorted Sequences with <code>bisect</code></li>
-<li>Know How to Use <code>heapq</code> for Priority Queues</li>
-<li><a href="/2019/10/22/memoryview-bytearray-zero-copy-interactions/">Consider <code>memoryview</code> and <code>bytearray</code> for Zero-Copy Interactions with bytes</a></li>
+<h3>Chapter 8. Migrating to TypeScript</h3>
+
+<p>...</p>
+<ol start="58">
+  <li>Write Modern JavaScript</li>
+  <li>Use @ts-check and JSDoc to Experiment with TypeScript</li>
+  <li>Use allowJs to Mix TypeScript and JavaScript</li>
+  <li>Convert Module by Module Up Your Dependency Graph</li>
+  <li>Don’t Consider Migration Complete Until You Enable noImplicitAny</li>
 </ol>
 
-<h3>Chapter 9: Testing and Debugging</h3>
-<p>You should always test your code, regardless of what language it&#8217;s written in. However, Python&#8217;s dynamic features can increase the risk of runtime errors in unique ways. Luckily, they also make it easier to write tests and diagnose malfunctioning programs. This chapter covers Python&#8217;s built-in tools for testing and debugging.</p>
-<ol start="75">
-<li>Use <code>repr</code> Strings for Debugging Output</li>
-<li>Verify Related Behaviors in <code>TestCase</code> Subclasses</li>
-<li>Isolate Tests from Each Other with <code>setUp</code>, <code>tearDown</code>, <code>setUpModule</code>, and <code>tearDownModule</code></li>
-<li>Use Mocks to Test Code with Complex Dependencies</li>
-<li>Encapsulate Dependencies to Facilitate Mocking and Testing</li>
-<li>Consider Interactive Debugging with <code>pdb</code></li>
-<li>Use <code>tracemalloc</code> to Understand Memory Usage and Leaks</li>
-</ol>
-
-<h3>Chapter 10: Collaboration</h3>
-<p>Collaborating on Python programs requires you to be deliberate about how you write your code. Even if you&#8217;re working alone, you&#8217;ll want to understand how to use modules written by others. This chapter covers the standard tools and best practices that enable people to work together on Python programs.</p>
-<ol start="82">
-<li>Know Where to Find Community-Built Modules</li>
-<li>Use Virtual Environments for Isolated and Reproducible Dependencies</li>
-<li>Write Docstrings for Every Function, Class, and Module</li>
-<li>Use Packages to Organize Modules and Provide Stable APIs</li>
-<li>Consider Module-Scoped Code to Configure Deployment Environments</li>
-<li>Define a Root <code>Exception</code> to Insulate Callers from APIs</li>
-<li>Know How to Break Circular Dependencies</li>
-<li>Consider <code>warnings</code> to Refactor and Migrate Usage</li>
-<li>Consider Static Analysis via <code>typing</code> to Obviate Bugs</li>
-</ol>
             </div>
         </div>
     </div>
