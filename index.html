@@ -47,12 +47,15 @@
           // gtag('config', 'UA-53888969-1');
 
           var trackOutboundLink = function(category, url) {
+            document.location = url;
+            /*
              gtag('event', 'click', {
                  'event_category': category,
                  'event_label': url,
                  'transport_type': 'beacon',
                  'event_callback': function() { document.location = url; }
              });
+            */
           }
         </script>
     </head>
