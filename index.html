@@ -8,8 +8,8 @@
 
             <script type="text/javascript" src="//use.typekit.net/wsb2ykq.js"></script>
             <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-            <link href="//effectivetypescript.com/theme/css/bootstrap.min.css" rel="stylesheet" />
-            <link href="//effectivetypescript.com/theme/css/customize.css" rel="stylesheet" />
+            <link href="/theme/css/bootstrap.min.css" rel="stylesheet" />
+            <link href="/theme/css/customize.css" rel="stylesheet" />
 
             <link rel="icon" type="image/jpg" href="https://effectivetypescript.com/images/favicon.jpg">
 
@@ -31,36 +31,43 @@
 
             <meta name="google-site-verification" content="...">
 
-        <!--<script async src="https://www.googletagmanager.com/gtag/js?id=UA-53888969-1"></script>-->
+            <!-- Google Tag Manager -->
+            <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-KMN22CN');</script>
+            <!-- End Google Tag Manager -->
+
         <script>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          // TODO(danvk): enable this
           // gtag('config', 'UA-53888969-1');
 
           var trackOutboundLink = function(category, url) {
-          //     gtag('event', 'click', {
-          //         'event_category': category,
-          //         'event_label': url,
-          //         'transport_type': 'beacon',
-          //         'event_callback': function() { document.location = url; }
-          //     });
+             gtag('event', 'click', {
+                 'event_category': category,
+                 'event_label': url,
+                 'transport_type': 'beacon',
+                 'event_callback': function() { document.location = url; }
+             });
           }
         </script>
     </head>
 
     <body class="second-edition">
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KMN22CN" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
         <div class="header">
             <div class="container">
                     <div class="row">
                         <div class="col-md-12">
                             <h1 class="site-title">
                               <a href="https://effectivetypescript.com/">
-                                <span class="effective-type">Effective</span>
-                                <span class="python-p-type">T</span><span class="python-rest-type">ype</span>
-                                <span class="python-p-type">S</span><span class="python-rest-type">cript</span>
+                                <span class="effective-type">Effective TypeScript</span>
                               </a>
                             </h1>
                         </div>
