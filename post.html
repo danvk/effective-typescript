@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+            <title>Effective Python &rsaquo; Item 10: Prevent Repetition with Assignment Expressions</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+            <script type="text/javascript" src="//use.typekit.net/wsb2ykq.js"></script>
+            <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+            <link href="https://effectivepython.com/theme/css/bootstrap.min.css" rel="stylesheet" />
+            <link href="https://effectivepython.com/theme/css/customize.css" rel="stylesheet" />
+
+            <link rel="icon" type="image/jpg" href="https://effectivepython.com/images/favicon_2ed.jpg">
+
+            <meta name="description" content="An assignment expression—also known as the walrus operator—is a new syntax introduced in Python 3.8 to solve a long-standing problem with the language that can cause code duplication. Whereas normal assignment statements are written a = b and pronounced “a equals b”, these assignments are written a := b and pronounced “a walrus b” (because := looks like a pair of eyeballs and tusks).">
+
+            <meta name="twitter:card" content="summary">
+            <meta name="twitter:creator" content="@EffectivePython">
+            <meta name="twitter:domain" content="effectivepython.com">
+            <meta name="twitter:title" content="Effective Python &rsaquo; Item 10: Prevent Repetition with Assignment Expressions">
+            <meta name="twitter:description" content="An assignment expression—also known as the walrus operator—is a new syntax introduced in Python 3.8 to solve a long-standing problem with the language that can cause code duplication. Whereas normal assignment statements are written a = b and pronounced “a equals b”, these assignments are written a := b and pronounced “a walrus b” (because := looks like a pair of eyeballs and tusks).">
+            <meta name="twitter:img:src" content="https://effectivepython.com/images/cover_2ed.jpg">
+
+            <meta property="og:title" content="Effective Python &rsaquo; Item 10: Prevent Repetition with Assignment Expressions">
+            <meta property="og:description" content="An assignment expression—also known as the walrus operator—is a new syntax introduced in Python 3.8 to solve a long-standing problem with the language that can cause code duplication. Whereas normal assignment statements are written a = b and pronounced “a equals b”, these assignments are written a := b and pronounced “a walrus b” (because := looks like a pair of eyeballs and tusks).">
+            <meta property="og:image" content="https://effectivepython.com/images/cover_2ed.jpg">
+            <meta property="og:url" content="https://effectivepython.com/2020/02/02/prevent-repetition-with-assignment-expressions/">
+
+            <link href="https://effectivepython.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective Python Atom Feed" />
+
+            <meta name="google-site-verification" content="SxIULiiLHOaU206Ix5AbXU_9g_JiWZrdyKeI46XRfOA">
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-53888969-1"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'UA-53888969-1');
+
+          var trackOutboundLink = function(category, url) {
+              gtag('event', 'click', {
+                  'event_category': category,
+                  'event_label': url,
+                  'transport_type': 'beacon',
+                  'event_callback': function() { document.location = url; }
+              });
+          }
+        </script>
+    </head>
+
+    <body class="second-edition">
+        <div class="header">
+            <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="site-title"><a href="https://effectivepython.com/"><span class="effective-type">Effective</span> <span class="python-p-type">P</span><span class="python-rest-type">ython</span></a></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+<section id="content" class="article content">
+
+<div class="title-bar">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Item 10: Prevent Repetition with Assignment Expressions</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-muted published-container">
+                    <abbr class="published" title="2020-02-02T22:00:00-08:00">Sun 02 February 2020</abbr>
+                </div>
+                <div class="entry-content">
+
+<p>An assignment expression—also known as the <em>walrus operator</em>—is a new syntax introduced in Python 3.8 to solve a long-standing problem with the language that can cause code duplication. Whereas normal assignment statements are written <code>a = b</code> and pronounced &#8220;a equals b&#8221;, these assignments are written <code>a := b</code> and pronounced &#8220;a <em>walrus</em> b&#8221; (because <code>:=</code> looks like a pair of eyeballs and tusks).</p>
+<p>Assignment expressions are useful because they enable you to assign variables in places where assignment statements are disallowed, such as in the conditional expression of an <code>if</code> statement. An assignment expression&#8217;s value evaluates to whatever was assigned to the identifier on the left side of the walrus operator.</p>
+<p>For example, say that I have a basket of fresh fruit that I’m trying to manage for a juice bar. Here, I define the contents of the basket:</p>
+<div class="highlight"><pre><span></span><span class="n">fresh_fruit</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;apple&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;banana&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="s1">&#39;lemon&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>When a customer comes to the counter to order some lemonade, I need to make sure there is at least one lemon in the basket to squeeze. Here, I do this by retrieving the count of lemons and then using an <code>if</code> statement to check for a non-zero value:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">make_lemonade</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">out_of_stock</span><span class="p">():</span>
+    <span class="o">...</span>
+
+<span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lemon&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+    <span class="n">make_lemonade</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The problem with this seemingly simple code is that it’s noisier than it needs to be. The <code>count</code> variable is used only within the first block of the <code>if</code> statement. Defining <code>count</code> above the <code>if</code> statement causes it to appear to be more important than it really is, as if all code that follows, including the <code>else</code> block, will need to access the <code>count</code> variable, when in fact that is not the case.</p>
+<p>This pattern of fetching a value, checking to see if it’s non-zero, and then using it is extremely common in Python. Many programmers try to work around the multiple references to <code>count</code> with a variety of tricks that hurt readability (see Item 5: “Write Helper Functions Instead of Complex Expressions” for an example). Luckily, assignment expressions were added to the language to streamline exactly this type of code. Here, I rewrite this example using the walrus operator:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lemon&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">make_lemonade</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Though this is only one line shorter, it’s a lot more readable because it’s now clear that <code>count</code> is only relevant to the first block of the <code>if</code> statement. The assignment expression is first assigning a value to the <code>count</code> variable, and then evaluating that value in the context of the <code>if</code> statement to determine how to proceed with flow control. This two-step behavior—assign and then evaluate—is the fundamental nature of the walrus operator.</p>
+<p>Lemons are quite potent, so only one is needed for my lemonade recipe, which means a non-zero check is good enough. If a customer orders a cider, though, I need to make sure that I have at least four apples. Here, I do this by fetching the <code>count</code> from the <code>fruit_basket</code> dictionary, and then using a comparison in the <code>if</code> statement conditional expression:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">make_cider</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="n">make_cider</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>This has the same problem as the lemonade example, where the assignment of <code>count</code> puts distracting emphasis on that variable. Here, I improve the clarity of this code by also using the walrus operator:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="n">make_cider</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>This works as expected and makes the code one line shorter. It’s important to note how I needed to surround the assignment expression with parentheses to compare it with <code>4</code> in the <code>if</code> statement. In the lemonade example, no surrounding parentheses were required because the assignment expression stood on its own as a non-zero check; it wasn’t a subexpression of a larger expression. As with other expressions, you should avoid surrounding assignment expressions with parentheses when possible.</p>
+<p>Another common variation of this repetitive pattern occurs when I need to assign a variable in the enclosing scope depending on some condition, and then reference that variable shortly afterward in a function call. For example, say that a customer orders some banana smoothies. In order to make them, I need to have at least two bananas’ worth of slices, or else an <code>OutOfBananas</code> exception will be raised. Here, I implement this logic in a typical way:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">OutOfBananas</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">def</span> <span class="nf">make_smoothies</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">pieces</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smoothies</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">OutOfBananas</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>The other common way to do this is to put the <code>pieces = 0</code> assignment in the <code>else</code> block:</p>
+<div class="highlight"><pre><span></span><span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smoothies</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">OutOfBananas</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>This second approach can feel odd because it means that the <code>pieces</code> variable has two different locations—in each block of the <code>if</code> statement—where it can be initially defined. This split definition technically works because of Python’s scoping rules (see Item 21: “Know How Closures Interact with Variable Scope”), but it isn’t easy to read or discover, which is why many people prefer the construct above, where the <code>pieces = 0</code> assignment is first.</p>
+<p>The walrus operator can again be used to shorten this example by one line of code. This small change removes any emphasis on the <code>count</code> variable. Now, it’s clearer that <code>pieces</code> will be important beyond the <code>if</code> statement:</p>
+<div class="highlight"><pre><span></span><span class="n">pieces</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smoothies</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">OutOfBananas</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>Using the walrus operator also improves the readability of splitting the definition of <code>pieces</code> across both parts of the <code>if</code> statement. It’s easier to trace the <code>pieces</code> variable when the <code>count</code> definition no longer precedes the <code>if</code> statement:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">smoothies</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">OutOfBananas</span><span class="p">:</span>
+    <span class="n">out_of_stock</span><span class="p">()</span>
+</pre></div>
+
+
+<p>One frustration that programmers who are new to Python often have is the lack of a flexible switch/case statement. The general style for approximating this type of functionality is to have a deep nesting of multiple <code>if</code>, <code>elif</code>, and <code>else</code> statements.</p>
+<p>For example, imagine that I want to implement a system of precedence so that each customer automatically gets the best juice available and doesn’t have to order. Here, I define logic to make it so banana smoothies are served first, followed by apple cider, and then finally lemonade:</p>
+<div class="highlight"><pre><span></span><span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_cider</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lemon&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">count</span><span class="p">:</span>
+            <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_lemonade</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">to_enjoy</span> <span class="o">=</span> <span class="s1">&#39;Nothing&#39;</span>
+</pre></div>
+
+
+<p>Ugly constructs like this are surprisingly common in Python code. Luckily, the walrus operator provides an elegant solution that can feel nearly as versatile as dedicated syntax for switch/case statements:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="p">(</span><span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;banana&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="n">pieces</span> <span class="o">=</span> <span class="n">slice_bananas</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+    <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_smoothies</span><span class="p">(</span><span class="n">pieces</span><span class="p">)</span>
+<span class="k">elif</span> <span class="p">(</span><span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;apple&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_cider</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">elif</span> <span class="n">count</span> <span class="o">:=</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;lemon&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="n">to_enjoy</span> <span class="o">=</span> <span class="n">make_lemonade</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">to_enjoy</span> <span class="o">=</span> <span class="s1">&#39;Nothing&#39;</span>
+</pre></div>
+
+
+<p>The version that uses assignment expressions is only five lines shorter than the original, but the improvement in readability is vast due to the reduction in nesting and indentation. If you ever see such ugly constructs emerge in your code, I suggest that you move them over to using the walrus operator if possible.</p>
+<p>Another common frustration of new Python programmers is the lack of a do/while loop construct. For example, say that I want to bottle juice as new fruit is delivered until there’s no fruit remaining. Here, I implement this logic with a <code>while</code> loop:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pick_fruit</span><span class="p">():</span>
+    <span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">make_juice</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="n">bottles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">fresh_fruit</span> <span class="o">=</span> <span class="n">pick_fruit</span><span class="p">()</span>
+<span class="k">while</span> <span class="n">fresh_fruit</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">fruit</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">make_juice</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">bottles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+    <span class="n">fresh_fruit</span> <span class="o">=</span> <span class="n">pick_fruit</span><span class="p">()</span>
+</pre></div>
+
+
+<p>This is repetitive because it requires two separate <code>fresh_fruit = pick_fruit()</code> calls: one before the loop to set initial conditions, and another at the end of the loop to replenish the <code>list</code> of delivered fruit.</p>
+<p>A strategy for improving code reuse in this situation is to use the <em>loop-and-a-half</em> idiom. This eliminates the redundant lines, but it also undermines the <code>while</code> loop’s contribution by making it a dumb infinite loop. Now, all of the flow control of the loop depends on the conditional <code>break</code> statement:</p>
+<div class="highlight"><pre><span></span><span class="n">bottles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>                     <span class="c1"># Loop</span>
+    <span class="n">fresh_fruit</span> <span class="o">=</span> <span class="n">pick_fruit</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">fresh_fruit</span><span class="p">:</span>         <span class="c1"># And a half</span>
+        <span class="k">break</span>
+    <span class="k">for</span> <span class="n">fruit</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">make_juice</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">bottles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</pre></div>
+
+
+<p>The walrus operator obviates the need for the loop-and-a-half idiom by allowing the <code>fresh_fruit</code> variable to be reassigned and then conditionally evaluated each time through the <code>while</code> loop. This solution is short and easy to read, and it should be the preferred approach in your code:</p>
+<div class="highlight"><pre><span></span><span class="n">bottles</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">while</span> <span class="n">fresh_fruit</span> <span class="o">:=</span> <span class="n">pick_fruit</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">fruit</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">fresh_fruit</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">make_juice</span><span class="p">(</span><span class="n">fruit</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">bottles</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</pre></div>
+
+
+<p>There are many other situations where assignment expressions can be used to eliminate redundancy (see Item 29: “Avoid Repeated Work in Comprehensions by Using Assignment Expressions” for another). In general, when you find yourself repeating the same expression or assignment multiple times within a grouping of lines, it’s time to consider using assignment expressions in order to improve readability.</p>
+<h3>Things to Remember</h3>
+<ul>
+<li>Assignment expressions use the walrus operator (<code>:=</code>) to both assign and evaluate variable names in a single expression, thus reducing repetition.</li>
+<li>When an assignment expression is a subexpression of a larger expression, it must be surrounded with parentheses.</li>
+<li>Although switch/case statements and do/while loops are not available in Python, their functionality can be emulated much more clearly by using assignment expressions.</li>
+</ul></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="promotion">
+    <div class="row">
+        <div class="col-sm-6 text-right">
+          <a target="_blank" href="https://amzn.to/30fJtiG" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/30fJtiG'); return false;" class="btn btn-info btn-lg primary">Buy the Book on Amazon</a>
+        </div>
+        <div class="col-sm-6 text-left hidden-xs">
+            <a target="_blank" href="https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762" onclick="trackOutboundLink('post learn more hover', 'https://click.linksynergy.com/link?id=YvEWtFaKGwg&offerid=145238.2820370&type=2&murl=http%3A%2F%2Fwww.informit.com%2Ftitle%2F9780134854762'); return false;" class="btn btn-info btn-lg">Buy the DRM-free eBook</a>
+        </div>
+    </div>
+</div>
+
+<div class="page-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <a href="https://amzn.to/30fJtiG" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/30fJtiG'); return false;"><img src="https://effectivepython.com/images/cover_2ed.jpg" class="learn-more-photo" alt="Effective Python: Second Edition Book Cover"></a>
+
+                <em><b>Effective Python: Second Edition</b></em> provides insight into the <em>Pythonic</em> way of writing programs: the best way to use Python. Novice programmers will learn the best practices of Python's capabilities. Experienced programmers will learn how to embrace the strangeness of a new tool with confidence. Items include advice on what to do, what to avoid, how to strike the right balance, and why this is the best&nbsp;choice. <a href="/" onclick="trackOutboundLink('post learn more', '/'); return false;">Learn more &raquo;</a>
+
+                <div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</section>
+
+
+        <footer id="contentinfo" class="footer">
+            <div class="container">
+                <address id="about" class="vcard body">
+                    &copy; 2014 - 2020 <a class="url fn" href="https://onebigfluke.com" onclick="trackOutboundLink('footer', 'https://onebigfluke.com'); return false;">Brett Slatkin</a>
+                    <div class="footer-attribution">Powered by <a href="https://getpelican.com/" onclick="trackOutboundLink('footer', 'https://getpelican.com/'); return false;" rel="nofollow">Pelican</a></div>
+                </address>
+            </div>
+        </footer>
+    </body>
+</html>
