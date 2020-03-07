@@ -4,10 +4,13 @@
 
 This is the code sample repo for _Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_. The book is available through:
 
-- [O'Reilly][o]
 - [Amazon][a]
+- [O'Reilly][o]
+- [DRM-Free eBook][ebook]
 
 and others.
+
+You can get the latest updates on the book at <https://effectivetypescript.com>.
 
 ## Code Samples
 
@@ -94,7 +97,8 @@ Unless otherwise noted in a comment at the top of the code sample, the samples a
   - [:memo: Item 62][Item 62]: Don’t Consider Migration Complete Until You Enable noImplicitAny
 
 [o]: https://www.oreilly.com/library/view/effective-typescript/9781492053736/
-[a]: https://www.amazon.com/Effective-TypeScript-Specific-JavaScript-Scales/dp/1492053740
+[a]: https://amzn.to/38s1oCK
+[ebook]: https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1
 [literate-ts]: https://github.com/danvk/literate-ts
 [play]: https://www.typescriptlang.org/play/
 
