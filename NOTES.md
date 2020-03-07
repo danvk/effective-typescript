@@ -53,9 +53,12 @@ To-do:
 - [x] Test "excerpts" (you use <!-- more -->)
 - [x] Fix ugly source code formatting
 - [x] Fix footer
-- [ ] Match Brett's article page
-- [ ] Add RSS feed
+- [x] Match Brett's article page
+- [x] Add RSS feed
+- [ ] Get generation to work
+- [ ] Add emails via MailChimp or other
 - [ ] Look into automatically wrapping external links
+- [ ] Update fonts
 
 Notes:
 
@@ -64,4 +67,14 @@ Notes:
   - I tried hexo-prism-plugin but couldn't get it to work.
   - It looks like hexo-utils might support it?
   - This isn't great but probably not worth fussing about.
-
+- Asciidoc
+  - There is an asciidoc plugin, hexo-renderer-asciidoc
+  - It uses asciidoctor, which I think is what O'Reilly uses, too
+  - It didn't work too well, and I will have to do some editing anyway.
+- Drafts
+  - Put drafts in a `source/_drafts` folder.
+  - See them by running with `hexo server --drafts`.
+- Markdown
+  - You can include markdown as a partial just the same as ejs
+  - The one annoyance is that single line breaks become paragraph breaks.
+  - (This is easy to fix!)
