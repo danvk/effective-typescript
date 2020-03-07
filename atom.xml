@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Effective TypeScript</title>
+  <icon>https://effectivetypescript.com/icon.png</icon>
+  <subtitle>62 Specific Ways to Improve Your TypeScript</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://effectivetypescript.com/"/>
+  <updated>2020-03-07T23:29:51.171Z</updated>
+  <id>https://effectivetypescript.com/</id>
+  
+  <author>
+    <name>Dan Vanderkam</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Welcome to Effective TypeScript!</title>
+    <link href="https://effectivetypescript.com/2020/03/06/hello-world/"/>
+    <id>https://effectivetypescript.com/2020/03/06/hello-world/</id>
+    <published>2020-03-06T17:34:56.000Z</published>
+    <updated>2020-03-07T23:29:51.171Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to the Effective TypeScript website!</p><a id="more"></a><p><a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener"><em>Effective TypeScript</em></a> (the book) waspublished at the end of October 2019.</p><p>This companion site was a bit long in coming, but I hope to use it to:</p><ul><li>Post sample items</li><li>Post updates when TypeScript releases change the advice in the book.</li><li>Share links to conference presentations and videos.</li><li>Show examples of how to apply the items in the book.</li><li>Show general TypeScript tips &amp; tricks.</li></ul><p>An inspiration for this last one is the <a href="https://www.centauri-dreams.org/" target="_blank" rel="noopener">Centauri Dreams</a> blog, which started as acompanion site for a book published in 2004 but is still going strong 16 years later.</p><p>Look for posts every ~2 weeks.</p><p>I built this site using <a href="https://hexo.io/" target="_blank" rel="noopener">hexo</a>, a popular JavaScript-based static site generator. If you visit the <a href="https://effectivepython.com/" target="_blank" rel="noopener"><em>Effective Python</em> site</a>, you&#39;ll notice a strong family resemblance. So a big thanks to <a href="https://twitter.com/haxor" target="_blank" rel="noopener">Brett</a> for that!</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to the Effective TypeScript website!&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
+  
+</feed>

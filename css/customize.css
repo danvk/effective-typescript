@@ -36,7 +36,9 @@ h2, h3 {
 p {
     margin: 0;
 }
-p + p {
+p + p,
+p + a#more,
+a#more + p {
     margin-top: 10px;
 }
 
@@ -201,11 +203,11 @@ pre {
     font-size: 14px;
     padding: 10px;
     border: 0;
-    background-color: #f3f3f3 !important;
     border-radius: 0;
     overflow-x: auto;
     word-wrap: normal;
     margin: 0;
+    background: white;
 }
 
 .highlight {
