@@ -55,10 +55,11 @@ To-do:
 - [x] Fix footer
 - [x] Match Brett's article page
 - [x] Add RSS feed
-- [ ] Get generation to work
+- [x] Get generation to work
+- [x] Look into automatically wrapping external links
 - [ ] Add emails via MailChimp or other
-- [ ] Look into automatically wrapping external links
 - [ ] Update fonts
+- [ ] Delete unused code from hexo theme
 
 Notes:
 
@@ -78,3 +79,7 @@ Notes:
   - You can include markdown as a partial just the same as ejs
   - The one annoyance is that single line breaks become paragraph breaks.
   - (This is easy to fix!)
+- Link wrapping
+  - The plugins page indicates I should just write a script but gives no examples https://hexo.io/docs/plugins#Script
+  - The autominifier plugin seems close-ish to what I want https://github.com/chenzhutian/hexo-all-minifier/
+  - The target="_blank" does not work w/ the gtags wrapper. Also broken on Brett's site.
