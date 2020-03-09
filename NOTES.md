@@ -60,6 +60,7 @@ To-do:
 - [x] Delete unused code from hexo theme
 - [ ] Add emails via MailChimp or other
 - [ ] Update fonts
+- [ ] Fix "description" meta tags in posts
 
 Notes:
 
