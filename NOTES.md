@@ -57,9 +57,9 @@ To-do:
 - [x] Add RSS feed
 - [x] Get generation to work
 - [x] Look into automatically wrapping external links
+- [x] Delete unused code from hexo theme
 - [ ] Add emails via MailChimp or other
 - [ ] Update fonts
-- [ ] Delete unused code from hexo theme
 
 Notes:
 
@@ -83,3 +83,4 @@ Notes:
   - The plugins page indicates I should just write a script but gives no examples https://hexo.io/docs/plugins#Script
   - The autominifier plugin seems close-ish to what I want https://github.com/chenzhutian/hexo-all-minifier/
   - The target="_blank" does not work w/ the gtags wrapper. Also broken on Brett's site.
+  - cheerio is a popular way to work w/ HTML in node. I had to downgrade to 0.22 because 1.0rc breaks in all sorts of ways.

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Item 41: Understand Evolving any</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; The Book">
+    <meta name="twitter:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; The Book">
+    <meta property="og:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    <meta name="google-site-verification" content="...">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url) {
+         gtag('event', 'click', {
+             'event_category': category,
+             'event_label': url,
+             'transport_type': 'beacon',
+             'event_callback': function() { document.location = url; }
+         });
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body>
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="https://effectivetypescript.com/">
+                      <span class="effective-type">Effective TypeScript</span>
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-12">
+                  <h1>Item 41: Understand Evolving any</h1>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="page-content">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-12">
+                  <div class="text-muted published-container">
+                      <time class="published" datetime="2020-03-09T16:34:56.000Z" itemprop="datePublished">
+                          Mon 09 March 2020
+                      </time>
+                  </div>
+                  <div class="entry-content">
+                      <p><em>This feature was introduced way back in <a href="https://github.com/Microsoft/TypeScript/wiki/What' target=" _blank" rel="noopener" s-new-in-typescript#improved-any-inference" target="_blank" onclick="trackOutboundLink('', 'https://github.com/Microsoft/TypeScript/wiki/What' target='); return false;">TypeScript 2.1</a> in 2016. The term &quot;evolving any&quot; is not widely used outside the TypeScript compiler itself, but I find it useful to have a name for this unusual pattern.</em></p>
+<p>In TypeScript a variable&#39;s type is generally determined when it is declared. After this, it can be <em>refined</em> (by checking if it is <code>null</code>, for instance), but it cannot expand to include new values. There is one notable exception to this, however, involving <code>any</code> types.</p>
+<p>In JavaScript, you might write a function to generate a range of numbers like this:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">range</span>(<span class="hljs-params">start, limit</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &lt; limit; i++) &#123;<br>    out.push(i);<br>  &#125;<br>  <span class="hljs-keyword">return</span> out;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>When you convert this to TypeScript, it works exactly as you&#39;d expect:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">range</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &lt; limit; i++) &#123;<br>    out.push(i);<br>  &#125;<br>  <span class="hljs-keyword">return</span> out;  <span class="hljs-comment">// Return type inferred as number[]</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Upon closer inspection, however, it&#39;s surprising that this works! How does TypeScript know that the type of <code>out</code> is <code>number[]</code> when it&#39;s initialized as <code>[]</code>, which could be an array of any type?</p>
+<p>Inspecting each of the three occurrences of <code>out</code> to reveal its inferred type starts to tell the story:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">range</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];  <span class="hljs-comment">// Type is any[]</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &lt; limit; i++) &#123;<br>    out.push(i);  <span class="hljs-comment">// Type of out is any[]</span><br>  &#125;<br>  <span class="hljs-keyword">return</span> out;  <span class="hljs-comment">// Type is number[]</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The type of <code>out</code> starts as <code>any[]</code>, an undifferentiated array. But as we push <code>number</code> values onto it, its type &quot;evolves&quot; to become <code>number[]</code>.</p>
+<p>This is distinct from narrowing (Item 22). An array&#39;s type can expand by pushing different elements onto it:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> result = [];  <span class="hljs-comment">// Type is any[]</span><br>result.push(<span class="hljs-string">'a'</span>);<br>result  <span class="hljs-comment">// Type is string[]</span><br>result.push(<span class="hljs-number">1</span>);<br>result  <span class="hljs-comment">// Type is (string | number)[]</span><br></code></pre></td></tr></table></figure>
+
+<p>With conditionals, the type can even vary across branches. Here we show the same behavior with a simple value, rather than an array:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.random() &lt; <span class="hljs-number">0.5</span>) &#123;<br>  val = <span class="hljs-regexp">/hello/</span>;<br>  val  <span class="hljs-comment">// Type is RegExp</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is number</span><br>&#125;<br>val  <span class="hljs-comment">// Type is number | RegExp</span><br></code></pre></td></tr></table></figure>
+
+<p>A final case that triggers this &quot;evolving any&quot; behavior is if a variable is initially <code>null</code>. This often comes up when you set a value in a <code>try</code>/<code>catch</code> block:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">try</span> &#123;<br>  somethingDangerous();<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is number</span><br>&#125; <span class="hljs-keyword">catch</span> (e) &#123;<br>  <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">'alas!'</span>);<br>&#125;<br>val  <span class="hljs-comment">// Type is number | null</span><br></code></pre></td></tr></table></figure>
+
+<p>Interestingly, this behavior only happens when a variable&#39;s type is implicitly <code>any</code> with <code>noImplicitAny</code> set! Adding an <em>explicit</em> <code>any</code> keeps the type constant:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val: <span class="hljs-built_in">any</span>;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.random() &lt; <span class="hljs-number">0.5</span>) &#123;<br>  val = <span class="hljs-regexp">/hello/</span>;<br>  val  <span class="hljs-comment">// Type is any</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is any</span><br>&#125;<br>val  <span class="hljs-comment">// Type is any</span><br></code></pre></td></tr></table></figure>
+
+<hr>
+<!-- TODO: insert note icon -->
+<p>This behavior can be confusing to follow in your editor since the type is only &quot;evolved&quot; <em>after</em> you assign or push an element. Inspecting the type on the line with the assignment will still show <code>any</code> or <code>any[]</code>.</p>
+<hr>
+<p>If you use a value before any assignment to it, you&#39;ll get an implicit any error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">range</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];<br>  <span class="hljs-comment">//    ~~~ Variable 'out' implicitly has type 'any[]' in some</span><br>  <span class="hljs-comment">//        locations where its type cannot be determined</span><br>  <span class="hljs-keyword">if</span> (start === limit) &#123;<br>    <span class="hljs-keyword">return</span> out;<br>    <span class="hljs-comment">//     ~~~ Variable 'out' implicitly has an 'any[]' type</span><br>  &#125;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &lt; limit; i++) &#123;<br>    out.push(i);<br>  &#125;<br>  <span class="hljs-keyword">return</span> out;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Put another way, &quot;evolving&quot; <code>any</code> types are only <code>any</code> when you <em>write</em> to them. If you try to <em>read</em> from them while they&#39;re still <code>any</code>, you&#39;ll get an error.</p>
+<p>Implicit <code>any</code> types do not evolve through function calls. The arrow function here trips up inference:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeSquares</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];<br>     <span class="hljs-comment">// ~~~ Variable 'out' implicitly has type 'any[]' in some locations</span><br>  range(start, limit).forEach(<span class="hljs-function"><span class="hljs-params">i</span> =&gt;</span> &#123;<br>    out.push(i * i);<br>  &#125;);<br>  <span class="hljs-keyword">return</span> out;<br>      <span class="hljs-comment">// ~~~ Variable 'out' implicitly has an 'any[]' type</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>In cases like this, you may want to consider using an array&#39;s <code>map</code> and <code>filter</code> methods to build arrays in a single statement and avoid iteration and evolving <code>any</code> entirely. See Items 23 and 27.</p>
+<p>Evolving <code>any</code> comes with all the usual caveats about type inference. Is the correct type for your array really <code>(string|number)[]</code>? Or should it be <code>number[]</code> and you incorrectly pushed a <code>string</code>? You may still want to provide an explicit type annotation to get better error checking instead of using evolving <code>any</code>.</p>
+<h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
+<li>While TypeScript types typically only <em>refine</em>, implicit <code>any</code> and <code>any[]</code> types are allowed to <em>evolve</em>. You should be able to recognize and understand this construct where it occurs.</li>
+<li>For better error checking, consider providing an explicit type annotation instead of using evolving <code>any</code>.</li>
+</ul>
+
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="promotion">
+      <div class="row">
+          <div class="col-sm-6 text-right">
+            <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book on Amazon</a>
+          </div>
+          <div class="col-sm-6 text-left hidden-xs">
+              <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy the DRM-free eBook</a>
+          </div>
+      </div>
+  </div>
+
+  <div class="page-content">
+      <div class="container">
+          <div class="row">
+              <div class="col-md-12">
+                  <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover"></a>
+
+                  <p><strong><em>Effective TypeScript</em></strong> provides insight not just into <em>how</em> to use TypeScript but how to use it <em>well</em>.
+Novice programmers will learn the best practices of TypeScript and its type system,
+and how to avoid falling into common traps.
+Experienced programmers will quickly come up to speed on a new tool some of its most surprising behaviors.
+Items include advice on what to do, what to avoid, and how to build mental models.
+After reading <em>Effective TypeScript</em>, your relationship with the type system will
+be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+      <address id="about" class="vcard body">
+          &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+          <div class="footer-attribution">Powered by <a href="http://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'http://hexo.io/'); return false;">Hexo</a></div>
+      </address>
+  </div>
+</footer>
+</body>
+</html>
