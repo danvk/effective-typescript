@@ -16,6 +16,16 @@ div.header + section {
     margin-top: 0;
 }
 
+h1 {
+    font-family: 'Khula', sans-serif;
+    font-weight: 600;
+    font-size: 40px;
+}
+
+.site-title a {
+    color: #333;
+}
+
 pre {
     border: none;
     background: none;
@@ -25,6 +35,10 @@ code {
     color: #333;
     background: none;
     padding: 0;
+}
+
+pre code {
+    font-size: 14px;
 }
 
 p + p,
