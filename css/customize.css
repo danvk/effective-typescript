@@ -58,6 +58,13 @@ a#more + p {
     clear: both;
 }
 
+blockquote {
+    font-size: small;
+}
+blockquote p {
+    line-height: 1.42857143;
+}
+
 #stay-in-touch {
     margin-top: 16px;
 }
