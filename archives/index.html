@@ -5,6 +5,7 @@
     <title>Effective TypeScript</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" id="open-sans-css" href="//fonts.googleapis.com/css?family=Open+Sans%3A300italic%2C400italic%2C600italic%2C300%2C400%2C600&amp;subset=latin%2Clatin-ext&amp;ver=3.9.2" type="text/css" media="all">
     <link href="/css/customize.css" rel="stylesheet" />
     <link href="/css/highlight.vs.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/images/icon.png">
@@ -22,9 +23,6 @@
     <meta property="og:url" content="https://effectivetypescript.com/">
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
-
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-    <meta name="google-site-verification" content="...">
 
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
@@ -51,7 +49,7 @@
       <div class="row">
           <div class="col-md-12">
               <h1 class="site-title">
-                  <a href="https://effectivetypescript.com/">
+                  <a href="/">
                       <span class="effective-type">Effective TypeScript</span>
                   </a>
               </h1>
@@ -60,101 +58,119 @@
   </div>
 </div>
 
-  <section id="the-book" class="content">
+  <section id="preface" class="content">
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="cover-photo" alt="Effective TypeScript Book Cover"></a>
+
+          <p>TypeScript is a typed superset of JavaScript with the potential to solve many of the headaches for which JavaScript is famous. But TypeScript has a learning curve of its own, and understanding how to use it effectively can take time.</p>
+<p><em>Effective TypeScript</em> guides you through 62 specific ways to improve your use of TypeScript, following the format popularized by <em>Effective C++</em> and <em>Effective Java</em>. You’ll advance from a beginning or intermediate user familiar with the basics to an advanced user who knows how to use the language well.</p>
+<p>Already Have the Book? <a href="https://github.com/danvk/effective-typescript" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/danvk/effective-typescript'); return false;">Visit the GitHub project</a> to see all of the code snippets from the book in one place. You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544'); return false;">report any errors</a> you&#39;ve found.</p>
 
 
-  <div class="title-bar">
-      <div class="container">
-          <div class="row">
-              <div class="col-md-12">
-                  <h1>The Book</h1>
-              </div>
-          </div>
+          <p>
+            <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
+            <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy the eBook</a>
+          </p>
+        </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="updates" class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Recent Blog Posts</h2>
+      </div>
+    </div>
   </div>
 
+  <div class="container">
+  
+    <div class="row hentry" id="evolving-any">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2020/03/09/evolving-any/">Item 41: Understand Evolving any</a>
+    </h3>
 
-  <div class="page-content">
-      <div class="container">
+    <div class="text-muted published-container">
+      <time class="published" datetime="2020-03-09T16:34:56.000Z" itemprop="datePublished">
+        Mon 09 March 2020
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        In TypeScript a variable's type is generally determined when it is declared. After this, it can be <em>refined</em> (by checking if it is <code>null</code>, for instance), but it cannot expand to include new values. There is one notable exception to this, however, involving <code>any</code> types.
+
+        <a class="read-more" href="/2020/03/09/evolving-any/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </div>
+  </div>
+</div>
+
+  
+    <div class="row hentry" id="hello-world">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2020/03/06/hello-world/">Welcome to Effective TypeScript!</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2020-03-06T17:34:56.000Z" itemprop="datePublished">
+        Fri 06 March 2020
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p>Welcome to the Effective TypeScript website!
+        <a class="read-more" href="/2020/03/06/hello-world/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </p></div>
+  </div>
+</div>
+
+  
+</div>
 
 
-          <div class="row">
-              <div class="col-md-12">
+  <div class="container" id="stay-in-touch">
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          For future updates about sample items, new releases, related videos, translations, conference presentations, and more, choose one of these ways to stay in touch:
+        </p>
 
-              </div>
-          </div>
+        <p>
+          <a class="btn btn-info btn-lg" href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">Subscribe (<span class="caps">RSS</span>)</a>
+          <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
+        </p>
       </div>
+    </div>
   </div>
 
 </section>
 
 
-<section id="preface" class="content">
-
-
-  <div class="page-content">
-      <div class="container">
-
-
-          <div class="row">
-              <div class="col-md-12">
-                  <h2>Preface</h2>
-  <div>
-      <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="cover-photo" alt="Effective TypeScript Book Cover"></a>
-  </div>
-
-  <p>TypeScript is a typed superset of JavaScript with the potential to solve many of the headaches for which JavaScript is famous. But TypeScript has a learning curve of its own, and understanding how to use it effectively can take time.</p>
-<p><em>Effective TypeScript</em> guides you through 62 specific ways to improve your use of TypeScript, following the format popularized by <em>Effective C++</em> and <em>Effective Java</em> (both from Addison-Wesley). You’ll advance from a beginning or intermediate user familiar with the basics to an advanced user who knows how to use the language well.</p>
-
-
-  <p><a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('preface', 'https://amzn.to/38s1oCK'); return false;">Buy the Book on Amazon</a>
-  <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('preface', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy the <span class="caps">DRM</span>-free eBook</a></p>
-  <h2>Already Have the Book?</h2>
-  <p><a href="https://github.com/danvk/effective-typescript" target="_blank" rel="noopener" onclick="trackOutboundLink('already have the book', 'https://github.com/danvk/effective-typescript'); return false;">Visit the GitHub project</a> to see all of the code snippets from the book in one place.
-    Run and modify the example code yourself to confirm your understanding.
-    You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="trackOutboundLink('report any errors', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544'); return false;">report any errors</a> you&#8217;ve found.
-  </p>
-  <p>For future updates about the book, related videos, translations, conference presentations, and more, choose one of these ways to stay in touch:</p>
-  <div>
-      <a href="TODO" class="btn btn-info btn-lg">Get Emailed</a>
-      <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
-      <a class="btn btn-info btn-lg" href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;"><span class="caps">RSS</span></a>
-  </div>
-              </div>
-          </div>
-      </div>
-  </div>
-
-  </section>
-
-
 <section id="more-info" class="content">
-
-
-  <div class="title-bar">
-      <div class="container">
-          <div class="row">
-              <div class="col-md-12">
-                  <h1>More Info</h1>
-              </div>
-          </div>
-      </div>
-  </div>
-
-
   <div class="page-content">
-      <div class="container">
-
-
-          <div class="row">
-              <div class="col-md-12">
-                  <h2>What This Book Covers</h2>
-  <p>Each chapter in <em>Effective TypeScript</em> contains a broad but related set of items. ...</p>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Table of Contents</h2>
+          <p>
+            In an <a href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" target="_blank" rel="noopener" onclick="trackOutboundLink('table of contents', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html'); return false;"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('table of contents', 'https://amzn.to/38s1oCK'); return false;">order a copy</a>.
+          </p>
 
   <h3>Chapter 1: Getting to Know TypeScript</h3>
 
   <p>
-    Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What's this about `any`? And ducks?
+    Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What's this about <code>any</code>? And ducks?
   </p>
 
   <ol start="1">
@@ -283,40 +299,32 @@
     <li>Don’t Consider Migration Complete Until You Enable <code>noImplicitAny</code></li>
   </ol>
 
-              </div>
-          </div>
+        </div>
       </div>
+    </div>
   </div>
+</section>
 
-  </section>
-
-
-  <section id="about-the-author" class="content">
-
+<section id="about-the-author" class="content">
 
   <div class="title-bar">
       <div class="container">
           <div class="row">
               <div class="col-md-12">
-                  <h1>About the Author</h1>
+
               </div>
           </div>
       </div>
   </div>
 
-
   <div class="page-content">
-      <div class="container">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>About the Author</h2>
+          <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
 
-
-          <div class="row">
-              <div class="col-md-12">
-                  <h2>Dan Vanderkam</h2>
-  <div>
-      <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
-  </div>
-
-  <p>Dan Vanderkam is a principal software engineer at <a href="https://sidewalklabs.com" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://sidewalklabs.com'); return false;">Sidewalk Labs</a>,
+          <p>Dan Vanderkam is a principal software engineer at <a href="https://sidewalklabs.com" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://sidewalklabs.com'); return false;">Sidewalk Labs</a>,
 where he&#39;s built engineering teams and processes for all of its products and spinouts,
 all of which use TypeScript.
 He previously worked on <a href="https://github.com/hammerlab/pileup.js" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/hammerlab/pileup.js'); return false;">open source genome visualizations</a>
@@ -332,100 +340,23 @@ He earned his bachelor&#39;s in computer science from Rice University in Houston
 and lives in Brooklyn, New York.</p>
 
 
-  <div class="clear-images">
-      <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('dan vanderkam', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
-      <a href="https://www.danvk.org" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('dan vanderkam', 'https://www.danvk.org'); return false;">Visit Personal Site</a>
-  </div>
-              </div>
-          </div>
+          <p>
+            <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('about the author', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
+            <a href="https://www.danvk.org" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('about the author', 'https://www.danvk.org'); return false;">Visit danvk.org</a>
+          </p>
+        </div>
       </div>
+    </div>
   </div>
 
 </section>
-
-<section id="updates" class="content">
-
-    <div class="title-bar">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h1>Updates</h1>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="page-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                </div>
-            </div>
-        </div>
-    </div>
-
-</section>
-
-<section id="posts" class="content">
-  <div class="container">
-
-
-  <div class="row hentry" id="evolving-any">
-    <div class="col-md-12">
-        <h2 class="entry-title">
-            <a href="/2020/03/09/evolving-any/">Item 41: Understand Evolving any</a>
-        </h2>
-
-        <div class="text-muted published-container">
-          <time class="published" datetime="2020-03-09T16:34:56.000Z" itemprop="datePublished">
-            Mon 09 March 2020
-          </time>
-        </div>
-
-        <div class="entry-content">
-            
-                In TypeScript a variable's type is generally determined when it is declared. After this, it can be <em>refined</em> (by checking if it is <code>null</code>, for instance), but it cannot expand to include new values. There is one notable exception to this, however, involving <code>any</code> types.
-
-                <a class="read-more" href="/2020/03/09/evolving-any/">Continue&nbsp;reading&nbsp;&raquo;</a>
-            
-        </div>
-    </div>
-</div>
-
-
-  <div class="row hentry" id="hello-world">
-    <div class="col-md-12">
-        <h2 class="entry-title">
-            <a href="/2020/03/06/hello-world/">Welcome to Effective TypeScript!</a>
-        </h2>
-
-        <div class="text-muted published-container">
-          <time class="published" datetime="2020-03-06T17:34:56.000Z" itemprop="datePublished">
-            Fri 06 March 2020
-          </time>
-        </div>
-
-        <div class="entry-content">
-            
-                <p>Welcome to the Effective TypeScript website!</p>
-                <a class="read-more" href="/2020/03/06/hello-world/">Continue&nbsp;reading&nbsp;&raquo;</a>
-            
-        </div>
-    </div>
-</div>
-
-
-
-  </div>
-</section>
-
 
   <footer id="contentinfo" class="footer">
   <div class="container">
-      <address id="about" class="vcard body">
-          &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-          <div class="footer-attribution">Powered by <a href="http://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'http://hexo.io/'); return false;">Hexo</a></div>
-      </address>
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="http://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'http://hexo.io/'); return false;">Hexo</a></div>
+    </address>
   </div>
 </footer>
 </body>
