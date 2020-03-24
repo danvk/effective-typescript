@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Item 31: Push Null Values to the Perimeter of Your Types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; The Book">
+    <meta name="twitter:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; The Book">
+    <meta property="og:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url) {
+         gtag('event', 'click', {
+             'event_category': category,
+             'event_label': url,
+             'transport_type': 'beacon',
+             'event_callback': function() { document.location = url; }
+         });
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Item 31: Push Null Values to the Perimeter of Your Types</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2020-03-24T14:05:00.000Z" itemprop="datePublished">
+              Tue 24 March 2020
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>Chapter 4 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. Design your types well and you&#39;ll have a happy, productive relationship with the type checker. Design them poorly and you&#39;ll find yourself constantly fighting unproductive battles with it. This item discusses a frequent source of problems in type design: where to put your <code>null</code> types.</em></p>
+<p>When you first turn on <code>strictNullChecks</code>, it may seem as though you have to add scores of <code>if</code> statements checking for <code>null</code> and <code>undefined</code> values throughout your code. This is often because the relationships between null and non-null values are implicit: when variable A is non-null, you know that variable B is also non-null and vice versa. These implicit relationships are confusing both for human readers of your code and for the type checker.</p>
+<p>Values are easier to work with when they&#39;re either completely null or completely non-null, rather than a mix. You can model this by pushing the null values out to the perimeter of your structures.</p>
+<p>Suppose you want to calculate the min and max of a list of numbers. We&#39;ll call this the &quot;extent.&quot; Here&#39;s an attempt:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The code type checks (without <code>strictNullChecks</code>) and has an inferred return type of <code>number[]</code>, which seems fine. But it has a bug and a design flaw:</p>
+<ul>
+<li>If the min or max is zero, it may get overridden. For example, <code>extent([0, 1, 2])</code> will return <code>[1, 2]</code> rather than <code>[0, 2]</code>.</li>
+<li>If the <code>nums</code> array is empty, the function will return <code>[undefined, undefined]</code>. This sort of object with several <code>undefined</code>s will be difficult for clients to work with and is exactly the sort of type that this item discourages. We know from reading the source code that <code>min</code> and <code>max</code> will either both be <code>undefined</code> or neither, but that information isn&#39;t represented in the type system.</li>
+</ul>
+<p>Turning on <code>strictNullChecks</code> makes both of these issues more apparent:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>                  <span class="hljs-comment">// ~~~ Argument of type 'number | undefined' is not</span><br>                  <span class="hljs-comment">//     assignable to parameter of type 'number'</span><br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The return type of <code>extent</code> is now inferred as <code>(number | undefined)[]</code>, which makes the design flaw more apparent. This is likely to manifest as a type error wherever you call <code>extent</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> [min, max] = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);<br><span class="hljs-keyword">const</span> span = max - min;<br>          <span class="hljs-comment">// ~~~   ~~~ Object is possibly 'undefined'</span><br></code></pre></td></tr></table></figure>
+
+<p>The error in the implementation of <code>extent</code> comes about because you&#39;ve excluded <code>undefined</code> as a value for <code>min</code> but not <code>max</code>. The two are initialized together, but this information isn&#39;t present in the type system. You could make it go away by adding a check for <code>max</code>, too, but this would be doubling down on the bug.</p>
+<p>A better solution is to put the min and max in the same object and make this object either fully <code>null</code> or fully non-<code>null</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> result: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>] | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!result) &#123;<br>      result = [num, num];<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      result = [<span class="hljs-built_in">Math</span>.min(num, result[<span class="hljs-number">0</span>]), <span class="hljs-built_in">Math</span>.max(num, result[<span class="hljs-number">1</span>])];<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The return type is now <code>[number, number] | null</code>, which is easier for clients to work with. The min and max can be retrieved with either a non-null assertion:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> [min, max] = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>])!;<br><span class="hljs-keyword">const</span> span = max - min;  <span class="hljs-comment">// OK</span><br></code></pre></td></tr></table></figure>
+
+<p>or a single check:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> range = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);<br><span class="hljs-keyword">if</span> (range) &#123;<br>  <span class="hljs-keyword">const</span> [min, max] = range;<br>  <span class="hljs-keyword">const</span> span = max - min;  <span class="hljs-comment">// OK</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>By using a single object to track the extent, we&#39;ve improved our design, helped TypeScript understand the relationship between null values, and fixed the bug: the <code>if (!result)</code> check is now problem free.</p>
+<p>A mix of null and non-null values can also lead to problems in classes. For instance, suppose you have a class that represents both a user and their posts on a forum:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">class</span> UserPosts &#123;<br>  user: UserInfo | <span class="hljs-literal">null</span>;<br>  posts: Post[] | <span class="hljs-literal">null</span>;<br><br>  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">this</span>.user = <span class="hljs-literal">null</span>;<br>    <span class="hljs-keyword">this</span>.posts = <span class="hljs-literal">null</span>;<br>  &#125;<br><br>  <span class="hljs-keyword">async</span> init(userId: <span class="hljs-built_in">string</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-keyword">this</span>.user = <span class="hljs-keyword">await</span> fetchUser(userId),<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-keyword">this</span>.posts = <span class="hljs-keyword">await</span> fetchPostsForUser(userId)<br>    ]);<br>  &#125;<br><br>  getUserName() &#123;<br>    <span class="hljs-comment">// ...?</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>While the two network requests are loading, the <code>user</code> and <code>posts</code> properties will be <code>null</code>. At any time, they might both be <code>null</code>, one might be <code>null</code>, or they might both be non-<code>null</code>. There are four possibilities. This complexity will seep into every method on the class. This design is almost certain to lead to confusion, a proliferation of <code>null</code> checks, and bugs.</p>
+<p>A better design would wait until all the data used by the class is available:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">class</span> UserPosts &#123;<br>  user: UserInfo;<br>  posts: Post[];<br><br>  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">user: UserInfo, posts: Post[]</span>) &#123;<br>    <span class="hljs-keyword">this</span>.user = user;<br>    <span class="hljs-keyword">this</span>.posts = posts;<br>  &#125;<br><br>  <span class="hljs-keyword">static</span> <span class="hljs-keyword">async</span> init(userId: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">Promise</span>&lt;UserPosts&gt; &#123;<br>    <span class="hljs-keyword">const</span> [user, posts] = <span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.all([<br>      fetchUser(userId),<br>      fetchPostsForUser(userId)<br>    ]);<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> UserPosts(user, posts);<br>  &#125;<br><br>  getUserName() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.user.name;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Now the <code>UserPosts</code> class is fully non-<code>null</code>, and it&#39;s easy to write correct methods on it. Of course, if you need to perform operations while data is partially loaded, then you&#39;ll need to deal with the multiplicity of <code>null</code> and non-<code>null</code> states.</p>
+<p>(Don&#39;t be tempted to replace nullable properties with Promises. This tends to lead to even more confusing code and forces all your methods to be async. Promises clarify the code that loads data but tend to have the opposite effect on the class that uses that data.)</p>
+<h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
+<li>Avoid designs in which one value being <code>null</code> or not <code>null</code> is implicitly related to another value being <code>null</code> or not <code>null</code>.</li>
+<li>Push <code>null</code> values to the perimeter of your API by making larger objects either <code>null</code> or fully non-<code>null</code>. This will make code clearer both for human readers and for the type checker.</li>
+<li>Consider creating a fully non-<code>null</code> class and constructing it when all values are available.</li>
+<li>While <code>strictNullChecks</code> may flag many issues in your code, it&#39;s indispensable for surfacing the behavior of functions with respect to null values.</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider
+          <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">subscribing (RSS)</a>
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
+          on Twitter to see more like it.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-6 text-right">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
+      </div>
+      <div class="col-sm-6 text-left hidden-xs">
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover"></a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="http://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'http://hexo.io/'); return false;">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>

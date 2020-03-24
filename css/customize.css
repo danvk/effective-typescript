@@ -29,6 +29,8 @@ h1 {
 pre {
     border: none;
     background: none;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 code {
@@ -41,10 +43,8 @@ pre code {
     font-size: 14px;
 }
 
-p + p,
-p + a#more,
-a#more + p {
-    margin-top: 10px;
+body.post p {
+    margin: 10px 0;
 }
 
 .page-content {
@@ -89,6 +89,13 @@ blockquote p {
     margin-top: 16px;
     border-top: 1px solid #e5e5e5;
     padding-top: 16px;
+}
+
+.follow-or-subscribe {
+    margin-top: 16px;
+    border-top: 1px solid #e5e5e5;
+    padding: 16px 0;
+    text-align: center;
 }
 
 .promotion {
