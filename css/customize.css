@@ -31,6 +31,8 @@ pre {
     background: none;
     padding-top: 0;
     padding-bottom: 0;
+    margin-bottom: 0;
+    padding: 10px;
 }
 
 code {
@@ -110,4 +112,14 @@ blockquote p {
     .container {
         width: 750px;
     }
+}
+
+figure.highlight {
+    margin-left: 10px;
+    background: #f3f3f3;
+}
+
+code.hljs {
+    padding: 0;
+    background: #f3f3f3;
 }
