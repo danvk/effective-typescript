@@ -53,7 +53,7 @@ body.post p {
     margin: 0;
 }
 
-.page-content img {
+body.index .page-content img {
     float: right;
     max-width: 50%;
     height: auto;
@@ -122,4 +122,8 @@ figure.highlight {
 code.hljs {
     padding: 0;
     background: #f3f3f3;
+}
+
+.mail img.mailhead {
+    width: 100%;
 }
