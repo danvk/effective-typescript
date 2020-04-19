@@ -63,7 +63,6 @@
 
   <section id="content" class="article content">
 
-
   <div class="title-bar">
     <div class="container">
       <div class="row">
@@ -137,10 +136,11 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          Like this post? Consider
-          <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">subscribing (RSS)</a>
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
+          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
           or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
-          on Twitter to see more like it.
+          on Twitter.
         </div>
       </div>
     </div>
@@ -148,11 +148,10 @@
 
   <div class="promotion">
     <div class="row">
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-12 text-center">
         <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-      </div>
-      <div class="col-sm-6 text-left hidden-xs">
-        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
       </div>
     </div>
   </div>
@@ -161,7 +160,9 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover"></a>
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
 <p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
 

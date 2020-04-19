@@ -3,18 +3,18 @@
   <head>
     <meta charset="utf-8" />
     
-    <title>What&#39;s the type of JSON.parse(JSON.stringify(x))?</title>
+    <title>What&#39;s the type of JSON.parse(​JSON.stringify(x))?</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
     <link href="/css/customize.css" rel="stylesheet" />
     <link href="/css/highlight.vs.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/images/icon.png">
-    <meta name="description" content="Effective TypeScript: What&#39;s the type of JSON.parse(JSON.stringify(x))?">
+    <meta name="description" content="Effective TypeScript: What&#39;s the type of JSON.parse(​JSON.stringify(x))?">
     <meta name="twitter:card" content="summary">
     <meta name="twitter:creator" content="@danvdk">
     <meta name="twitter:domain" content="effectivetypescript.com">
-    <meta name="twitter:title" content="Effective TypeScript &rsaquo; What&#39;s the type of JSON.parse(JSON.stringify(x))?">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; What&#39;s the type of JSON.parse(​JSON.stringify(x))?">
     <meta name="twitter:description" content="If you&amp;#39;re writing a server in JavaScript, you might write an endpoint that converts an object to JSON:
 app.get(&#39;/user&#39;, (request, response) =&amp;gt; &amp;#123;  const user = getCurrentUser();  response.json(user);&amp;#125;);
 
@@ -24,7 +24,7 @@ const response = await fetch(&#39;/user&#39;);const user = await response.json()
 What&amp;#39;s the relationship between the user object in the server and the corresponding user object in the client? And how would you model this in TypeScript?">
     <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
 
-    <meta property="og:title" content="Effective TypeScript &rsaquo; What&#39;s the type of JSON.parse(JSON.stringify(x))?">
+    <meta property="og:title" content="Effective TypeScript &rsaquo; What&#39;s the type of JSON.parse(​JSON.stringify(x))?">
     <meta property="og:description" content="If you&amp;#39;re writing a server in JavaScript, you might write an endpoint that converts an object to JSON:
 app.get(&#39;/user&#39;, (request, response) =&amp;gt; &amp;#123;  const user = getCurrentUser();  response.json(user);&amp;#125;);
 
@@ -73,12 +73,11 @@ What&amp;#39;s the relationship between the user object in the server and the co
 
   <section id="content" class="article content">
 
-
   <div class="title-bar">
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <h2>What&#39;s the type of JSON.parse(JSON.stringify(x))?</h2>
+          <h2>What&#39;s the type of JSON.parse(​JSON.stringify(x))?</h2>
         </div>
       </div>
     </div>
@@ -159,10 +158,11 @@ What&amp;#39;s the relationship between the user object in the server and the co
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          Like this post? Consider
-          <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">subscribing (RSS)</a>
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
+          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
           or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
-          on Twitter to see more like it.
+          on Twitter.
         </div>
       </div>
     </div>
@@ -170,11 +170,10 @@ What&amp;#39;s the relationship between the user object in the server and the co
 
   <div class="promotion">
     <div class="row">
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-12 text-center">
         <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-      </div>
-      <div class="col-sm-6 text-left hidden-xs">
-        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
       </div>
     </div>
   </div>
@@ -183,7 +182,9 @@ What&amp;#39;s the relationship between the user object in the server and the co
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover"></a>
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
 <p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
 
