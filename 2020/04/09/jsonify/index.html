@@ -110,15 +110,16 @@ What&amp;#39;s the relationship between the user object in the server and the co
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">jsonRoundTrip</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">x: T</span>): <span class="hljs-title">T</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(x));<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>But this isn&#39;t quite right. First of all, there are many objects which can&#39;t be directly represented in JSON. A regular expression, for instance:</p>
-<pre><code>&gt; JSON.stringify(/foo/)
-&apos;{}&apos;</code></pre><p>Second, there are some values that get transformed in the conversion process. For example, <code>undefined</code> in an array becomes <code>null</code>:</p>
-<pre><code>&gt; arr = [undefined]
-&gt; jsonRoundTrip(arr)
-[ null ]</code></pre><p>With <code>strictNullChecks</code> in TypeScript, <code>null</code> and <code>undefined</code> have distinct types.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; JSON.stringify(&#x2F;foo&#x2F;)<br>&#39;&#123;&#125;&#39;<br></code></pre></td></tr></table></figure>
+
+<p>Second, there are some values that get transformed in the conversion process. For example, <code>undefined</code> in an array becomes <code>null</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; arr &#x3D; [undefined]<br>&gt; jsonRoundTrip(arr)<br>[ null ]<br></code></pre></td></tr></table></figure>
+
+<p>With <code>strictNullChecks</code> in TypeScript, <code>null</code> and <code>undefined</code> have distinct types.</p>
 <p>If an object has a <code>toJSON</code> method, it will get called by <code>JSON.stringify</code>. This is implemented by some of the standard types in JavaScript, notably <code>Date</code>:</p>
-<pre><code>&gt; d = new Date();
-&gt; jsonRoundTrip(d)
-&apos;2020-04-09T01:07:48.835Z&apos;</code></pre><p>So <code>Date</code>s get converted to <code>string</code>s. Who knew? You can read the full details of how this works <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify'); return false;">on MDN</a>.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; d &#x3D; new Date();<br>&gt; jsonRoundTrip(d)<br>&#39;2020-04-09T01:07:48.835Z&#39;<br></code></pre></td></tr></table></figure>
+
+<p>So <code>Date</code>s get converted to <code>string</code>s. Who knew? You can read the full details of how this works <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify'); return false;">on MDN</a>.</p>
 <p>How to model this in TypeScript? Let&#39;s just focus on the behavior around Dates. For a complex mapping like this, we&#39;re going to want a <a href="https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/'); return false;">conditional type</a>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> Jsonify&lt;T&gt; = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">Date</span> ? <span class="hljs-built_in">string</span> : T;<br></code></pre></td></tr></table></figure>
 
