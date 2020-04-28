@@ -139,3 +139,9 @@ code.hljs {
 .mail img.mailhead {
     width: 100%;
 }
+
+body.post .article img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

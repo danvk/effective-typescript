@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Item 19: Avoid Cluttering Your Code with Inferable Types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Item 19: Avoid Cluttering Your Code with Inferable Types">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Item 19: Avoid Cluttering Your Code with Inferable Types">
+    <meta name="twitter:description" content="The first thing that many new TypeScript developers do when they convert a codebase from JavaScript is fill it with type annotations. TypeScript is about types, after all! But in TypeScript many annotations are unnecessary. Declaring types for all your variables is counterproductive and is considered poor style.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Item 19: Avoid Cluttering Your Code with Inferable Types">
+    <meta property="og:description" content="The first thing that many new TypeScript developers do when they convert a codebase from JavaScript is fill it with type annotations. TypeScript is about types, after all! But in TypeScript many annotations are unnecessary. Declaring types for all your variables is counterproductive and is considered poor style.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url) {
+         gtag('event', 'click', {
+             'event_category': category,
+             'event_label': url,
+             'transport_type': 'beacon',
+             'event_callback': function() { document.location = url; }
+         });
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Item 19: Avoid Cluttering Your Code with Inferable Types</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2020-04-28T15:23:45.000Z" itemprop="datePublished">
+              Tue 28 April 2020
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>Chapter 3 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Effective TypeScript</a> covers type inference: the process by which TypeScript infers the type of symbols in the absence of explicit annotations. A significant fraction of the comments I leave on TypeScript code reviews point out places where type annotations are unnecessary and can be omitted. This item explains why explicitly annotating inferable types is typically a bad idea, and enumerates a few specific exceptions to this rule.</em></p>
+<p>The first thing that many new TypeScript developers do when they convert a codebase from JavaScript is fill it with type annotations. TypeScript is about <em>types</em>, after all! But in TypeScript many annotations are unnecessary. Declaring types for all your variables is counterproductive and is considered poor style.</p>
+<p>Don’t write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> x: <span class="hljs-built_in">number</span> = <span class="hljs-number">12</span>;<br></code></pre></td></tr></table></figure>
+
+<p>Instead, just write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> x = <span class="hljs-number">12</span>;<br></code></pre></td></tr></table></figure>
+
+<p>If you mouse over <code>x</code> in your editor, you’ll see that its type has been inferred as <code>number</code>:</p>
+<img src="/images/efts_03in01.png" title="A text editor showing that the inferred type of x is number." width="33%">
+
+<p>The explicit type annotation is redundant. Writing it just adds noise. If you&#39;re unsure of the type, you can check it in your editor.</p>
+<p>TypeScript will also infer the types of more complex objects. Instead of:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> person: &#123;<br>  name: <span class="hljs-built_in">string</span>;<br>  born: &#123;<br>    where: <span class="hljs-built_in">string</span>;<br>    when: <span class="hljs-built_in">string</span>;<br>  &#125;;<br>  died: &#123;<br>    where: <span class="hljs-built_in">string</span>;<br>    when: <span class="hljs-built_in">string</span>;<br>  &#125;<br>&#125; = &#123;<br>  name: <span class="hljs-string">'Sojourner Truth'</span>,<br>  born: &#123;<br>    where: <span class="hljs-string">'Swartekill, NY'</span>,<br>    when: <span class="hljs-string">'c.1797'</span>,<br>  &#125;,<br>  died: &#123;<br>    where: <span class="hljs-string">'Battle Creek, MI'</span>,<br>    when: <span class="hljs-string">'Nov. 26, 1883'</span><br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>you can just write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> person = &#123;<br>  name: <span class="hljs-string">'Sojourner Truth'</span>,<br>  born: &#123;<br>    where: <span class="hljs-string">'Swartekill, NY'</span>,<br>    when: <span class="hljs-string">'c.1797'</span>,<br>  &#125;,<br>  died: &#123;<br>    where: <span class="hljs-string">'Battle Creek, MI'</span>,<br>    when: <span class="hljs-string">'Nov. 26, 1883'</span><br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>Again, the types are exactly the same. Writing the type in addition to the value just adds noise here. (Item 21, Understand Type Widening, has more to say on the types inferred for object literals.)</p>
+<p>What&#39;s true for objects is also true for arrays. TypeScript has no trouble figuring out the return type of this function based on its inputs and operations:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">square</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> nums.map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x * x);<br>&#125;<br><span class="hljs-keyword">const</span> squares = square([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]); <span class="hljs-comment">// Type is number[]</span><br></code></pre></td></tr></table></figure>
+
+<p>TypeScript may infer something more precise than what you expected. This is generally a good thing. For example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> axis1: <span class="hljs-built_in">string</span> = <span class="hljs-string">'x'</span>;  <span class="hljs-comment">// Type is string</span><br><span class="hljs-keyword">const</span> axis2 = <span class="hljs-string">'y'</span>;  <span class="hljs-comment">// Type is "y"</span><br></code></pre></td></tr></table></figure>
+
+<p><code>&quot;y&quot;</code> is a more precise type for the <code>axis</code> variable, and using it may fix some errors that would appear with the less-precise <code>string</code>.</p>
+<p>Allowing types to be inferred can also facilitate refactoring. Say you have a <code>Product</code> type and a function to log it:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Product &#123;<br>  id: <span class="hljs-built_in">number</span>;<br>  name: <span class="hljs-built_in">string</span>;<br>  price: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logProduct</span>(<span class="hljs-params">product: Product</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> id: <span class="hljs-built_in">number</span> = product.id;<br>  <span class="hljs-keyword">const</span> name: <span class="hljs-built_in">string</span> = product.name;<br>  <span class="hljs-keyword">const</span> price: <span class="hljs-built_in">number</span> = product.price;<br>  <span class="hljs-built_in">console</span>.log(id, name, price);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>At some point you learn that product IDs might have letters in them in addition to numbers. So you change the type of <code>id</code> in <code>Product</code>. Because you included explicit annotations on all the variables in <code>logProduct</code>, this produces an error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Product &#123;<br>  id: <span class="hljs-built_in">string</span>;<br>  name: <span class="hljs-built_in">string</span>;<br>  price: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logProduct</span>(<span class="hljs-params">product: Product</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> id: <span class="hljs-built_in">number</span> = product.id;<br>     <span class="hljs-comment">// ~~ Type 'string' is not assignable to type 'number'</span><br>  <span class="hljs-keyword">const</span> name: <span class="hljs-built_in">string</span> = product.name;<br>  <span class="hljs-keyword">const</span> price: <span class="hljs-built_in">number</span> = product.price;<br>  <span class="hljs-built_in">console</span>.log(id, name, price);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Had you left off all the annotations in the <code>logProduct</code> function body, the code would have passed the type checker without modification.</p>
+<p>A better implementation of <code>logProduct</code> would use destructuring assignment:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logProduct</span>(<span class="hljs-params">product: Product</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> &#123;id, name, price&#125; = product;<br>  <span class="hljs-built_in">console</span>.log(id, name, price);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This version allows the types of all the local variables to be inferred. The corresponding version with explicit type annotations is repetitive and cluttered:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">logProduct</span>(<span class="hljs-params">product: Product</span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> &#123;id, name, price&#125;: &#123;id: <span class="hljs-built_in">string</span>; name: <span class="hljs-built_in">string</span>; price: <span class="hljs-built_in">number</span> &#125; = product;<br>  <span class="hljs-built_in">console</span>.log(id, name, price);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Explicit type annotations are still required in some situations where TypeScript doesn’t have enough context to determine a type on its own. You have seen one of these before: function parameters.</p>
+<p>Some languages will infer types for parameters based on their eventual usage, but TypeScript does not. In TypeScript, a variable&#39;s type is generally determined when it is first introduced.</p>
+<p>Ideal TypeScript code includes type annotations for function/method signatures but not for the local variables created in their bodies. This keeps noise to a minimum and lets readers focus on the implementation logic.</p>
+<p>There are some situations where you can leave the type annotations off of function parameters, too. When there’s a default value, for example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseNumber</span>(<span class="hljs-params">str: <span class="hljs-built_in">string</span>, base=10</span>) </span>&#123;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Here the type of <code>base</code> is inferred as <code>number</code> because of the default value of <code>10</code>.</p>
+<p>Parameter types can usually be inferred when the function is used as a callback for a library with type declarations. The declarations on <code>request</code> and <code>response</code> in this example using the express HTTP server library are not required:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// Don't do this:</span><br>app.get(<span class="hljs-string">'/health'</span>, <span class="hljs-function">(<span class="hljs-params">request: express.Request, response: express.Response</span>) =&gt;</span> &#123;<br>  response.send(<span class="hljs-string">'OK'</span>);<br>&#125;);<br><br><span class="hljs-comment">// Do this:</span><br>app.get(<span class="hljs-string">'/health'</span>, <span class="hljs-function">(<span class="hljs-params">request, response</span>) =&gt;</span> &#123;<br>  response.send(<span class="hljs-string">'OK'</span>);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>For much more on this, see Item 26: Understand How Context Is Used in Type Inference.</p>
+<p>There are a few situations where you may still want to specify a type even where it can be inferred.</p>
+<p>One is when you define an object literal:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> elmo: Product = &#123;<br>  name: <span class="hljs-string">'Tickle Me Elmo'</span>,<br>  id: <span class="hljs-string">'048188 627152'</span>,<br>  price: <span class="hljs-number">28.99</span>,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>When you specify a type on a definition like this, you enable excess property checking. This can help catch errors, particularly for types with optional fields. (This is discussed in more detail in Item 11: Recognize the Limits of Excess Property Checking.)</p>
+<p>You also increase the odds that an error will be reported in the right place. If you leave off the annotation, a mistake in the object&#39;s definition will result in a type error where it&#39;s used, rather than where it&#39;s defined:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> furby = &#123;<br>  name: <span class="hljs-string">'Furby'</span>,<br>  id: <span class="hljs-number">630509430963</span>,<br>  price: <span class="hljs-number">35</span>,<br>&#125;;<br>logProduct(furby);<br>        <span class="hljs-comment">// ~~~~~ Argument .. is not assignable to parameter of type 'Product'</span><br>        <span class="hljs-comment">//         Types of property 'id' are incompatible</span><br>        <span class="hljs-comment">//         Type 'number' is not assignable to type 'string'</span><br></code></pre></td></tr></table></figure>
+
+<p>With an annotation, you get a more concise error in the place where the mistake was made:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"> <span class="hljs-keyword">const</span> furby: Product = &#123;<br>   name: <span class="hljs-string">'Furby'</span>,<br>   id: <span class="hljs-number">630509430963</span>,<br><span class="hljs-comment">// ~~ Type 'number' is not assignable to type 'string'</span><br>   price: <span class="hljs-number">35</span>,<br> &#125;;<br> logProduct(furby);<br></code></pre></td></tr></table></figure>
+
+<p>Similar considerations apply to a function&#39;s return type. You may still want to annotate this even when it can be inferred to ensure that implementation errors don&#39;t leak out into uses of the function.</p>
+<p>Say you have a function which retrieves a stock quote:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getQuote</span>(<span class="hljs-params">ticker: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> fetch(<span class="hljs-string">`https://quotes.example.com/?q=<span class="hljs-subst">$&#123;ticker&#125;</span>`</span>)<br>      .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.json());<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>You decide to add a cache to avoid duplicating network requests:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> cache: &#123;[ticker: <span class="hljs-built_in">string</span>]: <span class="hljs-built_in">number</span>&#125; = &#123;&#125;;<br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getQuote</span>(<span class="hljs-params">ticker: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>  <span class="hljs-keyword">if</span> (ticker <span class="hljs-keyword">in</span> cache) &#123;<br>    <span class="hljs-keyword">return</span> cache[ticker];<br>  &#125;<br>  <span class="hljs-keyword">return</span> fetch(<span class="hljs-string">`https://quotes.example.com/?q=<span class="hljs-subst">$&#123;ticker&#125;</span>`</span>)<br>      .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> response.json())<br>      .then(<span class="hljs-function"><span class="hljs-params">quote</span> =&gt;</span> &#123;<br>        cache[ticker] = quote;<br>        <span class="hljs-keyword">return</span> quote;<br>      &#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>There’s a mistake in this implementation: you should really be returning <code>Promise.resolve(cache[ticker])</code> so that <code>getQuote</code> always returns a Promise. The mistake will most likely produce an error… but in the code that calls <code>getQuote</code>, rather than in <code>getQuote</code> itself:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">getQuote(<span class="hljs-string">'MSFT'</span>).then(considerBuying);<br>              <span class="hljs-comment">// ~~~~ Property 'then' does not exist on type</span><br>              <span class="hljs-comment">//        'number | Promise&lt;any&gt;'</span><br>              <span class="hljs-comment">//      Property 'then' does not exist on type 'number'</span><br></code></pre></td></tr></table></figure>
+
+<p>Had you annotated the intended return type (<code>Promise&lt;number&gt;</code>), the error would have been reported in the correct place:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> cache: &#123;[ticker: <span class="hljs-built_in">string</span>]: <span class="hljs-built_in">number</span>&#125; = &#123;&#125;;<br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getQuote</span>(<span class="hljs-params">ticker: <span class="hljs-built_in">string</span></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">number</span>&gt; </span>&#123;<br>  <span class="hljs-keyword">if</span> (ticker <span class="hljs-keyword">in</span> cache) &#123;<br>    <span class="hljs-keyword">return</span> cache[ticker];<br>        <span class="hljs-comment">// ~~~~~~~~~~~~~ Type 'number' is not assignable to 'Promise&lt;number&gt;'</span><br>  &#125;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>When you annotate the return type, it keeps implementation errors from manifesting as errors in user code. (<code>async</code> functions are an effective way to avoid this specific error with Promises. They&#39;re discused in detail in Item 25: Use async Functions Instead of Callbacks for Asynchronous Code).</p>
+<p>Writing out the return type may also help you think more clearly about your function: you should know what its input and output types are <em>before you implement it</em>. While the implementation may shift around a bit, the function&#39;s contract (its type signature) generally should not. This is similar in spirit to test-driven development (TDD), in which you write the tests that exercise a function before you implement it. Writing the full type signature first helps get you the function you want, rather than the one the implementation makes expedient.</p>
+<p>A final reason to annotate return values is if you want to use a named type. You might choose not to write a return type for this function, for example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Vector2D &#123; x: <span class="hljs-built_in">number</span>; y: <span class="hljs-built_in">number</span>; &#125;<br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span>(<span class="hljs-params">a: Vector2D, b: Vector2D</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> &#123; x: a.x + b.x, y: a.y + b.y &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>TypeScript infers the return type as <code>{ x: number; y: number; }</code>. This is compatible with <code>Vector2D</code>, but it may be surprising to users of your code when they see <code>Vector2D</code> as a type of the input and not of the output:</p>
+<img src="/images/efts_03in02.png" title="The parameters to the add function have named types, while the inferred return value does not." width="75%">
+
+<p>If you annotate the return type, the presentation is more straightforward. And if you&#39;ve written documentation on the type (Item 48: Use TSDoc for API Comments) then it will be associated with the returned value as well. As the complexity of the inferred return type increases, it becomes increasingly helpful to provide a name.</p>
+<p>If you are using a linter, the eslint rule <code>no-inferrable-types</code> (note the variant spelling) can help ensure that all your type annotations are really necessary.</p>
+<h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
+<li>Avoid writing type annotations when TypeScript can infer the same type.</li>
+<li>Ideally your code has type annotations in function/method signatures but not on local variables in their bodies.</li>
+<li>Consider using explicit annotations for object literals and function return types even when they can be inferred. This will help prevent implementation errors from surfacing in user code.</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
+          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
