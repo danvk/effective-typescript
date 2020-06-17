@@ -35,13 +35,24 @@
       gtag('js', new Date());
       gtag('config', 'UA-769809-4');
 
-      var trackOutboundLink = function(category, url) {
-         gtag('event', 'click', {
-             'event_category': category,
-             'event_label': url,
-             'transport_type': 'beacon',
-             'event_callback': function() { document.location = url; }
-         });
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
       }
     </script>
   <meta name="generator" content="Hexo 4.2.0"></head>
@@ -83,7 +94,7 @@
             </time>
           </div>
           <div class="entry-content">
-            <p><em>Iterating over the keys and values in an object is a common operation that&#39;s surprisingly hard to write without type assertions in TypeScript. The difficulty results from a combination of the <a href="https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c'); return false;">quirks</a> of JavaScript objects and <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/interfaces.html'); return false;">duck typing</a>. Reading through this item again, I&#39;d add that this is all a good reason to consider using an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map'); return false;">ES6 <code>Map</code></a> instead of an object to store key/value pairs!</em></p>
+            <p><em>Iterating over the keys and values in an object is a common operation that&#39;s surprisingly hard to write without type assertions in TypeScript. The difficulty results from a combination of the <a href="https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c', event);">quirks</a> of JavaScript objects and <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/interfaces.html', event);">duck typing</a>. Reading through this item again, I&#39;d add that this is all a good reason to consider using an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map', event);">ES6 <code>Map</code></a> instead of an object to store key/value pairs!</em></p>
 <p>This code runs fine, and yet TypeScript flags an error in it. Why?</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> obj = &#123;<br>  one: <span class="hljs-string">'uno'</span>,<br>  two: <span class="hljs-string">'dos'</span>,<br>  three: <span class="hljs-string">'tres'</span>,<br>&#125;;<br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> k <span class="hljs-keyword">in</span> obj) &#123;<br>  <span class="hljs-keyword">const</span> v = obj[k];<br>         <span class="hljs-comment">// ~~~~~~ Element implicitly has an 'any' type</span><br>         <span class="hljs-comment">//        because type ... has no index signature</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -136,9 +147,9 @@ z</pre>
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
-          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
-          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
           on Twitter.
         </div>
       </div>
@@ -162,8 +173,8 @@ z</pre>
               (d.head || d.body).appendChild(s);
             })();
           </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="trackOutboundLink('item  know how to iterate over objects', 'http://disqus.com/?ref_noscript'); return false;">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="trackOutboundLink('item  know how to iterate over objects', 'http://disqus.com'); return false;">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('item  know how to iterate over objects', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('item  know how to iterate over objects', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
         </div>
       </div>
     </div>
@@ -172,9 +183,9 @@ z</pre>
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
-        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
     </div>
   </div>
@@ -183,7 +194,7 @@ z</pre>
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -200,7 +211,7 @@ z</pre>
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>

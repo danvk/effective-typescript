@@ -35,13 +35,24 @@
       gtag('js', new Date());
       gtag('config', 'UA-769809-4');
 
-      var trackOutboundLink = function(category, url) {
-         gtag('event', 'click', {
-             'event_category': category,
-             'event_label': url,
-             'transport_type': 'beacon',
-             'event_callback': function() { document.location = url; }
-         });
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
       }
     </script>
   <meta name="generator" content="Hexo 4.2.0"></head>
@@ -83,7 +94,7 @@
             </time>
           </div>
           <div class="entry-content">
-            <p><em>Chapter 4 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. Design your types well and you&#39;ll have a happy, productive relationship with the type checker. Design them poorly and you&#39;ll find yourself constantly fighting unproductive battles with it. This item discusses a frequent source of problems in type design: where to put your <code>null</code> types.</em></p>
+            <p><em>Chapter 4 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. Design your types well and you&#39;ll have a happy, productive relationship with the type checker. Design them poorly and you&#39;ll find yourself constantly fighting unproductive battles with it. This item discusses a frequent source of problems in type design: where to put your <code>null</code> types.</em></p>
 <p>When you first turn on <code>strictNullChecks</code>, it may seem as though you have to add scores of <code>if</code> statements checking for <code>null</code> and <code>undefined</code> values throughout your code. This is often because the relationships between null and non-null values are implicit: when variable A is non-null, you know that variable B is also non-null and vice versa. These implicit relationships are confusing both for human readers of your code and for the type checker.</p>
 <p>Values are easier to work with when they&#39;re either completely null or completely non-null, rather than a mix. You can model this by pushing the null values out to the perimeter of your structures.</p>
 <p>Suppose you want to calculate the min and max of a list of numbers. We&#39;ll call this the &quot;extent.&quot; Here&#39;s an attempt:</p>
@@ -138,9 +149,9 @@
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
-          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
-          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
           on Twitter.
         </div>
       </div>
@@ -164,8 +175,8 @@
               (d.head || d.body).appendChild(s);
             })();
           </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="trackOutboundLink('item  push null values to the perimeter of your types', 'http://disqus.com/?ref_noscript'); return false;">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="trackOutboundLink('item  push null values to the perimeter of your types', 'http://disqus.com'); return false;">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('item  push null values to the perimeter of your types', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('item  push null values to the perimeter of your types', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
         </div>
       </div>
     </div>
@@ -174,9 +185,9 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
-        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
     </div>
   </div>
@@ -185,7 +196,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -202,7 +213,7 @@
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>

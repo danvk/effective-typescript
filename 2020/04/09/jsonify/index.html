@@ -45,13 +45,24 @@ What&amp;#39;s the relationship between the user object in the server and the co
       gtag('js', new Date());
       gtag('config', 'UA-769809-4');
 
-      var trackOutboundLink = function(category, url) {
-         gtag('event', 'click', {
-             'event_category': category,
-             'event_label': url,
-             'transport_type': 'beacon',
-             'event_callback': function() { document.location = url; }
-         });
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
       }
     </script>
   <meta name="generator" content="Hexo 4.2.0"></head>
@@ -102,10 +113,10 @@ What&amp;#39;s the relationship between the user object in the server and the co
 <p>What&#39;s the relationship between the <code>user</code> object in the server and the corresponding <code>user</code> object in the client? And how would you model this in TypeScript?</p>
 <a id="more"></a>
 
-<p>Because the serialization and deserialization <a href="https://github.com/expressjs/express/blob/67e64ca4c1c5b26cf971e6d6c35278d6357dc6bb/lib/response.js#L1122" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/expressjs/express/blob/67e64ca4c1c5b26cf971e6d6c35278d6357dc6bb/lib/response.js#L1122'); return false;">ultimately happens</a> via JavaScript&#39;s built-in <code>JSON.stringify</code> and <code>JSON.parse</code> functions, we can alternatively ask: what&#39;s the return type of this function?</p>
+<p>Because the serialization and deserialization <a href="https://github.com/expressjs/express/blob/67e64ca4c1c5b26cf971e6d6c35278d6357dc6bb/lib/response.js#L1122" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/expressjs/express/blob/67e64ca4c1c5b26cf971e6d6c35278d6357dc6bb/lib/response.js#L1122', event);">ultimately happens</a> via JavaScript&#39;s built-in <code>JSON.stringify</code> and <code>JSON.parse</code> functions, we can alternatively ask: what&#39;s the return type of this function?</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">jsonRoundTrip</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">x: T</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(x));<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>If you mouse over <code>jsonRoundTrip</code> on the <a href="https://www.typescriptlang.org/play/?ssl=1&ssc=1&pln=10&pc=1#code/GYVwdgxgLglg9mABAKwM4IEp3AEwCoBOMADgDx4B8AFAB4BcieAlIgN4BQiiBAplCASQApAMoB5AHIA6YgEMCqHlVGSpqKETABzGMACetJkwDc7AL7sgA" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/play/?ssl=1&ssc=1&pln=10&pc=1#code/GYVwdgxgLglg9mABAKwM4IEp3AEwCoBOMADgDx4B8AFAB4BcieAlIgN4BQiiBAplCASQApAMoB5AHIA6YgEMCqHlVGSpqKETABzGMACetJkwDc7AL7sgA'); return false;">TypeScript playground</a>, you&#39;ll see that its inferred return type is <code>any</code>. That&#39;s not very satisfying!</p>
+<p>If you mouse over <code>jsonRoundTrip</code> on the <a href="https://www.typescriptlang.org/play/?ssl=1&ssc=1&pln=10&pc=1#code/GYVwdgxgLglg9mABAKwM4IEp3AEwCoBOMADgDx4B8AFAB4BcieAlIgN4BQiiBAplCASQApAMoB5AHIA6YgEMCqHlVGSpqKETABzGMACetJkwDc7AL7sgA" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/play/?ssl=1&ssc=1&pln=10&pc=1#code/GYVwdgxgLglg9mABAKwM4IEp3AEwCoBOMADgDx4B8AFAB4BcieAlIgN4BQiiBAplCASQApAMoB5AHIA6YgEMCqHlVGSpqKETABzGMACetJkwDc7AL7sgA', event);">TypeScript playground</a>, you&#39;ll see that its inferred return type is <code>any</code>. That&#39;s not very satisfying!</p>
 <p>It&#39;s tempting to make the return type <code>T</code>, so that this is like an identity function:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">jsonRoundTrip</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">x: T</span>): <span class="hljs-title">T</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(x));<br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -119,8 +130,8 @@ What&amp;#39;s the relationship between the user object in the server and the co
 <p>If an object has a <code>toJSON</code> method, it will get called by <code>JSON.stringify</code>. This is implemented by some of the standard types in JavaScript, notably <code>Date</code>:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; d &#x3D; new Date();<br>&gt; jsonRoundTrip(d)<br>&#39;2020-04-09T01:07:48.835Z&#39;<br></code></pre></td></tr></table></figure>
 
-<p>So <code>Date</code>s get converted to <code>string</code>s. Who knew? You can read the full details of how this works <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify'); return false;">on MDN</a>.</p>
-<p>How to model this in TypeScript? Let&#39;s just focus on the behavior around Dates. For a complex mapping like this, we&#39;re going to want a <a href="https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/'); return false;">conditional type</a>:</p>
+<p>So <code>Date</code>s get converted to <code>string</code>s. Who knew? You can read the full details of how this works <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify', event);">on MDN</a>.</p>
+<p>How to model this in TypeScript? Let&#39;s just focus on the behavior around Dates. For a complex mapping like this, we&#39;re going to want a <a href="https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://artsy.github.io/blog/2018/11/21/conditional-types-in-typescript/', event);">conditional type</a>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> Jsonify&lt;T&gt; = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">Date</span> ? <span class="hljs-built_in">string</span> : T;<br></code></pre></td></tr></table></figure>
 
 <p>This is already doing something sensible:</p>
@@ -129,10 +140,10 @@ What&amp;#39;s the relationship between the user object in the server and the co
 <p>We even get support for union types because conditional types distribute over unions:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T = Jsonify&lt;<span class="hljs-built_in">Date</span> | <span class="hljs-literal">null</span>&gt;;  <span class="hljs-comment">// Type is string | null</span><br></code></pre></td></tr></table></figure>
 
-<p>But what about object types? Usually the <code>Date</code>s are buried somehwere in a larger type. So we&#39;ll need to make <code>Jsonify</code> recursive. This is possible <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases'); return false;">as of TypeScript 3.7</a>:</p>
+<p>But what about object types? Usually the <code>Date</code>s are buried somehwere in a larger type. So we&#39;ll need to make <code>Jsonify</code> recursive. This is possible <a href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#more-recursive-type-aliases', event);">as of TypeScript 3.7</a>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> Jsonify&lt;T&gt; = T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">Date</span><br>  ? <span class="hljs-built_in">string</span><br>  : T <span class="hljs-keyword">extends</span> object<br>  ? &#123;<br>      [k <span class="hljs-keyword">in</span> keyof T]: Jsonify&lt;T[k]&gt;;<br>    &#125;<br>  : T;<br></code></pre></td></tr></table></figure>
 
-<p>In the case that we have an object type, we use a <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types'); return false;">mapped type</a> to recursively apply the <code>Jsonify</code> transformation. This is already starting to make some interesting new types!</p>
+<p>In the case that we have an object type, we use a <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/advanced-types.html#mapped-types', event);">mapped type</a> to recursively apply the <code>Jsonify</code> transformation. This is already starting to make some interesting new types!</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Student &#123;<br>  id: <span class="hljs-built_in">number</span>;<br>  name: <span class="hljs-built_in">string</span>;<br>  birthday: <span class="hljs-built_in">Date</span> | <span class="hljs-literal">null</span><br>&#125;<br><span class="hljs-keyword">type</span> T1 = Jsonify&lt;Student&gt;;<br><span class="hljs-comment">// type T1 = &#123;</span><br><span class="hljs-comment">//   id: number;</span><br><span class="hljs-comment">//   name: string;</span><br><span class="hljs-comment">//   birthday: string | null;</span><br><span class="hljs-comment">// &#125;</span><br><br><span class="hljs-keyword">interface</span> Class &#123;<br>  valedictorian: Student;<br>  salutatorian?: Student;<br>&#125;<br><span class="hljs-keyword">type</span> T2 = Jsonify&lt;Class&gt;;<br><span class="hljs-comment">// type T2 = &#123;</span><br><span class="hljs-comment">//   valedictorian: &#123;</span><br><span class="hljs-comment">//     id: number;</span><br><span class="hljs-comment">//     name: string;</span><br><span class="hljs-comment">//     birthday: string | null;</span><br><span class="hljs-comment">//   &#125;;</span><br><span class="hljs-comment">//   salutatorian?: &#123;</span><br><span class="hljs-comment">//     id: number;</span><br><span class="hljs-comment">//     name: string;</span><br><span class="hljs-comment">//     birthday: string | null;</span><br><span class="hljs-comment">//   &#125; | undefined;</span><br><span class="hljs-comment">// &#125;</span><br></code></pre></td></tr></table></figure>
 
 <p>What if there&#39;s an array involved? Does that work?</p>
@@ -146,8 +157,8 @@ What&amp;#39;s the relationship between the user object in the server and the co
 <p>But regardless, this is great! We can even loosen the definition slightly to handle any object with a <code>toJSON()</code> method (including Dates):</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> Jsonify&lt;T&gt; = T <span class="hljs-keyword">extends</span> &#123;toJSON(): infer U&#125;<br>  ? U<br>  : T <span class="hljs-keyword">extends</span> object<br>  ? &#123;<br>      [k <span class="hljs-keyword">in</span> keyof T]: Jsonify&lt;T[k]&gt;;<br>    &#125;<br>  : T;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">jsonRoundTrip</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">x: T</span>): <span class="hljs-title">Jsonify</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-built_in">JSON</span>.stringify(x));<br>&#125;<br><br><span class="hljs-keyword">const</span> student: Student = &#123;<br>  id: <span class="hljs-number">327</span>, name: <span class="hljs-string">'Bobby'</span>, birthday: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-string">'2007-10-10'</span>)<br>&#125;;<br><span class="hljs-keyword">const</span> studentRT = jsonRoundTrip(student);<br><span class="hljs-comment">// type is &#123;</span><br><span class="hljs-comment">//   id: number;</span><br><span class="hljs-comment">//   name: string;</span><br><span class="hljs-comment">//   birthday: string | null;</span><br><span class="hljs-comment">// &#125;</span><br><br><span class="hljs-keyword">const</span> objWithToJSON = &#123;<br>  x: <span class="hljs-number">5</span>, y: <span class="hljs-number">6</span>, toJSON()&#123; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.x + <span class="hljs-keyword">this</span>.y; &#125;<br>&#125;;<br><span class="hljs-keyword">const</span> objRT = jsonRoundTrip(objWithToJSON);<br><span class="hljs-comment">// type is number!</span><br></code></pre></td></tr></table></figure>
 
-<p>Here we&#39;ve used the <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types'); return false;">infer keyword</a> to infer the return type of the <code>toJSON</code> method of the object. Try the last example out in <a href="https://www.typescriptlang.org/play/?ssl=25&ssc=11&pln=25&pc=62#code/C4TwDgpgBAUgzgewHYEsBmIA8AVAfFAXimyggA9gIkATOKAb2ARgGUB5AOQAoBKALigokaCACcoAVQC+AKChQA-JLlQBJcpRp0EAIwBWEAMbAVS+ivnyA2gGtBSKDYggEaYgF0B8ZOizZb7rgA3BZQsvJqITJoAK5IxijIUHqISABKCHHU2KIoYDi4XGRq-LCpvgUMKqIQwDGiDqycAHRgAIaicBBcTRzNcMC5SADmvkU8PCGyQpSiaG2G0Cx11FTAVfIo1AJIMQC2OmIh8khtexACA0PDx1A6KKLAABbUbSACACJtlFAAPlC7AA2gJkskMyAGUAGMVWSGAAmWMLWhAYWwEAEYAEwAZgANACzhcoAByABCuh0IGJ+Pujxebx2EAA7lAvpQuMTMQAGLkAdgAtOiuYKucSeFIQuCkJDobDgGkSEQUsgMlkcnkuLK1pMZAB6XVQUCQQR0cz6yxogH7Q6iELmk6Ey6DIQ3PUG+S056vd5Q50jP5W4F2g2yGRSyEIFH0KDFKAAVnxPoAbPimL1eNGanUGoanig4M0yFAANS5-PNEBBMJhSUQ9YIBUo5XpTI0dVgLgIHXmo3QfNWg5iACEMiAA" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.typescriptlang.org/play/?ssl=25&ssc=11&pln=25&pc=62#code/C4TwDgpgBAUgzgewHYEsBmIA8AVAfFAXimyggA9gIkATOKAb2ARgGUB5AOQAoBKALigokaCACcoAVQC+AKChQA-JLlQBJcpRp0EAIwBWEAMbAVS+ivnyA2gGtBSKDYggEaYgF0B8ZOizZb7rgA3BZQsvJqITJoAK5IxijIUHqISABKCHHU2KIoYDi4XGRq-LCpvgUMKqIQwDGiDqycAHRgAIaicBBcTRzNcMC5SADmvkU8PCGyQpSiaG2G0Cx11FTAVfIo1AJIMQC2OmIh8khtexACA0PDx1A6KKLAABbUbSACACJtlFAAPlC7AA2gJkskMyAGUAGMVWSGAAmWMLWhAYWwEAEYAEwAZgANACzhcoAByABCuh0IGJ+Pujxebx2EAA7lAvpQuMTMQAGLkAdgAtOiuYKucSeFIQuCkJDobDgGkSEQUsgMlkcnkuLK1pMZAB6XVQUCQQR0cz6yxogH7Q6iELmk6Ey6DIQ3PUG+S056vd5Q50jP5W4F2g2yGRSyEIFH0KDFKAAVnxPoAbPimL1eNGanUGoanig4M0yFAANS5-PNEBBMJhSUQ9YIBUo5XpTI0dVgLgIHXmo3QfNWg5iACEMiAA'); return false;">the playground</a>. It really does return a <code>number</code>!</p>
-<p>As TypeScript Development lead Ryan Cavanaugh once <a href="https://twitter.com/SeaRyanC/status/1029846761718702081" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://twitter.com/SeaRyanC/status/1029846761718702081'); return false;">said</a>, it&#39;s remarkable how many problems are solved by conditional types. The types involved in JSON serialization are one of them! If you produce and consume JSON in a TypeScript project, consider using something like <code>Jsonify</code> to safely handle Dates in your objects.</p>
+<p>Here we&#39;ve used the <a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/advanced-types.html#type-inference-in-conditional-types', event);">infer keyword</a> to infer the return type of the <code>toJSON</code> method of the object. Try the last example out in <a href="https://www.typescriptlang.org/play/?ssl=25&ssc=11&pln=25&pc=62#code/C4TwDgpgBAUgzgewHYEsBmIA8AVAfFAXimyggA9gIkATOKAb2ARgGUB5AOQAoBKALigokaCACcoAVQC+AKChQA-JLlQBJcpRp0EAIwBWEAMbAVS+ivnyA2gGtBSKDYggEaYgF0B8ZOizZb7rgA3BZQsvJqITJoAK5IxijIUHqISABKCHHU2KIoYDi4XGRq-LCpvgUMKqIQwDGiDqycAHRgAIaicBBcTRzNcMC5SADmvkU8PCGyQpSiaG2G0Cx11FTAVfIo1AJIMQC2OmIh8khtexACA0PDx1A6KKLAABbUbSACACJtlFAAPlC7AA2gJkskMyAGUAGMVWSGAAmWMLWhAYWwEAEYAEwAZgANACzhcoAByABCuh0IGJ+Pujxebx2EAA7lAvpQuMTMQAGLkAdgAtOiuYKucSeFIQuCkJDobDgGkSEQUsgMlkcnkuLK1pMZAB6XVQUCQQR0cz6yxogH7Q6iELmk6Ey6DIQ3PUG+S056vd5Q50jP5W4F2g2yGRSyEIFH0KDFKAAVnxPoAbPimL1eNGanUGoanig4M0yFAANS5-PNEBBMJhSUQ9YIBUo5XpTI0dVgLgIHXmo3QfNWg5iACEMiAA" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/play/?ssl=25&ssc=11&pln=25&pc=62#code/C4TwDgpgBAUgzgewHYEsBmIA8AVAfFAXimyggA9gIkATOKAb2ARgGUB5AOQAoBKALigokaCACcoAVQC+AKChQA-JLlQBJcpRp0EAIwBWEAMbAVS+ivnyA2gGtBSKDYggEaYgF0B8ZOizZb7rgA3BZQsvJqITJoAK5IxijIUHqISABKCHHU2KIoYDi4XGRq-LCpvgUMKqIQwDGiDqycAHRgAIaicBBcTRzNcMC5SADmvkU8PCGyQpSiaG2G0Cx11FTAVfIo1AJIMQC2OmIh8khtexACA0PDx1A6KKLAABbUbSACACJtlFAAPlC7AA2gJkskMyAGUAGMVWSGAAmWMLWhAYWwEAEYAEwAZgANACzhcoAByABCuh0IGJ+Pujxebx2EAA7lAvpQuMTMQAGLkAdgAtOiuYKucSeFIQuCkJDobDgGkSEQUsgMlkcnkuLK1pMZAB6XVQUCQQR0cz6yxogH7Q6iELmk6Ey6DIQ3PUG+S056vd5Q50jP5W4F2g2yGRSyEIFH0KDFKAAVnxPoAbPimL1eNGanUGoanig4M0yFAANS5-PNEBBMJhSUQ9YIBUo5XpTI0dVgLgIHXmo3QfNWg5iACEMiAA', event);">the playground</a>. It really does return a <code>number</code>!</p>
+<p>As TypeScript Development lead Ryan Cavanaugh once <a href="https://twitter.com/SeaRyanC/status/1029846761718702081" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/SeaRyanC/status/1029846761718702081', event);">said</a>, it&#39;s remarkable how many problems are solved by conditional types. The types involved in JSON serialization are one of them! If you produce and consume JSON in a TypeScript project, consider using something like <code>Jsonify</code> to safely handle Dates in your objects.</p>
 
           </div>
         </div>
@@ -160,9 +171,9 @@ What&amp;#39;s the relationship between the user object in the server and the co
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">my newsletter</a>,
-          the <a href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;">RSS feed</a>,
-          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">following me</a>
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
           on Twitter.
         </div>
       </div>
@@ -186,8 +197,8 @@ What&amp;#39;s the relationship between the user object in the server and the co
               (d.head || d.body).appendChild(s);
             })();
           </script>
-        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="trackOutboundLink('whats the type of jsonparsejsonstringifyx', 'http://disqus.com/?ref_noscript'); return false;">comments powered by Disqus.</a></noscript>
-        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="trackOutboundLink('whats the type of jsonparsejsonstringifyx', 'http://disqus.com'); return false;">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('whats the type of jsonparsejsonstringifyx', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('whats the type of jsonparsejsonstringifyx', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
         </div>
       </div>
     </div>
@@ -196,9 +207,9 @@ What&amp;#39;s the relationship between the user object in the server and the co
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy eBook</a>
-        <a href="/mail/" class="btn btn-info btn-lg" onclick="trackOutboundLink('post learn more hover', '/mail/'); return false;">Subscribe</a>
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
     </div>
   </div>
@@ -207,7 +218,7 @@ What&amp;#39;s the relationship between the user object in the server and the co
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK'); return false;">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -224,7 +235,7 @@ What&amp;#39;s the relationship between the user object in the server and the co
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>

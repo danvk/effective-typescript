@@ -33,13 +33,24 @@
       gtag('js', new Date());
       gtag('config', 'UA-769809-4');
 
-      var trackOutboundLink = function(category, url) {
-         gtag('event', 'click', {
-             'event_category': category,
-             'event_label': url,
-             'transport_type': 'beacon',
-             'event_callback': function() { document.location = url; }
-         });
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
       }
     </script>
   <meta name="generator" content="Hexo 4.2.0"></head>
@@ -91,7 +102,7 @@
 		Sign up to receive emails with new posts and updates on the book.
 		Expect a message about once every two weeks.
 		You can alternatively <a href="/atom.xml">subscribe via RSS</a>
-		or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">follow @danvdk</a> on Twitter.
+		or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">follow @danvdk</a> on Twitter.
 	</p>
 <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
 <div class="mc-field-group">
@@ -99,7 +110,7 @@
 </label>
 	<input type="email" value name="EMAIL" class="required email" id="mce-EMAIL">
 </div>
-<p><a href="https://us4.campaign-archive.com/home/?u=628269c1b1a84231088e614d2&id=04969338ee" target="_blank" rel="noopener" title="View previous campaigns" onclick="trackOutboundLink('subscribe to the effective typescript newsletter', 'https://us4.campaign-archive.com/home/?u=628269c1b1a84231088e614d2&id=04969338ee'); return false;">View previous campaigns.</a></p>
+<p><a href="https://us4.campaign-archive.com/home/?u=628269c1b1a84231088e614d2&id=04969338ee" target="_blank" rel="noopener" title="View previous campaigns" onclick="return trackOutboundLink('subscribe to the effective typescript newsletter', 'https://us4.campaign-archive.com/home/?u=628269c1b1a84231088e614d2&id=04969338ee', event);">View previous campaigns.</a></p>
 	<div id="mce-responses" class="clear">
 		<div class="response" id="mce-error-response" style="display:none"></div>
 		<div class="response" id="mce-success-response" style="display:none"></div>
@@ -123,7 +134,7 @@
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>

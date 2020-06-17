@@ -33,13 +33,24 @@
       gtag('js', new Date());
       gtag('config', 'UA-769809-4');
 
-      var trackOutboundLink = function(category, url) {
-         gtag('event', 'click', {
-             'event_category': category,
-             'event_label': url,
-             'transport_type': 'beacon',
-             'event_callback': function() { document.location = url; }
-         });
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
       }
     </script>
   <meta name="generator" content="Hexo 4.2.0"></head>
@@ -64,16 +75,16 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('cover image', 'https://amzn.to/38s1oCK'); return false;"><img src="https://effectivetypescript.com/images/cover.jpg" class="cover-photo" alt="Effective TypeScript Book Cover"></a>
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('cover image', 'https://amzn.to/38s1oCK', event);"><img src="https://effectivetypescript.com/images/cover.jpg" class="cover-photo" alt="Effective TypeScript Book Cover"></a>
 
           <p>TypeScript is a typed superset of JavaScript with the potential to solve many of the headaches for which JavaScript is famous. But TypeScript has a learning curve of its own, and understanding how to use it effectively can take time.</p>
 <p><em>Effective TypeScript</em> guides you through 62 specific ways to improve your use of TypeScript, following the format popularized by <em>Effective C++</em> and <em>Effective Java</em>. You’ll advance from a beginning or intermediate user familiar with the basics to an advanced user who knows how to use the language well.</p>
-<p>Already have the Book? <a href="https://github.com/danvk/effective-typescript" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/danvk/effective-typescript'); return false;">Visit the GitHub project</a> to see all of the code snippets from the book in one place. You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544'); return false;">report any errors</a> you&#39;ve found.</p>
+<p>Already have the Book? <a href="https://github.com/danvk/effective-typescript" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/effective-typescript', event);">Visit the GitHub project</a> to see all of the code snippets from the book in one place. You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544', event);">report any errors</a> you&#39;ve found.</p>
 
 
           <p>
-            <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Buy the Book</a>
-            <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1'); return false;">Buy the eBook</a>
+            <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+            <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy the eBook</a>
           </p>
         </div>
       </div>
@@ -104,7 +115,7 @@
 <p>Now I have to go and refactor some of my code in the light of what I&#39;ve learned.</p>
 <footer>Matěj Zábský</footer>
 </blockquote>
-<p>Read more reviews on <a href="https://www.goodreads.com/book/show/48570456-effective-typescript" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.goodreads.com/book/show/48570456-effective-typescript'); return false;">Goodreads</a> and <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">Amazon</a>.</p>
+<p>Read more reviews on <a href="https://www.goodreads.com/book/show/48570456-effective-typescript" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.goodreads.com/book/show/48570456-effective-typescript', event);">Goodreads</a> and <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Amazon</a>.</p>
 
       </div>
     </div>
@@ -180,9 +191,9 @@
         </p>
 
         <p>
-          <a class="btn btn-info btn-lg" href="/mail/" onclick="trackOutboundLink('subscribe newsletter', '/mail/'); return false;">Subscribe to the Newsletter</a>
-          <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
-          <a class="btn btn-info btn-lg" href="/atom.xml" onclick="trackOutboundLink('follow RSS', '/atom.xml'); return false;"><span class="caps">RSS</span></a>
+          <a class="btn btn-info btn-lg" href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">Subscribe to the Newsletter</a>
+          <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">Follow @danvdk</a>
+          <a class="btn btn-info btn-lg" href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);"><span class="caps">RSS</span></a>
         </p>
       </div>
     </div>
@@ -198,7 +209,7 @@
         <div class="col-md-12">
           <h2>Table of Contents</h2>
 
-          <p>In an <a href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html'); return false;"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://amzn.to/38s1oCK'); return false;">order a copy</a>.</p>
+          <p>In an <a href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html', event);"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">order a copy</a>.</p>
 <h3 id="Chapter-1-Getting-to-Know-TypeScript"><a href="#Chapter-1-Getting-to-Know-TypeScript" class="headerlink" title="Chapter 1: Getting to Know TypeScript"></a>Chapter 1: Getting to Know TypeScript</h3><p>Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What&#39;s this about <code>any</code>? And ducks?</p>
 <ol>
 <li>Understand the Relationship Between TypeScript and JavaScript</li>
@@ -301,25 +312,25 @@
           <h2>About the Author</h2>
           <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
 
-          <p>Dan Vanderkam is a principal software engineer at <a href="https://sidewalklabs.com" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://sidewalklabs.com'); return false;">Sidewalk Labs</a>,
+          <p>Dan Vanderkam is a principal software engineer at <a href="https://sidewalklabs.com" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://sidewalklabs.com', event);">Sidewalk Labs</a>,
 where he&#39;s built engineering teams and processes for all of its products and spinouts,
 all of which use TypeScript.
-He previously worked on <a href="https://github.com/hammerlab/pileup.js" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/hammerlab/pileup.js'); return false;">open source genome visualizations</a>
+He previously worked on <a href="https://github.com/hammerlab/pileup.js" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/hammerlab/pileup.js', event);">open source genome visualizations</a>
 at Mt. Sinai&#39;s Icahn School of Medicine and on Google search features used by billions of people
-(search for <a href="https://google.com/search?q=sunset+nyc" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://google.com/search?q=sunset+nyc'); return false;">sunset nyc</a> or <a href="https://google.com/search?q=population+of+france" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://google.com/search?q=population+of+france'); return false;">population of france</a>).
-He has a long history of working on <a href="https://github.com/danvk" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/danvk'); return false;">open source projects</a>,
-including the popular <a href="https://github.com/danvk/dygraphs" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/danvk/dygraphs'); return false;">dygraphs</a> library and <a href="https://github.com/danvk/source-map-explorer" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://github.com/danvk/source-map-explorer'); return false;">source-map-explorer</a>,
+(search for <a href="https://google.com/search?q=sunset+nyc" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://google.com/search?q=sunset+nyc', event);">sunset nyc</a> or <a href="https://google.com/search?q=population+of+france" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://google.com/search?q=population+of+france', event);">population of france</a>).
+He has a long history of working on <a href="https://github.com/danvk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk', event);">open source projects</a>,
+including the popular <a href="https://github.com/danvk/dygraphs" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/dygraphs', event);">dygraphs</a> library and <a href="https://github.com/danvk/source-map-explorer" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/source-map-explorer', event);">source-map-explorer</a>,
 a tool for visualizing JavaScript code size.
-He is also a co-founder of the <a href="https://www.meetup.com/TypeScriptNYC/" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.meetup.com/TypeScriptNYC/'); return false;">NYC TypeScript Meetup</a>.</p>
+He is also a co-founder of the <a href="https://www.meetup.com/TypeScriptNYC/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.meetup.com/TypeScriptNYC/', event);">NYC TypeScript Meetup</a>.</p>
 <p>When he&#39;s not programming, Dan enjoys climbing rocks and playing bridge.
-He writes on <a href="https://medium.com/@danvdk" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://medium.com/@danvdk'); return false;">Medium</a> and at <a href="https://www.danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('', 'https://www.danvk.org'); return false;">danvk.org</a>.
+He writes on <a href="https://medium.com/@danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://medium.com/@danvdk', event);">Medium</a> and at <a href="https://www.danvk.org" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.danvk.org', event);">danvk.org</a>.
 He earned his bachelor&#39;s in computer science from Rice University in Houston, Texas,
 and lives in Brooklyn, New York.</p>
 
 
           <p>
-            <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('about the author', 'https://twitter.com/danvdk'); return false;">Follow @danvdk</a>
-            <a href="https://www.danvk.org" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="trackOutboundLink('about the author', 'https://www.danvk.org'); return false;">Visit danvk.org</a>
+            <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://twitter.com/danvdk', event);">Follow @danvdk</a>
+            <a href="https://www.danvk.org" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org', event);">Visit danvk.org</a>
           </p>
         </div>
       </div>
@@ -332,7 +343,7 @@ and lives in Brooklyn, New York.</p>
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="trackOutboundLink('', 'https://hexo.io/'); return false;">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>
