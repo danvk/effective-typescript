@@ -171,9 +171,13 @@
     <div class="entry-content">
       
         <p>If you&#39;re writing a server in JavaScript, you might write an endpoint that converts an object to JSON:</p>
+<!-- verifier:skip to avoid express dep -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">app.get(<span class="hljs-string">'/user'</span>, <span class="hljs-function">(<span class="hljs-params">request, response</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> user = getCurrentUser();<br>  response.json(user);<br>&#125;);<br></code></pre></td></tr></table></figure>
 
 <p>On the client, you might use the <code>fetch</code> API to hit this endpoint and deserialize (parse) the data:</p>
+<!-- verifier:tsconfig:module=esnext -->
+<!-- verifier:tsconfig:target=esnext -->
+<!-- verifier:skip until top-level await works -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> fetch(<span class="hljs-string">'/user'</span>);<br><span class="hljs-keyword">const</span> user = <span class="hljs-keyword">await</span> response.json();<br></code></pre></td></tr></table></figure>
 
 <p>What&#39;s the relationship between the <code>user</code> object in the server and the corresponding <code>user</code> object in the client? And how would you model this in TypeScript?</p>

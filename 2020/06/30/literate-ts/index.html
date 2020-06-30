@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Type-safe blogs books with literate-ts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Type-safe blogs books with literate-ts">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Type-safe blogs books with literate-ts">
+    <meta name="twitter:description" content="Years ago when Brett Slatkin wrote Effective Python, he blogged about creating a tool call pyliterate to run all the code samples in his book and verify that their output matched what he&amp;#39;d written in the text. The idea stuck with me and when I started writing Effective TypeScript in early 2019, I thought I&amp;#39;d do something similar. If nothing else, static analysis of a book seems very much in the spirit of TypeScript. Creating literate-ts wound up being a lot of work, but in the end I think it more justified itself, though not quite for the reasons I expected!">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Type-safe blogs books with literate-ts">
+    <meta property="og:description" content="Years ago when Brett Slatkin wrote Effective Python, he blogged about creating a tool call pyliterate to run all the code samples in his book and verify that their output matched what he&amp;#39;d written in the text. The idea stuck with me and when I started writing Effective TypeScript in early 2019, I thought I&amp;#39;d do something similar. If nothing else, static analysis of a book seems very much in the spirit of TypeScript. Creating literate-ts wound up being a lot of work, but in the end I think it more justified itself, though not quite for the reasons I expected!">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Type-safe blogs books with literate-ts</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2020-06-30T21:00:00.000Z" itemprop="datePublished">
+              Tue 30 June 2020
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Years ago when Brett Slatkin wrote <a href="https://effectivepython.com/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://effectivepython.com/', event);"><em>Effective Python</em></a>, he <a href="https://www.onebigfluke.com/2014/07/how-im-writing-programming-book.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.onebigfluke.com/2014/07/how-im-writing-programming-book.html', event);">blogged about</a> creating a tool call <a href="https://github.com/bslatkin/pyliterate" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/bslatkin/pyliterate', event);">pyliterate</a> to run all the code samples in his book and verify that their output matched what he&#39;d written in the text. The idea stuck with me and when I started writing <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> in early 2019, I thought I&#39;d do something similar. If nothing else, static analysis of a book seems very much in the spirit of TypeScript. Creating <a href="https://github.com/danvk/literate-ts" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/literate-ts', event);">literate-ts</a> wound up being a lot of work, but in the end I think it more justified itself, though not quite for the reasons I expected!</p>
+<a id="more"></a>
+
+<p>TypeScript presents a few challenges for verification. You can compile and run a TypeScript program through Node to check its output, sure, but then you&#39;re not testing anything relating to the errors or inferred types. Usually you see these by mousing over a symbol or an error in your editor. But what&#39;s &quot;mousing over&quot; in a printed book? Still, inferred types and errors are both essential parts of the TypeScript experience and I wanted to both show them in <em>Effective TypeScript</em> and check them with a verifier.</p>
+<p>As I wrote, I eventually settled on a system. To show an error in a code sample, I&#39;d put tildes and the error message in a comment under the line on which the error occurred. This is meant to evoke the squiggly red lines under an error in your editor:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> str = <span class="hljs-string">'not a number'</span>;<br><span class="hljs-keyword">let</span> num: <span class="hljs-built_in">number</span> = str;<br><span class="hljs-comment">//  ~~~ Type 'string' is not assignable to type 'number'.</span><br></code></pre></td></tr></table></figure>
+
+<p>In addition to conveying the error to the reader, there are a few things for that can be verified here:</p>
+<ol>
+<li>When you run it through <code>tsc</code>, does the code sample produce that one error <em>and no others</em>?</li>
+<li>Do the tildes line up with the true error?</li>
+<li>Do the error messages match?</li>
+</ol>
+<p>For inferred types, I used a slightly different comment syntax, always starting with &quot;type is&quot;:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> x = <span class="hljs-number">12</span>;  <span class="hljs-comment">// type is number</span><br><span class="hljs-string">'four score'</span>.split(<span class="hljs-string">' '</span>);  <span class="hljs-comment">// type is string[]</span><br></code></pre></td></tr></table></figure>
+
+<p>This indicates that if you mouse over <code>x</code> you&#39;ll see that the inferred type is <code>number</code>. For the second line, you need to assign the expression to a variable or mouse over <code>split</code> to see the <code>string[]</code> type. It&#39;s usually quite intuitive which symbol the &quot;type is&quot; refers to, but getting this right in the verifier took a bit of care. The main thing to verify here, of course, is the type of the symbol or expression. The string representations of the types are matched, character-for-character, ala <a href="https://github.com/microsoft/dtslint" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/microsoft/dtslint', event);">dtslint</a>.</p>
+<p>If the types don&#39;t line up, or the errors aren&#39;t quite right, <code>literate-ts</code> will complain:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">$ cat sample.asciidoc<br>TypeScript will infer types in the absence of annotations:<br><br>[source,ts]<br>----<br>const n &#x3D; 10;  &#x2F;&#x2F; type is number<br>----<br><br>$ literate-ts --alsologtostderr sample.asciidoc<br>Verifying with TypeScript 4.0.0-dev.20200629<br><br>Code passed type checker.<br>sample-4: Failed type assertion for const n &#x3D; 10; (tested n)<br>  Expected: number<br>    Actual: 10<br>  0&#x2F;1 type assertions matched.<br></code></pre></td></tr></table></figure>
+
+<p>(The issue is here is that the inferred type is the numeric literal type <code>10</code> rather than <code>number</code>. Either the comment should be changed or the variable should be declared with <code>let</code>.)</p>
+<p>Overall I&#39;m pretty happy with how things turned out! You can check out the results over at the <a href="https://github.com/danvk/literate-ts" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/literate-ts', event);">literate-ts</a> repo. All in all, there are about 600 code samples in <em>Effective TypeScript</em> that all get checked. Running these checks takes 5–10 minutes on my Macbook.</p>
+<p>So what sorts of errors did literate-ts turn up? Initially… not many! I&#39;d been pretty careful about running code samples through VS Code or the TypeScript playground before committing them. Here was the first mistake that it caught (at the end of Item 7, &quot;Think of Types as Sets of values&quot;):</p>
+<blockquote>
+<p>Finally, it&#39;s worth noting that not all sets of values correspond to TypeScript types. There is no TypeScript type for all the integers, or for all the objects which have <code>x</code> and <code>y</code> properties but no others. You can sometimes subtract types using <code>Exclude</code>, but only when it would result in a proper TypeScript type:</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T = Exclude&lt;<span class="hljs-built_in">string</span>|<span class="hljs-built_in">Date</span>, <span class="hljs-built_in">string</span>|<span class="hljs-built_in">number</span>&gt;;  <span class="hljs-comment">// type is number</span><br><span class="hljs-keyword">type</span> NonZeroNums = Exclude&lt;<span class="hljs-built_in">number</span>, <span class="hljs-number">0</span>&gt;;  <span class="hljs-comment">// type is still just number</span><br></code></pre></td></tr></table></figure>
+
+<p>It should be &quot;type is Date&quot;, not &quot;type is number&quot;. Not a major mistake (the argument is still valid) but a nice validation of literate-ts nonetheless. There were a handful of small mistakes like this.</p>
+<p>Where literate-ts <em>really</em> shone was when I started <del>refactoring</del> editing the text. It&#39;s exactly the same as in coding. Writing it right the first time isn&#39;t nearly so hard as changing things and <em>keeping</em> them right. As I incorporated feedback from my editors and reworked Items, I constantly found myself introducing real mistakes that were caught by the verifier. Score one for literate-ts!</p>
+<p>This was doubly true when the O&#39;Reilly editors started editing the text directly in the run-up to publication. Inevitably some mistakes were made, e.g. dropping quotes or comment markers. literate-ts caught all of these. (Since the book is stored in a git repo, <code>git log</code> and <code>git diff</code> were also extremely useful tools for catching these sorts of problems.)</p>
+<p>But the biggest benefit came when new TypeScript versions were released. In the week before <em>Effective TypeScript</em> came out, the beta of TypeScript 3.7 was announced. As Anders Hejlsberg has said, semantic versioning isn&#39;t very meaningful when it comes to <code>tsc</code>: the whole <em>point</em> of new versions of TypeScript is to break your code! (Or rather to reveal ways in which it was already broken.) So as a book author, this was a bit terrifying. But no big deal, I just updated literate-ts and ran all the code samples.</p>
+<p>The biggest issue I found was that I had a code sample showing that <code>interface</code>s could be recursive but <code>type</code> aliases couldn&#39;t. And that was true… until <a href="https://github.com/microsoft/TypeScript/pull/33050" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/microsoft/TypeScript/pull/33050', event);">TypeScript 3.7!</a>. So I knew exactly what I had to fix. But just as importantly for my peace of mind, I knew that the rest of the book was OK. As new versions of TypeScript have come out since the book&#39;s publication in October of 2019, I&#39;ve continued to re-run the verifier and make minor revisions as needed.</p>
+<p>So what sorts of mistakes <em>didn&#39;t</em> literate-ts catch? It&#39;s the classic case of <a href="https://www.destroyallsoftware.com/talks/ideology" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.destroyallsoftware.com/talks/ideology', event);">tests vs. types</a>. Here&#39;s a particularly egregious example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> SortedList&lt;T&gt; = T[] &amp; &#123;_brand: <span class="hljs-string">'sorted'</span>&#125;;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isSorted</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">xs: T[]</span>): <span class="hljs-title">xs</span> <span class="hljs-title">is</span> <span class="hljs-title">SortedList</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">1</span>; i &lt; xs.length; i++) &#123;<br>    <span class="hljs-keyword">if</span> (xs[i] &lt; xs[i - <span class="hljs-number">1</span>]) &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">binarySearch</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">xs: SortedList&lt;T&gt;, x: T</span>): <span class="hljs-title">boolean</span> </span>&#123;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This comes from Item 37, which discusses &quot;brands&quot;, a way of simulating nominal typing in TypeScript to create types for things like &quot;non-empty sets&quot; or &quot;sorted sets&quot; that can&#39;t be represented directly.</p>
+<p>The implementation of <code>binarySearch</code> is listed earlier in the text and assumes a list that&#39;s sorted in ascending order. The <code>isSorted</code> type guard checks that the list is sorted… but in descending order. Oops! This all type checks great, but it produces incorrect results. A type checker can&#39;t tell you that <code>&lt;</code> should be <code>&gt;</code> (Haskell people, please tell me if I&#39;m wrong!). You really need a unit test.</p>
+<p>At some point I realized that you <em>could</em> create a unit test with literate-ts! The trick is to write some code that calls the function and <code>console.log</code>s the results. Then literate-ts can check the expected output against the actual output. This can all go in a comment so that the reader doesn&#39;t see it.</p>
+<p>Basically all of the <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544', event);">errata</a> have been variations on this: things that weren&#39;t checked by the verifier. I&#39;m not aware of a single mistake having to do with the type system itself.</p>
+<p>I&#39;ve recently published <a href="https://github.com/danvk/literate-ts" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/literate-ts', event);"><code>literate-ts</code></a> to npm and added support for Markdown sources (O&#39;Reilly books are written in Asciidoc). And I&#39;ve started applying it to this blog. If you&#39;re writing a TypeScript book or blog yourself, head over to the <a href="https://github.com/danvk/literate-ts" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/literate-ts', event);">literate-ts</a> repo, give it a try and let me know how it goes!</p>
+<p>If you prefer videos, literate-ts comes up in my 2019 tsconf talk on Testing Types:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/nygcFEwOG8w?start=1198" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<!--
+
+Reviewing _Mastering TypeScript_ is probably a good opportunity to polish this up and publicize it.
+
+literate-ts repo to-do:
+- To what extent have literate-ts and verifier diverged?
+- Make it use node_modules from the asciidoc directory
+  (or make this configurable?)
+- Speed it up (don't rebuild compiler on every sample)
+- Less verbose logging
+- Type check ets-site (i.e. support markdown)
+
+-->
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('typesafe blogs books with literatets', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('typesafe blogs books with literatets', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
