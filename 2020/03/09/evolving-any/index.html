@@ -104,6 +104,7 @@
 
 <p>Upon closer inspection, however, it&#39;s surprising that this works! How does TypeScript know that the type of <code>out</code> is <code>number[]</code> when it&#39;s initialized as <code>[]</code>, which could be an array of any type?</p>
 <p>Inspecting each of the three occurrences of <code>out</code> to reveal its inferred type starts to tell the story:</p>
+<!-- #type-safe-range -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">range</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];  <span class="hljs-comment">// Type is any[]</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = start; i &lt; limit; i++) &#123;<br>    out.push(i);  <span class="hljs-comment">// Type of out is any[]</span><br>  &#125;<br>  <span class="hljs-keyword">return</span> out;  <span class="hljs-comment">// Type is number[]</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>The type of <code>out</code> starts as <code>any[]</code>, an undifferentiated array. But as we push <code>number</code> values onto it, its type &quot;evolves&quot; to become <code>number[]</code>.</p>
@@ -114,7 +115,13 @@
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.random() &lt; <span class="hljs-number">0.5</span>) &#123;<br>  val = <span class="hljs-regexp">/hello/</span>;<br>  val  <span class="hljs-comment">// Type is RegExp</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is number</span><br>&#125;<br>val  <span class="hljs-comment">// Type is number | RegExp</span><br></code></pre></td></tr></table></figure>
 
 <p>A final case that triggers this &quot;evolving any&quot; behavior is if a variable is initially <code>null</code>. This often comes up when you set a value in a <code>try</code>/<code>catch</code> block:</p>
+<!--
+// verifier:prepend-to-following
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">somethingDangerous</span>(<span class="hljs-params"></span>) </span>&#123;&#125;<br></code></pre></td></tr></table></figure>
+<p>--&gt;</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val = <span class="hljs-literal">null</span>;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">try</span> &#123;<br>  somethingDangerous();<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is number</span><br>&#125; <span class="hljs-keyword">catch</span> (e) &#123;<br>  <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">'alas!'</span>);<br>&#125;<br>val  <span class="hljs-comment">// Type is number | null</span><br></code></pre></td></tr></table></figure>
+
+<!-- verifier:reset -->
 
 <p>Interestingly, this behavior only happens when a variable&#39;s type is implicitly <code>any</code> with <code>noImplicitAny</code> set! Adding an <em>explicit</em> <code>any</code> keeps the type constant:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> val: <span class="hljs-built_in">any</span>;  <span class="hljs-comment">// Type is any</span><br><span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.random() &lt; <span class="hljs-number">0.5</span>) &#123;<br>  val = <span class="hljs-regexp">/hello/</span>;<br>  val  <span class="hljs-comment">// Type is any</span><br>&#125; <span class="hljs-keyword">else</span> &#123;<br>  val = <span class="hljs-number">12</span>;<br>  val  <span class="hljs-comment">// Type is any</span><br>&#125;<br>val  <span class="hljs-comment">// Type is any</span><br></code></pre></td></tr></table></figure>
@@ -128,7 +135,9 @@
 
 <p>Put another way, &quot;evolving&quot; <code>any</code> types are only <code>any</code> when you <em>write</em> to them. If you try to <em>read</em> from them while they&#39;re still <code>any</code>, you&#39;ll get an error.</p>
 <p>Implicit <code>any</code> types do not evolve through function calls. The arrow function here trips up inference:</p>
+<!-- verifier:prepend-id-to-following:type-safe-range -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeSquares</span>(<span class="hljs-params">start: <span class="hljs-built_in">number</span>, limit: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> out = [];<br>     <span class="hljs-comment">// ~~~ Variable 'out' implicitly has type 'any[]' in some locations</span><br>  range(start, limit).forEach(<span class="hljs-function"><span class="hljs-params">i</span> =&gt;</span> &#123;<br>    out.push(i * i);<br>  &#125;);<br>  <span class="hljs-keyword">return</span> out;<br>      <span class="hljs-comment">// ~~~ Variable 'out' implicitly has an 'any[]' type</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<!-- verifier:reset -->
 
 <p>In cases like this, you may want to consider using an array&#39;s <code>map</code> and <code>filter</code> methods to build arrays in a single statement and avoid iteration and evolving <code>any</code> entirely. See Items 23 and 27.</p>
 <p>Evolving <code>any</code> comes with all the usual caveats about type inference. Is the correct type for your array really <code>(string|number)[]</code>? Or should it be <code>number[]</code> and you incorrectly pushed a <code>string</code>? You may still want to provide an explicit type annotation to get better error checking instead of using evolving <code>any</code>.</p>

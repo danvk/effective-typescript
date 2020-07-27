@@ -96,6 +96,7 @@
           <div class="entry-content">
             <p><em>Iterating over the keys and values in an object is a common operation that&#39;s surprisingly hard to write without type assertions in TypeScript. The difficulty results from a combination of the <a href="https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://medium.com/node-modules/what-is-prototype-pollution-and-why-is-it-such-a-big-deal-2dd8d89a93c', event);">quirks</a> of JavaScript objects and <a href="https://www.typescriptlang.org/docs/handbook/interfaces.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/interfaces.html', event);">duck typing</a>. Reading through this item again, I&#39;d add that this is all a good reason to consider using an <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map', event);">ES6 <code>Map</code></a> instead of an object to store key/value pairs!</em></p>
 <p>This code runs fine, and yet TypeScript flags an error in it. Why?</p>
+<!-- #one-two-three -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> obj = &#123;<br>  one: <span class="hljs-string">'uno'</span>,<br>  two: <span class="hljs-string">'dos'</span>,<br>  three: <span class="hljs-string">'tres'</span>,<br>&#125;;<br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> k <span class="hljs-keyword">in</span> obj) &#123;<br>  <span class="hljs-keyword">const</span> v = obj[k];<br>         <span class="hljs-comment">// ~~~~~~ Element implicitly has an 'any' type</span><br>         <span class="hljs-comment">//        because type ... has no index signature</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>Inspecting the <code>obj</code> and <code>k</code> symbols gives a clue:</p>
@@ -103,10 +104,12 @@
 
 <p>The type of <code>k</code> is <code>string</code>, but you&#39;re trying to index into an object whose type only has three specific keys: <code>&#39;one&#39;</code>, <code>&#39;two&#39;</code>, and <code>&#39;three&#39;</code>. There are strings other than these three, so this has to fail.</p>
 <p>Plugging in a narrower type declaration for <code>k</code> fixes the issue:</p>
+<!-- verifier:prepend-id-to-following:one-two-three -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> k: keyof <span class="hljs-keyword">typeof</span> obj;  <span class="hljs-comment">// Type is "one" | "two" | "three"</span><br><span class="hljs-keyword">for</span> (k <span class="hljs-keyword">in</span> obj) &#123;<br>  <span class="hljs-keyword">const</span> v = obj[k];  <span class="hljs-comment">// OK</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>So the real question is: why is the type of <code>k</code> in the first example inferred as <code>string</code> rather than <code>&quot;one&quot; | &quot;two&quot; | &quot;three&quot;</code>?</p>
 <p>To understand, let&#39;s look at a slightly different example involving an interface and a function:</p>
+<!-- verifier:prepend-to-following -->
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ABC &#123;<br>  a: <span class="hljs-built_in">string</span>;<br>  b: <span class="hljs-built_in">string</span>;<br>  c: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params">abc: ABC</span>) </span>&#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> k <span class="hljs-keyword">in</span> abc) &#123;  <span class="hljs-comment">// const k: string</span><br>    <span class="hljs-keyword">const</span> v = abc[k];<br>           <span class="hljs-comment">// ~~~~~~ Element implicitly has an 'any' type</span><br>           <span class="hljs-comment">//        because type 'ABC' has no index signature</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>It&#39;s the same error as before. And you can &quot;fix&quot; it using the same sort of declaration (<code>let k: keyof ABC</code>). But in this case TypeScript is right to complain. Here&#39;s why:</p>
@@ -114,6 +117,11 @@
 
 <p>The function <code>foo</code> can be called with any value <em>assignable</em> to <code>ABC</code>, not just a value with &quot;a,&quot; &quot;b,&quot; and &quot;c&quot; properties. It&#39;s entirely possible that the value will have other properties, too (see Item 4: Get Comfortable with Structural Typing). To allow for this, TypeScript gives <code>k</code> the only type it can be confident of, namely, <code>string</code>.</p>
 <p>Using the <code>keyof</code> declaration would have another downside here:</p>
+<!--
+// verifier:reset
+// verifier:prepend-to-following
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ABC &#123;<br>  a: <span class="hljs-built_in">string</span>;<br>  b: <span class="hljs-built_in">string</span>;<br>  c: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>--&gt;</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params">abc: ABC</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> k: keyof ABC;<br>  <span class="hljs-keyword">for</span> (k <span class="hljs-keyword">in</span> abc) &#123;  <span class="hljs-comment">// let k: "a" | "b" | "c"</span><br>    <span class="hljs-keyword">const</span> v = abc[k];  <span class="hljs-comment">// Type is string | number</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>If <code>&quot;a&quot; | &quot;b&quot; | &quot;c&quot;</code> is too narrow for <code>k</code>, then <code>string | number</code> is certainly too narrow for <code>v</code>. In the preceding example one of the values is a <code>Date</code>, but it could be anything. The types here give a false sense of certainty that could lead to chaos at runtime.</p>
@@ -135,7 +143,7 @@ z</pre>
 <li>Use <code>let k: keyof T</code> and a for-in loop to iterate objects when you know exactly what the keys will be. Be aware that any objects your function receives as parameters might have additional keys.</li>
 <li>Use <code>Object.entries</code> to iterate over the keys and values of any object.</li>
 </ul>
-
+-->
           </div>
         </div>
       </div>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Writing a safe querySelector: the one-way street from values to types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Writing a safe querySelector: the one-way street from values to types">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Writing a safe querySelector: the one-way street from values to types">
+    <meta name="twitter:description" content="The DOM&#39;s document.querySelector method is ubiquitious in JavaScript but somewhat tricky to type in a safe way. This post walks through how you can create a safe querySelector for use in TypeScript code and explains how this is an example of a general pattern of using values (which exist at runtime) as a source of truth, rather than types (which don&#39;t).
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Writing a safe querySelector: the one-way street from values to types">
+    <meta property="og:description" content="The DOM&#39;s document.querySelector method is ubiquitious in JavaScript but somewhat tricky to type in a safe way. This post walks through how you can create a safe querySelector for use in TypeScript code and explains how this is an example of a general pattern of using values (which exist at runtime) as a source of truth, rather than types (which don&#39;t).
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Writing a safe querySelector: the one-way street from values to types</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2020-07-27T13:57:32.000Z" itemprop="datePublished">
+              Mon 27 July 2020
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>The <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector', event);"><code>querySelector</code></a> method lets you retrieve DOM elements from JavaScript using CSS selectors:</p>
+<!-- verifier:prepend-to-following -->
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> codeBlockEl = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'p.intro code'</span>);<br></code></pre></td></tr></table></figure>
+
+<p>This API is ubiquitous in JavaScript, but it presents some challenges in a TypeScript context. For example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">alert(codeBlockEl.textContent);<br>   <span class="hljs-comment">// ~~~~~~~~~~~ const codeBlockEl: Element | null</span><br>   <span class="hljs-comment">//             Object is possibly 'null'.</span><br></code></pre></td></tr></table></figure>
+
+<p>There&#39;s no guarantee that the selector will match any element, in which case it returns <code>null</code>. If you know from context that such an element does exist, you can use a non-<code>null</code> assertion (<code>!</code>) to silence the error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">alert(codeBlockEl!.textContent);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p><code>codeBlockEl!</code> is shorthand for <code>(codeBlockEl as Element)</code> and is just as unsafe as any type assertion. If you <em>don&#39;t</em> know that the selector will match, you can use a conditional to narrow its type:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">if</span> (codeBlockEl) &#123;<br>  alert(codeBlockEl.textContent);  <span class="hljs-comment">// also ok</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>You can also use the optional chaining operator to allow <code>undefined</code>s to bubble up:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">alert(codeBlockEl?.textContent);  <span class="hljs-comment">// ok, might alert null or undefined</span><br></code></pre></td></tr></table></figure>
+
+<p>But <code>null</code> isn&#39;t the only problem. You might also get a type that&#39;s not specific enough. For example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nameEl = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'input.first-name'</span>);<br>alert(nameEl!.value);<br>           <span class="hljs-comment">// ~~~~~ Property 'value' does not exist on type 'Element'.</span><br></code></pre></td></tr></table></figure>
+
+<p><code>document.querySelector</code> returns an <code>Element</code>, but the <code>value</code> property is only defined on <code>HTMLInputElement</code>, which is a subtype. The solutions to this problem are similar. You can either use an unsafe type assertion:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nameEl =<br>  <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'input.first-name'</span>) <span class="hljs-keyword">as</span> HTMLInputElement;<br>alert(nameEl.value);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>Or you can use an <code>instanceof</code> check to narrow the type:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nameEl = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'input.first-name'</span>);<br><span class="hljs-keyword">if</span> (!(nameEl <span class="hljs-keyword">instanceof</span> HTMLInputElement)) &#123;<br>  <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Something has gone very, very wrong.'</span>);<br>&#125;<br>alert(nameEl.value);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>If you plug this last example into the <a href="https://www.typescriptlang.org/play/#code/MYewdgzgLgBGCGBbApgUQDYwLwwCYmAFcUwoA6AR0OQCcBPAZWXWWChBoAoByASzAAOhcgDNeNaAFoEKbgEoA3ACheImJwCEnGWkz9o8MMGQg1ACQAqAWQAyASUHCMyElDlyYAbyUwYUABY0IADucMihqDRBXNwMICgB-ADmMP7wEDBJ4MgwAG60dAA0eQUwwUFgSWTyygC+SvAsNFDaSLpkuY3Uir4A9L0wIADWSkA" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/play/#code/MYewdgzgLgBGCGBbApgUQDYwLwwCYmAFcUwoA6AR0OQCcBPAZWXWWChBoAoByASzAAOhcgDNeNaAFoEKbgEoA3ACheImJwCEnGWkz9o8MMGQg1ACQAqAWQAyASUHCMyElDlyYAbyUwYUABY0IADucMihqDRBXNwMICgB-ADmMP7wEDBJ4MgwAG60dAA0eQUwwUFgSWTyygC+SvAsNFDaSLpkuY3Uir4A9L0wIADWSkA', event);">TypeScript playground</a> and mouse over <code>nameEl</code> on the last line, you&#39;ll see that its TypeScript type is <code>HTMLInputElement</code>. Every other type would have made the code throw.</p>
+<p>Writing these sorts of checks out every time you use <code>querySelector</code> quickly becomes tedious. Let&#39;s try to write a generic version instead!</p>
+<p>The <code>null</code> checking is easy to abstract:</p>
+<!-- verifier:prepend-to-following -->
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">checkedQuerySelector</span>(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  parent: Element | Document, selector: <span class="hljs-built_in">string</span></span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">Element</span> </span>&#123;<br>  <span class="hljs-keyword">const</span> el = parent.querySelector(selector);<br>  <span class="hljs-keyword">if</span> (!el) &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Selector <span class="hljs-subst">$&#123;selector&#125;</span> didn't match any elements.`</span>);<br>  &#125;<br>  <span class="hljs-keyword">return</span> el;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>You can swap this in for any use of <code>querySelector</code> to exclude <code>null</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">alert(checkedQuerySelector(<span class="hljs-built_in">document</span>, <span class="hljs-string">'p.intro code'</span>).textContent);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>But what about the case where you need a more specific type? It&#39;s tempting to plug in a generic type parameter and try to implement something like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeQuerySelector</span>&lt;<span class="hljs-title">T</span> <span class="hljs-title">extends</span> <span class="hljs-title">Element</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  parent: Document|Element, selector: <span class="hljs-built_in">string</span></span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">T</span> </span>&#123;<br>  <span class="hljs-keyword">const</span> el = checkedQuerySelector(parent, selector);<br>  <span class="hljs-keyword">if</span> (!(el <span class="hljs-keyword">instanceof</span> T)) &#123;<br>                   <span class="hljs-comment">// ~ 'T' only refers to a type, but is</span><br>                   <span class="hljs-comment">//    being used as a value here.</span><br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Selector <span class="hljs-subst">$&#123;selector&#125;</span> returned the wrong type.`</span>);<br>  &#125;<br>  <span class="hljs-keyword">return</span> el;<br><span class="hljs-comment">// ~~~~~~~~~ Type 'Element' is not assignable to type 'T'.</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The error on the <code>instanceof</code> check is a fundamental one that cannot be worked around. <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof', event);"><code>instanceof</code></a> is an operator that is evaluated at runtime. As Item 3 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> (&quot;Understand That Code Generation Is Independent of Types&quot;) and <a href="http://neugierig.org/software/blog/2016/04/typescript-types.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'http://neugierig.org/software/blog/2016/04/typescript-types.html', event);">many other sites</a> explain, TypeScript types <em>do not exist at runtime</em>. So referencing them in a runtime expression is nonsensical. You can&#39;t get a value at runtime from a TypeScript type. It just won&#39;t work.</p>
+<p>You <em>can</em> go the other way, however! Given a value, you can get a TypeScript type using <code>typeof</code>. And fortunately for us, there are runtime values corresponding to all the DOM types, just as there are for all classes. <a href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement', event);"><code>HTMLButtonElement</code></a> in TypeScript can refer to either a type or a value depending on the context.</p>
+<p>So instead of passing in the type we want, let&#39;s pass in a value. Here&#39;s a sketch:</p>
+<!-- verifier:skip because it's incomplete -->
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeQuerySelector</span>&lt;<span class="hljs-title">T</span> <span class="hljs-title">extends</span> ???&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  parent: Document | Element,</span></span><br><span class="hljs-function"><span class="hljs-params">  <span class="hljs-keyword">type</span>: T,</span></span><br><span class="hljs-function"><span class="hljs-params">  selector: <span class="hljs-built_in">string</span>,</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): ??? </span>&#123;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br><br><span class="hljs-keyword">const</span> buttonEl = safeQuerySelector(<br>  <span class="hljs-built_in">document</span>, HTMLButtonElement, <span class="hljs-string">'button.save'</span><br>);  <span class="hljs-comment">// type should be HTMLButtonElement</span><br></code></pre></td></tr></table></figure>
+
+<p>Don&#39;t let the name fool you: <code>type</code> here is a <em>value</em>. We&#39;ve got a few blanks to fill in, but this declaration at least has the great advantage of not going against TypeScript&#39;s design principles!</p>
+<p>Every value has a type. So what&#39;s the type of <code>HTMLButtonElement</code> in the previous function call? It&#39;s <code>typeof HTMLButtonElement</code>, of course! You can see what this really is by hovering over <code>T</code> in the following sample:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T = <span class="hljs-keyword">typeof</span> HTMLButtonElement;<br><span class="hljs-comment">// type is &#123;</span><br><span class="hljs-comment">//    new (): HTMLButtonElement;</span><br><span class="hljs-comment">//    prototype: HTMLButtonElement;</span><br><span class="hljs-comment">// &#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>This definition comes from <a href="https://github.com/microsoft/TypeScript/blob/73b268ec5b7b31f7065b77c20b6a8d759e0b7091/lib/lib.dom.d.ts#L6610-L6613" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/microsoft/TypeScript/blob/73b268ec5b7b31f7065b77c20b6a8d759e0b7091/lib/lib.dom.d.ts#L6610-L6613', event);"><code>lib.dom.d.ts</code></a>. It says that you can <code>new</code> an instance of <code>typeof HTMLButtonElement</code> to get an instance of the <code>HTMLButtonElement</code> type. The other DOM element classes (such as <code>HTMLElement</code>) have similar types.</p>
+<p>We can use this to place a constraint on the generic parameter, <code>T</code>:</p>
+<!-- verifier:skip because it's incomplete -->
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">queryElement</span>&lt;<span class="hljs-title">T</span> <span class="hljs-title">extends</span> <span class="hljs-title">typeof</span> <span class="hljs-title">Element</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  container: Element,</span></span><br><span class="hljs-function"><span class="hljs-params">  <span class="hljs-keyword">type</span>: T,</span></span><br><span class="hljs-function"><span class="hljs-params">  selector: <span class="hljs-built_in">string</span>,</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): ??? </span>&#123;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The <code>Element</code> in <code>T extends typeof Element</code> refers to a value, but <code>typeof Element</code> is a type. If <code>HTMLButtonElement</code> is a subtype of <code>Element</code>, then <code>typeof HTMLButtonElement</code> is a subtype of <code>typeof Element</code>. Passing in <code>HTMLButtonElement</code> will work, but passing in <code>RegExp</code> or <code>console</code> won&#39;t. And by using a generic parameter, we&#39;ll be able to infer a precise type based on the value of the <code>type</code> parameter at the call site.</p>
+<!--
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// Test of the claim in the previous paragraph.</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">test</span>(<span class="hljs-params"><span class="hljs-keyword">type</span>: <span class="hljs-keyword">typeof</span> Element</span>) </span>&#123;&#125;<br><br>test(Element);<br>test(HTMLElement);<br>test(HTMLButtonElement);<br>test(HTMLDivElement);<br>test(<span class="hljs-regexp">/foo/</span>);<br>  <span class="hljs-comment">// ~~~~~ Type RegExp is not assignable to type typeof Element</span><br>test(<span class="hljs-built_in">console</span>);<br>  <span class="hljs-comment">// ~~~~~ Type Console is not assignable to type typeof Element</span><br></code></pre></td></tr></table></figure>
+<p>--&gt;</p>
+<p>What about the return type? How do we go from <code>typeof Element</code> to <code>Element</code> (the type)? This is precisely what TypeScript&#39;s built-in <a href="https://www.typescriptlang.org/docs/handbook/utility-types.html#instancetypet" target="_blank" rel="noopener"><code>InstanceType</code></a> generic does:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T = <span class="hljs-keyword">typeof</span> HTMLButtonElement;<br><span class="hljs-keyword">type</span> U = InstanceType&lt;T&gt;;  <span class="hljs-comment">// type is HTMLButtonElement</span><br></code></pre></td></tr></table></figure>
+
+<p>With that in place, we can finally implement the function:</p>
+<!-- verifier:prepend-to-following -->
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">queryElement</span>&lt;<span class="hljs-title">T</span> <span class="hljs-title">extends</span> <span class="hljs-title">typeof</span> <span class="hljs-title">Element</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  container: Document | Element,</span></span><br><span class="hljs-function"><span class="hljs-params">  <span class="hljs-keyword">type</span>: T,</span></span><br><span class="hljs-function"><span class="hljs-params">  selector: <span class="hljs-built_in">string</span>,</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">InstanceType</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123;<br>  <span class="hljs-keyword">const</span> el = checkedQuerySelector(container, selector);<br>  <span class="hljs-keyword">if</span> (!(el <span class="hljs-keyword">instanceof</span> <span class="hljs-keyword">type</span>)) &#123;<br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<br>      <span class="hljs-string">`Selector <span class="hljs-subst">$&#123;selector&#125;</span> matched <span class="hljs-subst">$&#123;el&#125;</span> which is not an <span class="hljs-subst">$&#123;<span class="hljs-keyword">type</span>&#125;</span>`</span><br>    );<br>  &#125;<br>  <span class="hljs-keyword">return</span> el <span class="hljs-keyword">as</span> InstanceType&lt;T&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>And this works exactly as you&#39;d hope:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> el = queryElement(<br>  <span class="hljs-built_in">document</span>, HTMLTextAreaElement, <span class="hljs-string">'textarea.deep-thoughts'</span><br>);<br>alert(el.value);  <span class="hljs-comment">// ok, el's type is HTMLTextAreaElement</span><br></code></pre></td></tr></table></figure>
+
+<p>(If you know how to get rid of the type assertion on the <code>return</code> line, please <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/danvdk', event);">let me know</a>!)</p>
+<p>If you preferred the syntax of the explicit generic argument, where the <code>Element</code> subtype is more clearly separated from the usual <code>querySelector</code> parameters, you can get close by <a href="https://wiki.haskell.org/Currying" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://wiki.haskell.org/Currying', event);">currying</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> curryQueryElement = &lt;T <span class="hljs-keyword">extends</span> <span class="hljs-keyword">typeof</span> Element&gt;(<br>  <span class="hljs-keyword">type</span>: T,<br>) =&gt; (<br>  container: Document | Element,<br>  selector: <span class="hljs-built_in">string</span>,<br>) =&gt; queryElement(container, <span class="hljs-keyword">type</span>, selector);<br><br><span class="hljs-keyword">const</span> el = curryQueryElement(HTMLTextAreaElement)(<br>  <span class="hljs-built_in">document</span>, <span class="hljs-string">'textarea.deep-thoughts'</span><br>);<br><br><span class="hljs-comment">// Or:</span><br><span class="hljs-keyword">const</span> textareaQuery = curryQueryElement(HTMLTextAreaElement);<br><span class="hljs-keyword">const</span> el2 = textareaQuery(<span class="hljs-built_in">document</span>, <span class="hljs-string">'textarea.deep-thoughts'</span>);<br></code></pre></td></tr></table></figure>
+
+<p>If you ever find yourself wanting to use a TypeScript type at runtime, 🛑STOP 🛑! Remember that TypeScript types get erased when your code is converted to JavaScript, leaving only the values. But if your goal is to check the runtime type <em>and</em> narrow the TypeScript type, there may still be hope. Types and values are a one-way street: you can go from a value to a type (with <code>typeof</code>), but not from a type to a value. So the solution is often to rework your API to pass around values and derive the types from those. The safe <code>querySelector</code> we&#39;ve built in this post is one example of doing that. In future posts we&#39;ll look at a few more examples of how this strategy can play out in practice.</p>
+<p>Related material:</p>
+<ul>
+<li>Item 3: &quot;Understand That Code Generation Is Independent of Types&quot; or Evan Martin&#39;s <a href="http://neugierig.org/software/blog/2016/04/typescript-types.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'http://neugierig.org/software/blog/2016/04/typescript-types.html', event);">TypeScript&#39;s type independent output</a>.</li>
+<li>Item 8: &quot;Know How to Tell Whether a Symbol Is in the Type Space or Value Space&quot; or Florian Reuschel&#39;s <a href="https://dev.to/loilo/typescript-s-secret-parallel-universe-54i6" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://dev.to/loilo/typescript-s-secret-parallel-universe-54i6', event);">TypeScript&#39;s Secret Parallel Universe</a></li>
+<li>Item 55: &quot;Understand the DOM hierarchy&quot;</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
