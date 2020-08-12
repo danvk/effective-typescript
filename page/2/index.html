@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Effective TypeScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="index">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="preface" class="content">
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('cover image', 'https://amzn.to/38s1oCK', event);"><img src="https://effectivetypescript.com/images/cover.jpg" class="cover-photo" alt="Effective TypeScript Book Cover"></a>
+
+          <p>TypeScript is a typed superset of JavaScript with the potential to solve many of the headaches for which JavaScript is famous. But TypeScript has a learning curve of its own, and understanding how to use it effectively can take time.</p>
+<p><em>Effective TypeScript</em> guides you through 62 specific ways to improve your use of TypeScript, following the format popularized by <em>Effective C++</em> and <em>Effective Java</em>. You’ll advance from a beginning or intermediate user familiar with the basics to an advanced user who knows how to use the language well.</p>
+<p>Already have the Book? <a href="https://github.com/danvk/effective-typescript" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/effective-typescript', event);">Visit the GitHub project</a> to see all of the code snippets from the book in one place. You can also <a href="https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.oreilly.com/catalog/errata.csp?isbn=0636920261544', event);">report any errors</a> you&#39;ve found.</p>
+
+
+          <p>
+            <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+            <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy the eBook</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="praise" class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Praise for Effective TypeScript</h2>
+
+        <blockquote>
+<p>Effective TypeScript explores the most common questions we see when working with TypeScript and provides practical, results-oriented advice. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<footer>Ryan Cavanaugh, Engineering Lead for TypeScript at Microsoft</footer>
+</blockquote>
+<blockquote>
+<p>This book is packed with practical recipes and must be kept on the desk of every TypeScript eveloper. Even if you think you know TypeScript already, get this book and you won&#39;t regret it.</p>
+<footer>Yakov Fain, Java Champion</footer>
+</blockquote>
+<blockquote>
+<p>I have been working with TypeScript for two years, and with Flow for five. And it happens that I provided technical feedback for this book. It was a joy read. The items in the book provide specific, actionable advice that will help to deepen your understanding of TypeScript, and Dan&#39;s explanations are clear and concise. There is a lot of useful information, but my favorite part is Chapter 4, Type Design. Even as an experienced hotshot I learned a number of new things. And the advice sticks with me in my day-to-day work. For example I make an effort to apply types to entire function expressions, and in some cases I do so by using specialized React event handler types that this book pointed me to. Plus Dan convinced me to switch my <code>@type</code> dependencies to <code>devDependencies</code>.</p>
+<footer>Jesse Hallett, Senior Software Engineer, Originate, Inc.</footer>
+</blockquote>
+<blockquote>
+<p>The book hit me in exactly the right spot. I&#39;m an experienced developer and I&#39;ve worked with JS on and off for many years, but my structured TS education is limited to the official tutorial. I was able to figure out most of it along the way (TS is intuitive if you have good JS knowledge and realize how it works, Google and SO helped a lot too), but this approach also left me with a lot of gaps in my knowledge, many of which I don&#39;t even realize I have. This book excels at plugging such gaps.</p>
+<p>Now I have to go and refactor some of my code in the light of what I&#39;ve learned.</p>
+<footer>Matěj Zábský</footer>
+</blockquote>
+<p>Read more reviews on <a href="https://www.goodreads.com/book/show/48570456-effective-typescript" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.goodreads.com/book/show/48570456-effective-typescript', event);">Goodreads</a> and <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Amazon</a>.</p>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="updates" class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Recent Blog Posts</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+  
+    <div class="row hentry" id="hello-world">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2020/03/06/hello-world/">Welcome to Effective TypeScript!</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2020-03-06T17:34:56.000Z" itemprop="datePublished">
+        Fri 06 March 2020
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p>Welcome to the Effective TypeScript website!
+        <a class="read-more" href="/2020/03/06/hello-world/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </p></div>
+  </div>
+</div>
+
+  
+</div>
+
+
+  <div class="container" id="stay-in-touch">
+    <div class="row">
+      <div class="col-md-12">
+        <p>
+          For new TypeScript content every ~2 weeks, including new examples, sample items,
+          videos and book updates, choose one of these ways to stay in touch:
+        </p>
+
+        <p>
+          <a class="btn btn-info btn-lg" href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">Subscribe to the Newsletter</a>
+          <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">Follow @danvdk</a>
+          <a class="btn btn-info btn-lg" href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);"><span class="caps">RSS</span></a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<section id="more-info" class="content">
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Table of Contents</h2>
+
+          <p>In an <a href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html', event);"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">order a copy</a>.</p>
+<h3 id="Chapter-1-Getting-to-Know-TypeScript"><a href="#Chapter-1-Getting-to-Know-TypeScript" class="headerlink" title="Chapter 1: Getting to Know TypeScript"></a>Chapter 1: Getting to Know TypeScript</h3><p>Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What&#39;s this about <code>any</code>? And ducks?</p>
+<ol>
+<li>Understand the Relationship Between TypeScript and JavaScript</li>
+<li>Know Which TypeScript Options You’re Using</li>
+<li>Understand That Code Generation Is Independent of Types</li>
+<li>Get Comfortable with Structural Typing</li>
+<li>Limit Use of the <code>any</code> Type</li>
+</ol>
+<h3 id="Chapter-2-TypeScript’s-Type-System"><a href="#Chapter-2-TypeScript’s-Type-System" class="headerlink" title="Chapter 2: TypeScript’s Type System"></a>Chapter 2: TypeScript’s Type System</h3><p>This chapter walks you through the nuts and bolts of TypeScript&#39;s type system: how to think about it, how to use it, choices you&#39;ll need to make, and features you should avoid. TypeScript&#39;s type system is surprisingly powerful and able to express things you might not expect a type system to be able to. The items in this chapter will give you a solid foundation to build upon as you write TypeScript and read the rest of this book.</p>
+<ol start="6">
+<li>Use Your Editor to Interrogate and Explore the Type System</li>
+<li>Think of Types as Sets of Values</li>
+<li>Know How to Tell Whether a Symbol Is in the Type Space or Value Space</li>
+<li>Prefer Type Declarations to Type Assertions</li>
+<li>Avoid Object Wrapper Types (String, Number, Boolean, Symbol, BigInt)</li>
+<li>Recognize the Limits of Excess Property Checking</li>
+<li>Apply Types to Entire Function Expressions When Possible</li>
+<li>Know the Differences Between <code>type</code> and <code>interface</code></li>
+<li>Use Type Operations and Generics to Avoid Repeating Yourself</li>
+<li>Use Index Signatures for Dynamic Data</li>
+<li>Prefer Arrays, Tuples, and ArrayLike to number Index Signatures</li>
+<li>Use readonly to Avoid Errors Associated with Mutation</li>
+<li>Use Mapped Types to Keep Values in Sync</li>
+</ol>
+<h3 id="Chapter-3-Type-Inference"><a href="#Chapter-3-Type-Inference" class="headerlink" title="Chapter 3: Type Inference"></a>Chapter 3: Type Inference</h3><p>This chapter shows you some of the problems that can arise with type inference and how to fix them. After reading it, you should have a good understanding of how TypeScript infers types, when you still need to write type declarations, and when it&#39;s a good idea to write type declarations even when a type can be inferred.</p>
+<ol start="19">
+<li><a href="/2020/04/28/avoid-inferable/">Avoid Cluttering Your Code with Inferable Types</a></li>
+<li>Use Different Variables for Different Types</li>
+<li>Understand Type Widening</li>
+<li>Understand Type Narrowing</li>
+<li>Create Objects All at Once</li>
+<li>Be Consistent in Your Use of Aliases</li>
+<li>Use <code>async</code> Functions Instead of Callbacks for Asynchronous Code</li>
+<li>Understand How Context Is Used in Type Inference</li>
+<li>Use Functional Constructs and Libraries to Help Types Flow</li>
+</ol>
+<h3 id="Chapter-4-Type-Design"><a href="#Chapter-4-Type-Design" class="headerlink" title="Chapter 4: Type Design"></a>Chapter 4: Type Design</h3><p>Code is difficult to understand if you can&#39;t see the data or data types on which it operates. This is one of the great advantages of a type system: by writing out types, you make them visible to readers of your code. And this makes your code understandable. Other chapters cover the nuts and bolts of TypeScript types: using them, inferring them, and writing declarations with them. This chapter discusses the design of the types themselves. The examples in this chapter are all written with TypeScript in mind, but most of the ideas are more broadly applicable.</p>
+<ol start="28">
+<li>Prefer Types That Always Represent Valid States</li>
+<li>Be Liberal in What You Accept and Strict in What You Produce</li>
+<li>Don’t Repeat Type Information in Documentation</li>
+<li><a href="/2020/03/24/null-values-to-perimeter/">Push Null Values to the Perimeter of Your Types</a></li>
+<li>Prefer Unions of Interfaces to Interfaces of Unions</li>
+<li>Prefer More Precise Alternatives to String Types</li>
+<li>Prefer Incomplete Types to Inaccurate Types</li>
+<li>Generate Types from APIs and Specs, Not Data</li>
+<li>Name Types Using the Language of Your Problem Domain</li>
+<li>Consider “Brands” for Nominal Typing</li>
+</ol>
+<h3 id="Chapter-5-Working-with-any"><a href="#Chapter-5-Working-with-any" class="headerlink" title="Chapter 5: Working with any"></a>Chapter 5: Working with <code>any</code></h3><p>Type systems were traditionally binary affairs: either a language had a fully static type system or a fully dynamic one. TypeScript blurs the line, because its type system is <em>optional</em> and <em>gradual</em>. You can add types to parts of your program but not others. This is essential for migrating existing JavaScript codebases to TypeScript bit by bit. Key to this is the <code>any</code> type,  which effectively disables type checking for parts of your code. It is both powerful and prone to abuse. Learning to use <code>any</code> wisely is essential for writing effective TypeScript. This chapter walks you through how to limit the downsides of <code>any</code> while still retaining its benefits.</p>
+<ol start="38">
+<li>Use the Narrowest Possible Scope for <code>any</code> Types</li>
+<li>Prefer More Precise Variants of <code>any</code> to Plain <code>any</code></li>
+<li>Hide Unsafe Type Assertions in Well-Typed Functions</li>
+<li><a href="/2020/03/09/evolving-any/">Understand Evolving <code>any</code></a></li>
+<li>Use <code>unknown</code> Instead of <code>any</code> for Values with an Unknown Type</li>
+<li>Prefer Type-Safe Approaches to Monkey Patching</li>
+<li>Track Your Type Coverage to Prevent Regressions in Type Safety</li>
+</ol>
+<h3 id="Chapter-6-Types-Declarations-and-types"><a href="#Chapter-6-Types-Declarations-and-types" class="headerlink" title="Chapter 6: Types Declarations and @types"></a>Chapter 6: Types Declarations and <code>@types</code></h3><p>Dependency management can be confusing in any language, and TypeScript is no exception. This chapter will help you build a mental model for how dependencies work in TypeScript and show you how to work through some of the issues that can come up with them. It will also help you craft your own type declaration files to publish and share with others. By writing great type declarations, you can help not just your own project but the entire TypeScript community.</p>
+<ol start="45">
+<li>Put TypeScript and <code>@types</code> in <code>devDependencies</code></li>
+<li>Understand the Three Versions Involved in Type Declarations</li>
+<li>Export All Types That Appear in Public APIs</li>
+<li>Use TSDoc for API Comments</li>
+<li>Provide a Type for <code>this</code> in Callbacks</li>
+<li>Prefer Conditional Types to Overloaded Declarations</li>
+<li>Mirror Types to Sever Dependencies</li>
+<li>Be Aware of the Pitfalls of Testing Types</li>
+</ol>
+<h3 id="Chapter-7-Writing-and-Running-Your-Code"><a href="#Chapter-7-Writing-and-Running-Your-Code" class="headerlink" title="Chapter 7: Writing and Running Your Code"></a>Chapter 7: Writing and Running Your Code</h3><p>This chapter is a bit of a grab bag: it covers some issues that come up in writing code (not types) as well as issues you may run into when you run your code.</p>
+<ol start="53">
+<li>Prefer ECMAScript Features to TypeScript Features</li>
+<li><a href="/2020/05/26/iterate-objects/">Know How to Iterate Over Objects</a></li>
+<li>Understand the DOM hierarchy</li>
+<li>Don’t Rely on Private to Hide Information</li>
+<li>Use Source Maps to Debug TypeScript</li>
+</ol>
+<h3 id="Chapter-8-Migrating-to-TypeScript"><a href="#Chapter-8-Migrating-to-TypeScript" class="headerlink" title="Chapter 8. Migrating to TypeScript"></a>Chapter 8. Migrating to TypeScript</h3><p>You&#39;ve heard that TypeScript is great. You also know from painful experience that maintaining your 15-year-old, 100,000-line JavaScript library isn&#39;t. If only it could become a TypeScript library! This chapter offers some advice about migrating your JavaScript project to TypeScript without losing your sanity and abandoning the effort.</p>
+<ol start="58">
+<li>Write Modern JavaScript</li>
+<li>Use <code>@ts-check</code> and JSDoc to Experiment with TypeScript</li>
+<li>Use <code>allowJs</code> to Mix TypeScript and JavaScript</li>
+<li>Convert Module by Module Up Your Dependency Graph</li>
+<li>Don’t Consider Migration Complete Until You Enable <code>noImplicitAny</code></li>
+</ol>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about-the-author" class="content">
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>About the Author</h2>
+          <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
+
+          <p>Dan Vanderkam is a principal software engineer at <a href="https://sidewalklabs.com" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://sidewalklabs.com', event);">Sidewalk Labs</a>,
+where he&#39;s built engineering teams and processes for all of its products and spinouts,
+all of which use TypeScript.
+He previously worked on <a href="https://github.com/hammerlab/pileup.js" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/hammerlab/pileup.js', event);">open source genome visualizations</a>
+at Mt. Sinai&#39;s Icahn School of Medicine and on Google search features used by billions of people
+(search for <a href="https://google.com/search?q=sunset+nyc" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://google.com/search?q=sunset+nyc', event);">sunset nyc</a> or <a href="https://google.com/search?q=population+of+france" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://google.com/search?q=population+of+france', event);">population of france</a>).
+He has a long history of working on <a href="https://github.com/danvk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk', event);">open source projects</a>,
+including the popular <a href="https://github.com/danvk/dygraphs" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/dygraphs', event);">dygraphs</a> library and <a href="https://github.com/danvk/source-map-explorer" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/source-map-explorer', event);">source-map-explorer</a>,
+a tool for visualizing JavaScript code size.
+He is also a co-founder of the <a href="https://www.meetup.com/TypeScriptNYC/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.meetup.com/TypeScriptNYC/', event);">NYC TypeScript Meetup</a>.</p>
+<p>When he&#39;s not programming, Dan enjoys climbing rocks and playing bridge.
+He writes on <a href="https://medium.com/@danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://medium.com/@danvdk', event);">Medium</a> and at <a href="https://www.danvk.org" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.danvk.org', event);">danvk.org</a>.
+He earned his bachelor&#39;s in computer science from Rice University in Houston, Texas,
+and lives in Brooklyn, New York.</p>
+
+
+          <p>
+            <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://twitter.com/danvdk', event);">Follow @danvdk</a>
+            <a href="https://www.danvk.org" target="_blank" rel="noopener" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org', event);">Visit danvk.org</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
