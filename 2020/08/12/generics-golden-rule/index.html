@@ -15,13 +15,33 @@
     <meta name="twitter:creator" content="@danvdk">
     <meta name="twitter:domain" content="effectivetypescript.com">
     <meta name="twitter:title" content="Effective TypeScript &rsaquo; The Golden Rule of Generics">
-    <meta name="twitter:description" content="The new TypeScript Handbook has some real gemes in it, including one that I&#39;ve started to think of as the &#34;Golden Rule of Generics&#34;. This post explains the rule and goes through a few concrete examples of how to apply it, and fix code the violates it.
-">
+    <meta name="twitter:description" content="
+
+The New TypeScript Handbook has some real gems in it. Here&amp;#39;s what it has to say about generics:
+
+Writing generic functions is fun, and it can be easy to get carried away with type parameters. Having too many type parameters or using constraints where they aren&amp;#39;t needed can make inference less successful, frustrating callers of your function.
+
+It goes on to offer a few specific pieces of advice about how to use generics, including one that I&amp;#39;ve started to think of as the &amp;quot;Golden Rule of Generics&amp;quot;:
+
+Type Parameters Should Appear TwiceType parameters are for relating the types of multiple values. If a type parameter is only used once in the function signature, it&amp;#39;s not relating anything.
+Rule: If a type parameter only appears in one location, strongly reconsider if you actually need it.
+
+I love this rule because it&amp;#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.">
     <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
 
     <meta property="og:title" content="Effective TypeScript &rsaquo; The Golden Rule of Generics">
-    <meta property="og:description" content="The new TypeScript Handbook has some real gemes in it, including one that I&#39;ve started to think of as the &#34;Golden Rule of Generics&#34;. This post explains the rule and goes through a few concrete examples of how to apply it, and fix code the violates it.
-">
+    <meta property="og:description" content="
+
+The New TypeScript Handbook has some real gems in it. Here&amp;#39;s what it has to say about generics:
+
+Writing generic functions is fun, and it can be easy to get carried away with type parameters. Having too many type parameters or using constraints where they aren&amp;#39;t needed can make inference less successful, frustrating callers of your function.
+
+It goes on to offer a few specific pieces of advice about how to use generics, including one that I&amp;#39;ve started to think of as the &amp;quot;Golden Rule of Generics&amp;quot;:
+
+Type Parameters Should Appear TwiceType parameters are for relating the types of multiple values. If a type parameter is only used once in the function signature, it&amp;#39;s not relating anything.
+Rule: If a type parameter only appears in one location, strongly reconsider if you actually need it.
+
+I love this rule because it&amp;#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.">
     <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
     <meta property="og:url" content="https://effectivetypescript.com/">
 
@@ -106,6 +126,8 @@
 <p><strong>Rule: If a type parameter only appears in one location, strongly reconsider if you actually need it.</strong></p>
 </blockquote>
 <p>I love this rule because it&#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.</p>
+<a id="more"></a>
+
 <p>But it&#39;s not always obvious how to apply this rule, and it doesn&#39;t offer much guidance about how rework your code if you&#39;re using generics poorly. So in a nod to the <a href="https://fivethirtyeight.com/features/politics-podcast-good-use-of-polling-or-bad-use-of-polling-in-the-west-wing/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://fivethirtyeight.com/features/politics-podcast-good-use-of-polling-or-bad-use-of-polling-in-the-west-wing/', event);">folks at 538</a>, let&#39;s play the &quot;good use of generics or bad use of generics&quot; game. The examples that follow have been edited to protect the innocent, but they are all based on real code I&#39;ve encountered either in blog posts or in print.</p>
 <p>Let&#39;s start with the identity function:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">identity</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">arg: T</span>): <span class="hljs-title">T</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> arg;<br>&#125;<br></code></pre></td></tr></table></figure>

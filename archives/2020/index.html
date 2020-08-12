@@ -147,8 +147,18 @@
 
     <div class="entry-content">
       
-        The new TypeScript Handbook has some real gemes in it, including one that I've started to think of as the "Golden Rule of Generics". This post explains the rule and goes through a few concrete examples of how to apply it, and fix code the violates it.
+        <img src="/images/ruler.png" alt="Golden Ruler" style="float:right" width="300" height="180">
 
+<p>The <a href="https://microsoft.github.io/TypeScript-New-Handbook/everything/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/', event);">New TypeScript Handbook</a> has some real gems in it. Here&#39;s <a href="https://microsoft.github.io/TypeScript-New-Handbook/everything/#guidelines-for-writing-good-generic-functions" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/#guidelines-for-writing-good-generic-functions', event);">what it has to say about generics</a>:</p>
+<blockquote>
+<p>Writing generic functions is fun, and it can be easy to get carried away with type parameters. Having too many type parameters or using constraints where they aren&#39;t needed can make inference less successful, frustrating callers of your function.</p>
+</blockquote>
+<p>It goes on to offer a few specific pieces of advice about how to use generics, including one that I&#39;ve started to think of as the <a href="https://microsoft.github.io/TypeScript-New-Handbook/everything/#type-parameters-should-appear-twice" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/#type-parameters-should-appear-twice', event);">&quot;Golden Rule of Generics&quot;</a>:</p>
+<blockquote>
+<h5 id="Type-Parameters-Should-Appear-Twice"><a href="#Type-Parameters-Should-Appear-Twice" class="headerlink" title="Type Parameters Should Appear Twice"></a>Type Parameters Should Appear Twice</h5><p>Type parameters are for relating the types of multiple values. If a type parameter is only used once in the function signature, it&#39;s not relating anything.</p>
+<p><strong>Rule: If a type parameter only appears in one location, strongly reconsider if you actually need it.</strong></p>
+</blockquote>
+<p>I love this rule because it&#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.</p>
         <a class="read-more" href="/2020/08/12/generics-golden-rule/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
