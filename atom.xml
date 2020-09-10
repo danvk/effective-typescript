@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://effectivetypescript.com/"/>
-  <updated>2020-08-12T19:43:52.425Z</updated>
+  <updated>2020-09-10T13:23:34.549Z</updated>
   <id>https://effectivetypescript.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>TypeScript Exercises</title>
+    <link href="https://effectivetypescript.com/2020/09/10/problem-sets/"/>
+    <id>https://effectivetypescript.com/2020/09/10/problem-sets/</id>
+    <published>2020-09-10T13:25:00.000Z</published>
+    <updated>2020-09-10T13:23:34.549Z</updated>
+    
+    <content type="html"><![CDATA[<p>I&#39;d never describe problem sets as &quot;fun,&quot; but there&#39;s a reason teachers assign them. It&#39;s one thing to nod your head as you read a book (&quot;yes, that makes sense&quot;) but quite another to apply what you&#39;ve learned. Software is very much a &quot;learn by doing&quot; field. You retain knowledge better when you actively use it.</p><p>I would have liked to include exercises in <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> but never quite got around to it. Fortunately, there are several excellent sources of TypeScript exercises and puzzles online. Here are a few:</p><a id="more"></a><h2 id="TypeScript-Exercises"><a href="#TypeScript-Exercises" class="headerlink" title="TypeScript Exercises"></a>TypeScript Exercises</h2><p><img src="/images/typescript-exercises.png" alt="TypeScript Exercises"></p><p>I can&#39;t recommend <a href="https://twitter.com/mdevils" target="_blank" rel="noopener" onclick="return trackOutboundLink('typescript exercises', 'https://twitter.com/mdevils', event);">Marat Dulin</a>&#39;s <a href="https://typescript-exercises.github.io/" target="_blank" rel="noopener" onclick="return trackOutboundLink('typescript exercises', 'https://typescript-exercises.github.io/', event);">TypeScript Exercises</a> enough. The problems all build on one another, starting very simple and getting very complex. They have a story and a theme to them that I found thoroughly enjoyable (&quot;CEO&#39;s friend Nick told us that if we randomly swap user names from time to time in the community, it would be very funny and the project would definitely succeed!&quot;) Marat&#39;s latest update includes a hosted version, so you can complete the exercises without leaving your browser. My solutions and commentary on a previous version are <a href="https://github.com/typescript-exercises/typescript-exercises/pull/11" target="_blank" rel="noopener" onclick="return trackOutboundLink('typescript exercises', 'https://github.com/typescript-exercises/typescript-exercises/pull/11', event);">here</a>.</p><h2 id="Type-Challenges"><a href="#Type-Challenges" class="headerlink" title="Type Challenges"></a>Type Challenges</h2><p><img src="/images/type-challenges.png" alt="Type Challenges"></p><p>The <a href="https://github.com/type-challenges/type-challenges#challenges" target="_blank" rel="noopener" onclick="return trackOutboundLink('type challenges', 'https://github.com/type-challenges/type-challenges#challenges', event);">Type Challenges</a> project was created by <a href="https://antfu.me/" target="_blank" rel="noopener" onclick="return trackOutboundLink('type challenges', 'https://antfu.me/', event);">Anthony Fu</a> and others. (It&#39;s also available in Chinese!) These challenges are independent puzzles and can be done in any order. Each challenge takes you to a TypeScript playground with infuriating red squiggles that must be fixed. This project is very community-oriented: you&#39;re encouraged to submit your solutions and suggest other puzzles. I expect that over time it will grow to include many, many more challenges.</p><p>If you&#39;ve read <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('type challenges', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> and want to apply what you&#39;ve learned, these are both great resources. Are there others I&#39;ve missed? Let me know in the comments!</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;I&amp;#39;d never describe problem sets as &amp;quot;fun,&amp;quot; but there&amp;#39;s a reason teachers assign them. It&amp;#39;s one thing to nod your head as you read a book (&amp;quot;yes, that makes sense&amp;quot;) but quite another to apply what you&amp;#39;ve learned. Software is very much a &amp;quot;learn by doing&amp;quot; field. You retain knowledge better when you actively use it.&lt;/p&gt;
+&lt;p&gt;I would have liked to include exercises in &lt;a href=&quot;https://amzn.to/38s1oCK&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; onclick=&quot;return trackOutboundLink(&#39;&#39;, &#39;https://amzn.to/38s1oCK&#39;, event);&quot;&gt;&lt;em&gt;Effective TypeScript&lt;/em&gt;&lt;/a&gt; but never quite got around to it. Fortunately, there are several excellent sources of TypeScript exercises and puzzles online. Here are a few:&lt;/p&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>The Golden Rule of Generics</title>
