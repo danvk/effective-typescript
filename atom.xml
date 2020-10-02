@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://effectivetypescript.com/"/>
-  <updated>2020-09-10T13:23:34.549Z</updated>
+  <updated>2020-10-02T01:28:03.357Z</updated>
   <id>https://effectivetypescript.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Repeat yourself a little less: Strategies for mitigating prop drilling with React and TypeScript</title>
+    <link href="https://effectivetypescript.com/2020/10/01/prop-drilling/"/>
+    <id>https://effectivetypescript.com/2020/10/01/prop-drilling/</id>
+    <published>2020-10-02T01:30:00.000Z</published>
+    <updated>2020-10-02T01:28:03.357Z</updated>
+    
+    <content type="html"><![CDATA[<p>I have a new post up on the LogRocket blog this week: <a href="https://blog.logrocket.com/mitigating-prop-drilling-with-react-and-typescript/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://blog.logrocket.com/mitigating-prop-drilling-with-react-and-typescript/', event);">Repeat yourself a little less:Strategies for mitigating prop drilling with React and TypeScript</a>.</p><p>It presents the problem of &quot;prop drilling&quot; in React, where you want to add a prop to a component somewhere deep down in your hierarchy and you have to add it in ten other places to get it there. It then looks at five different solutions, all of which work in TypeScript. Give it a read and let me know what you think!</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;I have a new post up on the LogRocket blog this week: &lt;a href=&quot;https://blog.logrocket.com/mitigating-prop-drilling-with-react-and-typescr
+      
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>TypeScript Exercises</title>

@@ -133,70 +133,26 @@
 
   <div class="container">
   
-    <div class="row hentry" id="null-values-to-perimeter">
+    <div class="row hentry" id="prop-drilling">
   <div class="col-md-12">
     <h3 class="entry-title">
-      <a href="/2020/03/24/null-values-to-perimeter/">Item 31: Push Null Values to the Perimeter of Your Types</a>
+      <a href="/2020/10/01/prop-drilling/">Repeat yourself a little less: Strategies for mitigating prop drilling with React and TypeScript</a>
     </h3>
 
     <div class="text-muted published-container">
-      <time class="published" datetime="2020-03-24T14:05:00.000Z" itemprop="datePublished">
-        Tue 24 March 2020
+      <time class="published" datetime="2020-10-02T01:30:00.000Z" itemprop="datePublished">
+        Thu 01 October 2020
       </time>
     </div>
 
     <div class="entry-content">
       
-        When you first turn on <code>strictNullChecks</code>, it may seem as though you have to add scores of <code>if</code> statements checking for <code>null</code> and <code>undefined</code> values throughout your code. This is often because the relationships between null and non-null values are implicit: when variable A is non-null, you know that variable B is also non-null and vice versa. These implicit relationships are confusing both for human readers of your code and for the type checker.
+        <p>I have a new post up on the LogRocket blog this week: <a href="https://blog.logrocket.com/mitigating-prop-drilling-with-react-and-typescript/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://blog.logrocket.com/mitigating-prop-drilling-with-react-and-typescript/', event);">Repeat yourself a little less:
+Strategies for mitigating prop drilling with React and TypeScript</a>.</p>
+<p>It presents the problem of &quot;prop drilling&quot; in React, where you want to add a prop to a component somewhere deep down in your hierarchy and you have to add it in ten other places to get it there. It then looks at five different solutions, all of which work in TypeScript. Give it a read and let me know what you think!</p>
 
-        <a class="read-more" href="/2020/03/24/null-values-to-perimeter/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="evolving-any">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2020/03/09/evolving-any/">Item 41: Understand Evolving any</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2020-03-09T16:34:56.000Z" itemprop="datePublished">
-        Mon 09 March 2020
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        In TypeScript a variable's type is generally determined when it is declared. After this, it can be <em>refined</em> (by checking if it is <code>null</code>, for instance), but it cannot expand to include new values. There is one notable exception to this, however, involving <code>any</code> types.
-
-        <a class="read-more" href="/2020/03/09/evolving-any/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="hello-world">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2020/03/06/hello-world/">Welcome to Effective TypeScript!</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2020-03-06T17:34:56.000Z" itemprop="datePublished">
-        Fri 06 March 2020
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        <p>Welcome to the Effective TypeScript website!
-        <a class="read-more" href="/2020/03/06/hello-world/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </p></div>
   </div>
 </div>
 
