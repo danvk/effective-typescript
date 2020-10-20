@@ -99,7 +99,7 @@ One of the best ways to fight against this ramp-up of complexity is to simply re
           </div>
           <div class="entry-content">
             <p>Software engineering is a battle against complexity. Without any planning or care, it&#39;s easy to build programs where everything interacts with everything else (the &quot;big ball of yarn&quot; model). With a ball of yarn, if you double the number of components, you quadruple the number of interactions:</p>
-<img src="/images/quadratic.png" alt="Complexity increases with the number of interactions, i.e. quadratically" width="439" height="262">
+<img src="https://effectivetypescript.com/images/quadratic.png" alt="Complexity increases with the number of interactions, i.e. quadratically" width="439" height="262">
 
 <p>One of the best ways to fight against this ramp-up of complexity is to simply reduce N, i.e. to write fewer lines of code. Using a higher level programming language or depending on well-tested third-party libraries are common ways to do this. But one of the easiest ways is to find code you don&#39;t need any more and delete it.</p>
 <a id="more"></a>
@@ -128,7 +128,7 @@ One of the best ways to fight against this ramp-up of complexity is to simply re
 <li>An <code>export</code>ed symbol can be alive even if it&#39;s never <code>import</code>ed. This happens if it&#39;s used in its own module.</li>
 </ol>
 <p>This is all a little easier to understand in picture form:</p>
-<img src="/images/dead-code-depgraph.png" alt="Dependency graph showing dead code" width="678" height="353" style="max-height: 100%">
+<img src="https://effectivetypescript.com/images/dead-code-depgraph.png" alt="Dependency graph showing dead code" width="678" height="353" style="max-height: 100%">
 
 <p><em>Dead code is in gray, live code is bold. Code can be dead despite being referenced. Examples are if it&#39;s referenced from other dead code (<code>recA</code>/<code>recB</code>), or code that is not relevant for &quot;liveness&quot; like a test (<code>deadA</code>).</em></p>
 <p>I&#39;m saying &quot;functions&quot; here, but the same considerations apply to types and interfaces, too.</p>
