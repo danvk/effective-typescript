@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Finding dead code (and dead types) in TypeScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Finding dead code (and dead types) in TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Finding dead code (and dead types) in TypeScript">
+    <meta name="twitter:description" content="Software engineering is a battle against complexity. Without any planning or care, it&amp;#39;s easy to build programs where everything interacts with everything else (the &amp;quot;big ball of yarn&amp;quot; model). With a ball of yarn, if you double the number of components, you quadruple the number of interactions:
+
+
+One of the best ways to fight against this ramp-up of complexity is to simply reduce N, i.e. to write fewer lines of code. Using a higher level programming language or depending on well-tested third-party libraries are common ways to do this. But one of the easiest ways is to find code you don&amp;#39;t need any more and delete it.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Finding dead code (and dead types) in TypeScript">
+    <meta property="og:description" content="Software engineering is a battle against complexity. Without any planning or care, it&amp;#39;s easy to build programs where everything interacts with everything else (the &amp;quot;big ball of yarn&amp;quot; model). With a ball of yarn, if you double the number of components, you quadruple the number of interactions:
+
+
+One of the best ways to fight against this ramp-up of complexity is to simply reduce N, i.e. to write fewer lines of code. Using a higher level programming language or depending on well-tested third-party libraries are common ways to do this. But one of the easiest ways is to find code you don&amp;#39;t need any more and delete it.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Finding dead code (and dead types) in TypeScript</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2020-10-20T22:20:56.000Z" itemprop="datePublished">
+              Tue 20 October 2020
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Software engineering is a battle against complexity. Without any planning or care, it&#39;s easy to build programs where everything interacts with everything else (the &quot;big ball of yarn&quot; model). With a ball of yarn, if you double the number of components, you quadruple the number of interactions:</p>
+<img src="/images/quadratic.png" alt="Complexity increases with the number of interactions, i.e. quadratically" width="439" height="262">
+
+<p>One of the best ways to fight against this ramp-up of complexity is to simply reduce N, i.e. to write fewer lines of code. Using a higher level programming language or depending on well-tested third-party libraries are common ways to do this. But one of the easiest ways is to find code you don&#39;t need any more and delete it.</p>
+<a id="more"></a>
+
+<p>Or, to quote <a href="https://en.wikipedia.org/wiki/Ken_Thompson" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://en.wikipedia.org/wiki/Ken_Thompson', event);">Ken Thompson</a>:</p>
+<blockquote>
+<p>One of my most productive days was throwing away 1000 lines of code.</p>
+</blockquote>
+<p>So how do you find dead code (and dead types) in a TypeScript project? There are a few ways to do it, but my current solution involves the <a href="https://www.typescriptlang.org/docs/handbook/compiler-options.html" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://www.typescriptlang.org/docs/handbook/compiler-options.html', event);"><code>--noUnusedLocals</code></a> compiler option and the <a href="https://github.com/nadeesha/ts-prune" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/nadeesha/ts-prune', event);">ts-prune</a> tool from <a href="https://nadeeshacabral.com/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://nadeeshacabral.com/', event);">Nadeesha Cabral</a>.</p>
+<h3 id="noUnusedLocals"><a href="#noUnusedLocals" class="headerlink" title="noUnusedLocals"></a>noUnusedLocals</h3><p>First, <code>--noUnusedLocals</code>. This is typically set this in your <code>tsconfig.json</code> file. It&#39;s on by default so its behavior should be familiar. In addition to detecting unused local variables in function bodies, it also detects unused symbols at the module level:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params"></span>) </span>&#123;&#125;<br>      <span class="hljs-comment">// ~~~ 'foo' is declared but its value is never read.</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bar</span>(<span class="hljs-params"></span>) </span>&#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>(In VS Code, unused symbols typically appear in a lighter color instead of getting the red squiggly underline error treatment. This is because it&#39;s often only a temporary state until you write the code that uses the symbol.)</p>
+<p>In this example nothing calls <code>foo</code> or otherwise references it, so it&#39;s dead code. And while <code>bar</code> is unused in this module, it&#39;s exported, so there&#39;s at least the possibility that another module could import it and call it.</p>
+<p>Since imported symbols are local variables inside their module, <code>noUnusedLocals</code> will also catch unused imports for you.</p>
+<h3 id="ts-prune"><a href="#ts-prune" class="headerlink" title="ts-prune"></a>ts-prune</h3><p>But what about exported symbols? They&#39;re still dead code if they&#39;re unused, but determining whether that&#39;s the case is harder. It requires analysis of your whole program and it&#39;s a little trickier than you might expect at first blush. To see why, let&#39;s first look at an incorrect way to do it.</p>
+<p>What if we just look at all the <code>import</code>s in a program and pair them up with the <code>export</code>s? With this approach, an <code>export</code>ed symbol is unused if it&#39;s never <code>import</code>ed.</p>
+<p>There are several problems with this approach. Here are a few:</p>
+<ol>
+<li>Code can be <code>import</code>ed but still dead. Here are three ways this can happen:<ol>
+<li>A function is only imported by its test.</li>
+<li>Two functions call each other (mutual recursion), but are otherwise unused.</li>
+<li>A function is only used by other dead code.</li>
+</ol>
+</li>
+<li>An <code>export</code>ed symbol can be alive even if it&#39;s never <code>import</code>ed. This happens if it&#39;s used in its own module.</li>
+</ol>
+<p>This is all a little easier to understand in picture form:</p>
+<img src="/images/dead-code-depgraph.png" alt="Dependency graph showing dead code" width="678" height="353" style="max-height: 100%">
+
+<p><em>Dead code is in gray, live code is bold. Code can be dead despite being referenced. Examples are if it&#39;s referenced from other dead code (<code>recA</code>/<code>recB</code>), or code that is not relevant for &quot;liveness&quot; like a test (<code>deadA</code>).</em></p>
+<p>I&#39;m saying &quot;functions&quot; here, but the same considerations apply to types and interfaces, too.</p>
+<p>The first category of problems (imported but still dead) is reminiscent of a problem in <a href="https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)', event);">garbage collection</a>: if you do pure <a href="https://en.wikipedia.org/wiki/Reference_counting" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://en.wikipedia.org/wiki/Reference_counting', event);">reference counting</a>, then you have a problem with cycles, where two objects reference each other but are otherwise dead. The solution there is to start with some known &quot;live&quot; objects and follow all the references from them. This is known as <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://en.wikipedia.org/wiki/Tracing_garbage_collection#Na%C3%AFve_mark-and-sweep', event);">mark and sweep</a>.</p>
+<p>We can do something similar with ts-prune. To get the most value out of it, you create a special <code>tsconfig.json</code> file with a list of entrypoints to your program:</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">"files"</span>: [<br>    <span class="hljs-string">"src/entry1.ts"</span>,<br>    <span class="hljs-string">"src/entry2.ts"</span><br>  ]<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>I usually call this <code>tsconfig.ts-prune.json</code>. What constitutes an entrypoint depends on your program. For a Node program like a server, it&#39;s the file you run (perhaps <code>server.ts</code> or <code>main.ts</code> or <code>app.ts</code>). For a web application, it&#39;s the entrypoint you list in your webpack or equivalent config. For a library, it&#39;s any file you want your users to be able to import from the resulting distribution (typically <code>index.ts</code> / <code>index.js</code>).</p>
+<p>Once you&#39;ve created that file, you run something like this:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">$ ts-prune -p tsconfig.ts-prune.json | grep -v &#39;used in module&#39;<br>src&#x2F;example.ts:4 - bar<br></code></pre></td></tr></table></figure>
+
+<p>The <code>-p</code> points <code>ts-prune</code> at your special <code>tsconfig.json</code>. Since you never <code>import</code> tests, they wind up being ignored for purposes of detecting alive vs. dead code. The same goes for un-<code>import</code>ed modules.</p>
+<p>The <code>grep</code> filters out the second category of problems from the above list. I have no problem exporting symbols that are never imported (in fact, I recommend it in Item 47 <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a>: Export All Types That Appear in Public APIs).</p>
+<p><em>(Sidebar: why? Two main reasons. First, you often wind up needing to import them later, and exporting them makes it possible for tsserver to offer auto-import. Second, you&#39;re effectively exporting them already if they&#39;re part of a public API. You may as well make it easy.)</em></p>
+<p>The output of ts-prune tells us that the <code>bar</code> symbol is unused despite being exported. This is exactly what we wanted to know!</p>
+<p>I highly recommend setting up ts-prune for your project. You might find some dead code that you&#39;d forgotten about! It also works great with more exotic setups like media imports and generated code. Two examples of this from my own projects:</p>
+<ol>
+<li>My team has a file, <code>icons.ts</code>, that imports all the images in my web app, either from PNGs in my project or from Material-UI, and re-exports them. In this case running ts-prune finds the unused images, which shrinks your bundle! (Tree shaking would help here, too.)</li>
+<li>We use codegen to <a href="https://github.com/danvk/schemats" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/schemats', event);">produce TypeScript types from our Postgres schema</a>. In this case an unused export may correspond to a dead <em>database table</em>, which should definitely be dropped!</li>
+</ol>
+<p>As with most dead code elimination tool, when you delete some dead code that it&#39;s surfaced, you should immediately run <code>tsc</code> and <code>ts-prune</code> again. Running <code>tsc</code> will surface dead references to the dead code (e.g. its tests), which you should delete. In the process, you might have deleted the last reference to something, which will surface even more dead code. Repeat until convergence (or until you have no code left!).</p>
+<p>References:</p>
+<ul>
+<li><a href="https://github.com/nadeesha/ts-prune" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/nadeesha/ts-prune', event);">ts-prune</a> is a zero config CLI tool by <a href="https://nadeeshacabral.com/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://nadeeshacabral.com/', event);">Nadeehsa Cabral</a>. I <a href="https://github.com/nadeesha/ts-prune/pull/74" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/nadeesha/ts-prune/pull/74', event);">added</a> the &quot;used in module&quot; output to make it more useful for finding dead code in addition to unused imports.</li>
+<li><a href="https://github.com/pzavolinsky/ts-unused-exports" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/pzavolinsky/ts-unused-exports', event);">ts-unused-exports</a> is a related tool by <a href="https://github.com/pzavolinsky" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/pzavolinsky', event);">Patricio Zavolinsky</a>. I <a href="https://github.com/pzavolinsky/ts-unused-exports/issues/2" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/pzavolinsky/ts-unused-exports/issues/2', event);">ran into issues</a> with this tool that eventually led me to ts-prune, but you may prefer it if you don&#39;t like ts-prune. It certainly has many options!</li>
+<li>I&#39;m not aware of any tools for finding dead code in <em>JavaScript</em>. But since TypeScript is a superset of JavaScript, ts-prune should, in theory, be able to work on JS projects. I&#39;ve never tried this, but, if you get it to work, I&#39;d love to hear about it.</li>
+</ul>
+<!--
+It seems that there aren't god tools available in JavaScript:
+<https://www.google.com/search?q=javascript+find+dead+code>
+
+Anecdotes:
+- When I first ran ts-prune, it incorrectly reported dead code.
+  It turned out I hadn't ported all of my tests to TS yet!
+- Unused asset imports let you delete unused images.
+- If you can eliminate third-party imports, this shrinks your bundle.
+- Your test utils should only be imported by tests.
+
+-->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('finding dead code and dead types in typescript', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('finding dead code and dead types in typescript', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2020 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
