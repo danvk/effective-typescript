@@ -120,8 +120,15 @@
 <!--
 // verifier:reset
 // verifier:prepend-to-following
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ABC &#123;<br>  a: <span class="hljs-built_in">string</span>;<br>  b: <span class="hljs-built_in">string</span>;<br>  c: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>--&gt;</p>
+
+    interface ABC {
+      a: string;
+      b: string;
+      c: number;
+    }
+
+-->
+
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">foo</span>(<span class="hljs-params">abc: ABC</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> k: keyof ABC;<br>  <span class="hljs-keyword">for</span> (k <span class="hljs-keyword">in</span> abc) &#123;  <span class="hljs-comment">// let k: "a" | "b" | "c"</span><br>    <span class="hljs-keyword">const</span> v = abc[k];  <span class="hljs-comment">// Type is string | number</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>If <code>&quot;a&quot; | &quot;b&quot; | &quot;c&quot;</code> is too narrow for <code>k</code>, then <code>string | number</code> is certainly too narrow for <code>v</code>. In the preceding example one of the values is a <code>Date</code>, but it could be anything. The types here give a false sense of certainty that could lead to chaos at runtime.</p>
@@ -143,7 +150,7 @@ z</pre>
 <li>Use <code>let k: keyof T</code> and a for-in loop to iterate objects when you know exactly what the keys will be. Be aware that any objects your function receives as parameters might have additional keys.</li>
 <li>Use <code>Object.entries</code> to iterate over the keys and values of any object.</li>
 </ul>
--->
+
           </div>
         </div>
       </div>
