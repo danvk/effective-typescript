@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    
+    <title>Generic Tips Part 3: Avoid Repeating Type Expressions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet" />
+    <link href="/css/highlight.vs.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Generic Tips Part 3: Avoid Repeating Type Expressions">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Generic Tips Part 3: Avoid Repeating Type Expressions">
+    <meta name="twitter:description" content="Recently there&amp;#39;s been some chatter online about how you should use long names for generic types (i.e. longer than just T). I&amp;#39;d generalize all this a bit to say:
+Just because you&amp;#39;re writing generics, don&amp;#39;t forget everything you&amp;#39;ve learned about programming!
+So yes, give long-lived variables meaningful names. But also avoid repeating yourself by factoring out common expressions.
+This post presents a few patterns for reducing repetition in generics. None of them are perfect, but they&amp;#39;re worth learning because they&amp;#39;re usually better than repeating yourself!">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Generic Tips Part 3: Avoid Repeating Type Expressions">
+    <meta property="og:description" content="Recently there&amp;#39;s been some chatter online about how you should use long names for generic types (i.e. longer than just T). I&amp;#39;d generalize all this a bit to say:
+Just because you&amp;#39;re writing generics, don&amp;#39;t forget everything you&amp;#39;ve learned about programming!
+So yes, give long-lived variables meaningful names. But also avoid repeating yourself by factoring out common expressions.
+This post presents a few patterns for reducing repetition in generics. None of them are perfect, but they&amp;#39;re worth learning because they&amp;#39;re usually better than repeating yourself!">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed" />
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Generic Tips Part 3: Avoid Repeating Type Expressions</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2021-01-21T02:40:00.000Z" itemprop="datePublished">
+              Wed 20 January 2021
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Recently there&#39;s been some <a href="https://twitter.com/kentcdodds/status/1348016701632221184" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/kentcdodds/status/1348016701632221184', event);">chatter</a> online about how you should use <a href="https://fettblog.eu/tidy-typescript-name-your-generics/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://fettblog.eu/tidy-typescript-name-your-generics/', event);">long names for generic types</a> (i.e. longer than just <code>T</code>). I&#39;d generalize all this a bit to say:</p>
+<p><strong>Just because you&#39;re writing generics, don&#39;t forget everything you&#39;ve learned about programming!</strong></p>
+<p>So yes, give long-lived variables meaningful names. But also avoid repeating yourself by factoring out common expressions.</p>
+<p>This post presents a few patterns for reducing repetition in generics. None of them are perfect, but they&#39;re worth learning because they&#39;re usually better than repeating yourself!</p>
+<a id="more"></a>
+
+<p>As a motivating example, we&#39;ll look at how <a href="https://github.com/danvk/crosswalk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> registers express endpoints (see the <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">first post</a> for background on crosswalk). Recall that an API definition in crosswalk looks something like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> API &#123;<br>  <span class="hljs-string">'/users'</span>: &#123;<br>    <span class="hljs-keyword">get</span>: GetEndpoint&lt;UsersResponse&gt;;<br>    post: Endpoint&lt;CreateUserRequest, User&gt;;<br>  &#125;;<br>  <span class="hljs-string">'/users/:userId'</span>: &#123;<br>    <span class="hljs-keyword">get</span>: GetEndpoint&lt;User&gt;;<br>    put: Endpoint&lt;UpdateUser, User&gt;;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>In <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">the last post</a> we looked at how crosswalk defines safe wrappers to register handlers for an endpoint. Here&#39;s what usage looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> typedRouter = <span class="hljs-keyword">new</span> TypedRouter&lt;API&gt;(app);<br>app.get(<br>  <span class="hljs-string">'/users/:userId'</span>,<br>  <span class="hljs-keyword">async</span> (params, request, response) =&gt; getUserById(params.userId)<br>);<br></code></pre></td></tr></table></figure>
+
+<p>The <code>params</code> object has a type based on the path (<code>/users/:userId</code>) and the response is required to be <code>Promise&lt;User&gt;</code> (based on the <code>API</code> interface). Here&#39;s the implementation we wound up with in the <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">last post</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> LooseKey&lt;T, K&gt; = T[K &amp; keyof T];<br><span class="hljs-keyword">type</span> LooseKey2&lt;T, K1, K2&gt; = LooseKey&lt;LooseKey&lt;T, K1&gt;, K2&gt;;<br><span class="hljs-keyword">type</span> ExtractRouteParams&lt;Path <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>&gt; = ...;<br><span class="hljs-comment">// See https://twitter.com/danvdk/status/1301707026507198464</span><br><br><span class="hljs-keyword">class</span> TypedRouter&lt;API&gt; &#123;<br>  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> router: express.Router</span>) &#123;&#125;<br>  <span class="hljs-keyword">get</span>&lt;Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>&gt;(<br>    path: Path,<br>    handler: (<br>      params: ExtractRouteParams&lt;Path&gt;,<br>    ) =&gt; <span class="hljs-built_in">Promise</span>&lt;LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;&gt;<br>  ) &#123;<br>    <span class="hljs-comment">// ... implementation ...</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The real crosswalk API passes the express <code>request</code> and <code>response</code> objects to the callback as well as the path params. And express requests and responses <a href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/8d49ebd3e913bdbb90294d7672cda5884566d62a/types/express/index.d.ts#L112-L118" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/DefinitelyTyped/DefinitelyTyped/blob/8d49ebd3e913bdbb90294d7672cda5884566d62a/types/express/index.d.ts#L112-L118', event);">take several generic parameters</a>: the path params, the request body type and the response type. For a GET request, we can ignore the request type (there&#39;s no request body) but the other two are relevant. They let you reference <code>request.params</code> and get a type, for example.</p>
+<p>Here&#39;s what this looks like, focusing just on <code>get</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">get</span>&lt;Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>&gt;(<br>  path: Path,<br>  handler: (<br>    params: ExtractRouteParams&lt;Path&gt;,<br>    request: express.Request&lt;<br>      ExtractRouteParams&lt;Path&gt;,<br>      LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;<br>    &gt;,<br>    response: express.Response&lt;<br>      LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;<br>    &gt;<br>  ) =&gt; <span class="hljs-built_in">Promise</span>&lt;LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;&gt;<br>) &#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>Wow that&#39;s a lot of a lot of repetition! The <code>ExtractRouteParams</code> clause appears twice and the response type (the <code>LooseKey2</code> bit) appears three times. It would be even worse for the <code>post</code> handler, where we have a request body to type, too.</p>
+<p>So what can you do about this? There are a few options. They&#39;re better than nothing but, as we&#39;ll see, none are perfect.</p>
+<h3 id="Factor-out-helper-types"><a href="#Factor-out-helper-types" class="headerlink" title="Factor out helper types"></a>Factor out helper types</h3><p>This is the generic equivalent of factoring out a helper function. Instead of writing:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  a: Expresion&lt;Involving&lt;T&gt;&gt;,</span></span><br><span class="hljs-function"><span class="hljs-params">  b: Expression&lt;Involving&lt;T&gt;&gt;</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">Expression</span>&lt;<span class="hljs-title">Involving</span>&lt;<span class="hljs-title">T</span>&gt;&gt; </span>&#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>You can factor the repeated bits out into a helper type:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> Exp&lt;T&gt; = Expression&lt;Involving&lt;T&gt;&gt;;<br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">a: Exp&lt;T&gt;, b: Exp&lt;T&gt;</span>): <span class="hljs-title">Exp</span>&lt;<span class="hljs-title">T</span>&gt; </span>&#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>(Of course, you should give the helper type a semantically meaningful name if possible.)</p>
+<p>In the case of the crosswalk <code>get</code> method, we might want to factor out a helper to extract the <code>response</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> GetResponse&lt;API, Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>&gt; =<br>  LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;;<br><br><span class="hljs-keyword">get</span>&lt;Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>&gt;(<br>  path: Path,<br>  handler: (<br>    params: ExtractRouteParams&lt;Path&gt;,<br>    request: express.Request&lt;<br>      ExtractRouteParams&lt;Path&gt;,<br>      GetResponse&lt;API, Path&gt;<br>    &gt;,<br>    response: express.Response&lt;GetResponse&lt;API, Path&gt;&gt;<br>  ) =&gt; <span class="hljs-built_in">Promise</span>&lt;GetResponse&lt;API, Path&gt;&gt;<br>)<br></code></pre></td></tr></table></figure>
+
+<p>While this does cut down on repetition in the <code>get</code> declaration itself, it forces us to repeat the constraint on <code>Path</code>. As with helper functions, helper types work best when they are semantically meaningful on their own. This makes them easier to think about and increases the likelihood that they&#39;ll be useful in other places.</p>
+<h3 id="Introduce-a-local-type-alias"><a href="#Introduce-a-local-type-alias" class="headerlink" title="Introduce a local type alias"></a>Introduce a local type alias</h3><p>The <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">first post</a> in this series looked at how you can use classes and currying to introduce new inference sites. Currying has another advantage: it introduces a new scope in which you can create type aliases (you can&#39;t introduce a type alias scoped to a <code>class</code>).</p>
+<p>Instead of:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  a: Expresion&lt;Involving&lt;T&gt;&gt;,</span></span><br><span class="hljs-function"><span class="hljs-params">  b: Expression&lt;Involving&lt;T&gt;&gt;</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">Expression</span>&lt;<span class="hljs-title">Involving</span>&lt;<span class="hljs-title">T</span>&gt;&gt; </span>&#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>You could write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params"></span>) </span>&#123;<br>  <span class="hljs-keyword">type</span> Exp = Expresion&lt;Involving&lt;T&gt;&gt;;<br><br>  <span class="hljs-keyword">return</span> (a: Exp, b: Exp): <span class="hljs-function"><span class="hljs-params">Exp</span> =&gt;</span> &#123;<br>    <span class="hljs-comment">// ...</span><br>  &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>By changing the signature, we&#39;re able to introduce a type alias that depends on the generic parameter, <code>T</code>. This greatly simplifies the resulting generic and doesn&#39;t require us to repeat any bounds on the generic parameters.</p>
+<p>Here&#39;s what <code>get</code> might look like if we curried it:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">get</span>&lt;Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>&gt;(<br>  path: Path<br>) =&gt; &#123;<br>  <span class="hljs-keyword">type</span> Params = ExtractRouteParams&lt;Path&gt;;<br>  <span class="hljs-keyword">type</span> ResponseType = LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;;<br><br>  <span class="hljs-keyword">return</span> (<br>    handler: (<br>      params: Params,<br>      request: express.Request&lt;Params, Response&gt;,<br>      response: express.Response&lt;Response&gt;<br>    ): <span class="hljs-built_in">Promise</span>&lt;Response&gt;) =&gt; &#123;<br>      <span class="hljs-comment">// ...</span><br>    &#125;<br>  );<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This is much clearer and much less repetitive. The downside is that it&#39;s more complicated for the caller. One hybrid option is to have a public, non-curried function that delegates to a curried, internal function. See crosswalk&#39;s <a href="https://github.com/danvk/crosswalk/blob/c63c9ef5a55b42c275f4f701c21d8eb03ae9ca5e/src/typed-router.ts#L88" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/crosswalk/blob/c63c9ef5a55b42c275f4f701c21d8eb03ae9ca5e/src/typed-router.ts#L88', event);"><code>registerWithBody</code></a> for an example of this in action.</p>
+<h3 id="Add-Generic-Parameters-with-Defaults"><a href="#Add-Generic-Parameters-with-Defaults" class="headerlink" title="Add Generic Parameters with Defaults"></a>Add Generic Parameters with Defaults</h3><p>What if you&#39;re defining a type alias, rather than a generic function? Then you can&#39;t create a local scope since there&#39;s no function body.</p>
+<p>But if you&#39;re repeating the same type expression <em>a lot</em>, there is one mediocre option available: you can define another generic parameter with a default value.</p>
+<p>Instead of writing:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T&lt;A&gt; = [F&lt;A&gt;, F&lt;A&gt;, F&lt;A&gt;];<br></code></pre></td></tr></table></figure>
+
+<p>You&#39;d write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> T&lt;A, B <span class="hljs-keyword">extends</span> F&lt;A&gt; = F&lt;A&gt;&gt; = [B, B, B];<br></code></pre></td></tr></table></figure>
+
+<p>You have to write <code>F&lt;A&gt;</code> twice, so this trick isn&#39;t helpful unless it appears three or more times in your type alias.</p>
+<p>You can use the same technique with generic functions. For example, here&#39;s how you might write crosswalk&#39;s <code>get</code> with an extra generic parameter:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">get</span>&lt;<br>  Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>,<br>  ResponseType <span class="hljs-keyword">extends</span><br>    LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt; =<br>    LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;,<br>&gt;(<br>  path: Path,<br>  handler: (<br>    params: ExtractRouteParams&lt;Path&gt;,<br>    request: express.Request&lt;<br>      ExtractRouteParams&lt;Path&gt;,<br>      ResponseType<br>    &gt;,<br>    response: express.Response&lt;ResponseType&gt;<br>  ) =&gt; <span class="hljs-built_in">Promise</span>&lt;ResponseType&gt;<br>) &#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>Because <code>ResponseType</code> appears three times, defining it this way <em>does</em> reduce repetition. But because <code>ExtractRouteParams&lt;Path&gt;</code> only appears twice, factoring that out in the same way wouldn&#39;t be a win.</p>
+<p>The upside of this technique is that it effectively introduces a local type alias without changing the function signature. The downside is that it&#39;s gross and potentially confusing for your users, who may think they need to pass a value for the additional type parameter. But it works with type aliases and it&#39;s (arguably) better than nothing!</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Just because you&#39;re doing generic programming, don&#39;t forget that you&#39;re programming! Cryptic code is hard to follow, so use meaningful type names. And repetitive code is hard to follow and error-prone, so use the techniques at your disposal to reduce repetition.</p>
+<p>Admittedly none of these options are perfect. I&#39;ve filed a <a href="https://github.com/microsoft/TypeScript/issues/42388" target="_blank" rel="noopener" onclick="return trackOutboundLink('conclusion', 'https://github.com/microsoft/TypeScript/issues/42388', event);">feature request</a> to support <a href="https://github.com/rust-lang/rfcs/blob/master/text/0135-where.md" target="_blank" rel="noopener" onclick="return trackOutboundLink('conclusion', 'https://github.com/rust-lang/rfcs/blob/master/text/0135-where.md', event);">Rust-style <code>where</code> syntax</a> for generics, which would let you write <code>get</code> like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">get</span>(<br>  path: Path,<br>  handler: (<br>    params: Params,<br>    request: express.Request&lt;Params, ResponseType&gt;,<br>    response: express.Response&lt;ResponseType&gt;<br>  ) =&gt; <span class="hljs-built_in">Promise</span>&lt;ResponseType&gt;<br>) where<br>  Path <span class="hljs-keyword">extends</span> keyof API &amp; <span class="hljs-built_in">string</span>,<br>  Params = ExtractRouteParams&lt;Path&gt;,<br>  ResponseType = LooseKey2&lt;API[Path], <span class="hljs-string">'get'</span>, <span class="hljs-string">'response'</span>&gt;,<br>&#123; <span class="hljs-comment">/* ... */</span> &#125;<br></code></pre></td></tr></table></figure>
+
+<p>In other words, you&#39;d get the local type alias without any of the downside. This would make the story around reducing repetition much better (and this blog post happily obsolete!). If you like the idea, please go vote it up!</p>
+<p>The posts in this series have looked at how generic types are computed and inferred. In the next (and hopefully last) post, we&#39;ll look at your options for controlling how they&#39;re displayed.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a href="https://twitter.com/danvdk" target="_blank" rel="noopener" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript" target="_blank" rel="noopener" onclick="return trackOutboundLink('conclusion', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a href="http://disqus.com" target="_blank" rel="noopener" class="dsq-brlink" onclick="return trackOutboundLink('conclusion', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" target="_blank" rel="noopener" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2021 <a class="url fn" href="https://danvk.org" target="_blank" rel="noopener" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
