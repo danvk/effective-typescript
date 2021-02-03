@@ -99,9 +99,8 @@
 <li>Part 0: <a href="/2020/08/12/generics-golden-rule/">The Golden Rule of Generics</a></li>
 <li>Part 1: <a href="/2020/12/04/gentips-1-curry/">Use Classes and Currying to create new inference sites</a></li>
 <li>Part 2: Intersect what you have with whatever TypeScript wants</li>
-<li>Part 3: ???</li>
+<li>Part 3: <a href="/2021/01/20/gentips-3-aliases/">Avoid Repeating Type Expressions</a></li>
 <li>Part 4: ???</li>
-<li>Part 5: ???</li>
 </ul>
 <p>Recall that an API definition in <a href="https://github.com/danvk/crosswalk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> looks something like this:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> API &#123;<br>  <span class="hljs-string">'/users'</span>: &#123;<br>    <span class="hljs-keyword">get</span>: GetEndpoint&lt;UsersResponse&gt;;<br>    post: Endpoint&lt;CreateUserRequest, User&gt;;<br>  &#125;;<br>  <span class="hljs-string">'/users/:userId'</span>: &#123;<br>    <span class="hljs-keyword">get</span>: GetEndpoint&lt;User&gt;;<br>    put: Endpoint&lt;UpdateUser, User&gt;;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>

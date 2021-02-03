@@ -133,6 +133,28 @@
 
   <div class="container">
   
+    <div class="row hentry" id="pet-peeves">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2021/02/03/pet-peeves/">Four words to avoid in TypeScript writing</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2021-02-03T18:40:00.000Z" itemprop="datePublished">
+        Wed 03 February 2021
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p>I&#39;ve <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">written</a> <a href="https://effectivetypescript.com/archives/">many words</a> about TypeScript and I&#39;m sure I&#39;ve read even more. Here are four words that make me cringe every time I see them. If you write about TypeScript, please steer clear of these!</p>
+        <a class="read-more" href="/2021/02/03/pet-peeves/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="gentips-3-aliases">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -147,7 +169,15 @@
 
     <div class="entry-content">
       
-        <p>Recently there&#39;s been some <a href="https://twitter.com/kentcdodds/status/1348016701632221184" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/kentcdodds/status/1348016701632221184', event);">chatter</a> online about how you should use <a href="https://fettblog.eu/tidy-typescript-name-your-generics/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://fettblog.eu/tidy-typescript-name-your-generics/', event);">long names for generic types</a> (i.e. longer than just <code>T</code>). I&#39;d generalize all this a bit to say:</p>
+        <p><em>This is part of an ongoing series on tips I learned for working with TypeScript generics from building the <a href="https://github.com/danvk/crosswalk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library. Check out <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">part 1</a> for more background.</em></p>
+<ul>
+<li>Part 0: <a href="/2020/08/12/generics-golden-rule/">The Golden Rule of Generics</a></li>
+<li>Part 1: <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">Use Classes and Currying to create new inference sites</a></li>
+<li>Part 2: <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">Intersect what you have with whatever TypeScript wants</a></li>
+<li>Part 3: Avoid Repeating Type Expressions</li>
+<li>Part 4: ???</li>
+</ul>
+<p>Recently there&#39;s been some <a href="https://twitter.com/kentcdodds/status/1348016701632221184" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/kentcdodds/status/1348016701632221184', event);">chatter</a> online about how you should use <a href="https://fettblog.eu/tidy-typescript-name-your-generics/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://fettblog.eu/tidy-typescript-name-your-generics/', event);">long names for generic types</a> (i.e. longer than just <code>T</code>). I&#39;d generalize all this a bit to say:</p>
 <p><strong>Just because you&#39;re writing generics, don&#39;t forget everything you&#39;ve learned about programming!</strong></p>
 <p>So yes, give long-lived variables meaningful names. But also avoid repeating yourself by factoring out common expressions.</p>
 <p>This post presents a few patterns for reducing repetition in generics. None of them are perfect, but they&#39;re worth learning because they&#39;re usually better than repeating yourself!</p>
@@ -352,29 +382,6 @@ Strategies for mitigating prop drilling with React and TypeScript</a>.</p>
 </blockquote>
 <p>I love this rule because it&#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.</p>
         <a class="read-more" href="/2020/08/12/generics-golden-rule/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="safe-queryselector">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2020/07/27/safe-queryselector/">Writing a safe querySelector: the one-way street from values to types</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2020-07-27T13:57:32.000Z" itemprop="datePublished">
-        Mon 27 July 2020
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        The DOM's <code>document.querySelector</code> method is ubiquitious in JavaScript but somewhat tricky to type in a safe way. This post walks through how you can create a safe <code>querySelector</code> for use in TypeScript code and explains how this is an example of a general pattern of using values (which exist at runtime) as a source of truth, rather than types (which don't).
-
-        <a class="read-more" href="/2020/07/27/safe-queryselector/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
   </div>
