@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>In defense of interface: Using declaration merging to disable &#34;bad parts&#34;</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: In defense of interface: Using declaration merging to disable &#34;bad parts&#34;">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; In defense of interface: Using declaration merging to disable &#34;bad parts&#34;">
+    <meta name="twitter:description" content="TypeScript&amp;#39;s interface has gotten a bit of a bad rap lately, largely because of declaration merging, a behavior of interface that&amp;#39;s quite surprising when you first see it. This post explains what declaration merging is, why it is, and how you can use it to iron out some of JavaScript&amp;#39;s and TypeScript&amp;#39;s wrinkles in your own projects.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; In defense of interface: Using declaration merging to disable &#34;bad parts&#34;">
+    <meta property="og:description" content="TypeScript&amp;#39;s interface has gotten a bit of a bad rap lately, largely because of declaration merging, a behavior of interface that&amp;#39;s quite surprising when you first see it. This post explains what declaration merging is, why it is, and how you can use it to iron out some of JavaScript&amp;#39;s and TypeScript&amp;#39;s wrinkles in your own projects.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>In defense of interface: Using declaration merging to disable &#34;bad parts&#34;</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2021-06-03T21:00:56.000Z" itemprop="datePublished">
+              Thu 03 June 2021
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>TypeScript&#39;s <code>interface</code> has gotten a bit of a <a target="_blank" rel="noopener" href="https://twitter.com/kentcdodds/status/1392678508954980353" onclick="return trackOutboundLink('in defense of interface using declaration merging to disable bad parts', 'https://twitter.com/kentcdodds/status/1392678508954980353', event);">bad rap</a> lately, largely because of <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html" onclick="return trackOutboundLink('in defense of interface using declaration merging to disable bad parts', 'https://www.typescriptlang.org/docs/handbook/declaration-merging.html', event);">declaration merging</a>, a behavior of <code>interface</code> that&#39;s quite surprising when you first see it. This post explains what declaration merging is, <em>why</em> it is, and how you can use it to iron out some of JavaScript&#39;s and TypeScript&#39;s wrinkles in your own projects.</p>
+<span id="more"></span>
+
+<hr>
+<p>I recently implemented a multiselect feature on my product at work. For the most part this involved changing my state from:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> SelectionState &#123;<br>  featureId: <span class="hljs-built_in">string</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>to:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> SelectionState &#123;<br>  featureIds: <span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">string</span>&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>and tracking down all the resulting errors. But I had a bug! Sometimes I&#39;d click on a feature and it wouldn&#39;t get selected. Or, weirder, it would select a random smattering of other, unrelated features.</p>
+<p>I eventually realized that I&#39;d converted the existing code from:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">setSelectedFeatureId(featureId);<br></code></pre></td></tr></table></figure>
+
+<p>to</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">setSelectedFeatureIds(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>(featureId));<br></code></pre></td></tr></table></figure>
+
+<p>In my case <code>featureId</code> was something like <code>&quot;357&quot;</code> and, as you can see:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; new Set(&quot;357&quot;)<br>&#123;&quot;3&quot;, &quot;5&quot;, &quot;7&quot;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The <code>new Set</code> constructor takes an iterable, and JavaScript <code>string</code>s let you iterate over the sequence of their characters. Instead of selecting feature 357, I was selecting features 3, 5 and 7.</p>
+<p>The solution was to change it to:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">setSelectedFeatureIds(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>([featureId]));  <span class="hljs-comment">// one element array</span><br></code></pre></td></tr></table></figure>
+
+<p>Fixing one bug is fine, but it&#39;s better to find a way to make sure that same bug, or a whole class of bugs, never comes back. Since this is a blog about TypeScript, let&#39;s look at how we can use one of TypeScript&#39;s most head-scratching features to prevent ourselves (and our coworkers) from ever passing a <code>string</code> to the <code>Set</code> constructor again.</p>
+<h2 id="What-is-Declaration-Merging"><a href="#What-is-Declaration-Merging" class="headerlink" title="What is Declaration Merging?"></a>What is Declaration Merging?</h2><p>One of TypeScript&#39;s most surprising behaviors is <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html" onclick="return trackOutboundLink('what is declaration merging', 'https://www.typescriptlang.org/docs/handbook/declaration-merging.html', event);">declaration merging</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Product &#123;<br>  name: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-comment">// ...</span><br><br><span class="hljs-keyword">interface</span> Product &#123;<br>  price: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-keyword">declare</span> <span class="hljs-keyword">let</span> furby: Product;<br>furby.name;  <span class="hljs-comment">// ok, type is string</span><br>furby.price;  <span class="hljs-comment">// ok, type is number</span><br></code></pre></td></tr></table></figure>
+
+<p>Even though they may be separated by thousands of lines of code or in entirely different modules, the two declarations of the <code>Product</code> interface are <em>merged</em> into a single type with both <code>name</code> and <code>price</code> properties.</p>
+<p>Declaration merging is surprising and it&#39;s given <code>interface</code> a bit of a <a target="_blank" rel="noopener" href="https://twitter.com/kentcdodds/status/1392678508954980353" onclick="return trackOutboundLink('what is declaration merging', 'https://twitter.com/kentcdodds/status/1392678508954980353', event);">bad rap</a>. <em>Effective TypeScript</em> even suggests using <code>type</code> instead of <code>interface</code> to avoid it (type aliases are not merged; see Item 13: Know the Differences Between <code>type</code> and <code>interface</code>).</p>
+<p>But it&#39;s not all bad! Let&#39;s look at why TypeScript merges declarations before we use this to ban the evil <code>Set</code> constructor.</p>
+<h2 id="Why-Declaration-Merging"><a href="#Why-Declaration-Merging" class="headerlink" title="Why Declaration Merging?"></a>Why Declaration Merging?</h2><p>Declaration merging really shines when you look at the <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/tsconfig#lib" onclick="return trackOutboundLink('why declaration merging', 'https://www.typescriptlang.org/tsconfig#lib', event);"><code>lib</code> setting</a> in <code>tsconfig.json</code>, which models the ECMAScript version that will be available at runtime.</p>
+<p>The file <code>lib.es5.core.d.ts</code> <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es5.d.ts#L1220" onclick="return trackOutboundLink('why declaration merging', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es5.d.ts#L1220', event);">contains declarations</a> for built-in methods on the <code>Array</code> type as of 2009 vintage ES5:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Array&lt;T&gt; &#123;<br>  length: <span class="hljs-built_in">number</span>;<br>  pop(): T | <span class="hljs-literal">undefined</span>;<br>  push(...items: T[]): <span class="hljs-built_in">number</span>;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>ES2015 added a few new methods, for example <code>Array.prototype.find</code>. When you add <code>es2015</code> to the <code>lib</code> setting in <code>tsconfig.json</code>, TypeScript pulls in <code>lib.es2015.core.d.ts</code>, which <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.core.d.ts#L21-L32" onclick="return trackOutboundLink('why declaration merging', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.core.d.ts#L21-L32', event);">defines those methods</a>, too:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Array&lt;T&gt; &#123;<br>  find&lt;S <span class="hljs-keyword">extends</span> T&gt;(predicate: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">this</span>: <span class="hljs-built_in">void</span>, value: T, index: <span class="hljs-built_in">number</span>, obj: T[]</span>) =&gt;</span> value is S, thisArg?: <span class="hljs-built_in">any</span>): S | <span class="hljs-literal">undefined</span>;<br>  find(predicate: <span class="hljs-function">(<span class="hljs-params">value: T, index: <span class="hljs-built_in">number</span>, obj: T[]</span>) =&gt;</span> unknown, thisArg?: <span class="hljs-built_in">any</span>): T | <span class="hljs-literal">undefined</span>;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The net effect when these declarations are merged is that TypeScript will only know about <code>find</code> if your <code>lib</code> includes <code>es2015</code> (or later). Which is exactly what you want!</p>
+<p>I assume that <code>lib</code> was the motivation behind declaration merging. But you can make use of it in your own code, too. Let&#39;s use it to ban the &quot;evil&quot; <code>Set</code> constructor.</p>
+<h2 id="Banning-the-Evil-Set-Constructor"><a href="#Banning-the-Evil-Set-Constructor" class="headerlink" title="Banning the Evil Set Constructor"></a>Banning the Evil <code>Set</code> Constructor</h2><p>Recall that we want to disallow <code>new Set(&quot;string&quot;)</code> in our own code without affecting other invocations of the <code>Set</code> constructor.</p>
+<p>Here&#39;s the <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.collection.d.ts#L58-L71" onclick="return trackOutboundLink('banning the evil set constructor', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.collection.d.ts#L58-L71', event);">declaration of <code>Set</code></a> from <code>lib.es2015.collections.d.ts</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Set&lt;T&gt; &#123;<br>    add(value: T): <span class="hljs-built_in">this</span>;<br>    <span class="hljs-keyword">delete</span>(value: T): <span class="hljs-built_in">boolean</span>;<br>    has(value: T): <span class="hljs-built_in">boolean</span>;<br>    <span class="hljs-keyword">readonly</span> size: <span class="hljs-built_in">number</span>;<br>    <span class="hljs-comment">// ...</span><br>&#125;<br><br><span class="hljs-keyword">interface</span> SetConstructor &#123;<br>    <span class="hljs-keyword">new</span> &lt;T = <span class="hljs-built_in">any</span>&gt;(values?: <span class="hljs-keyword">readonly</span> T[] | <span class="hljs-literal">null</span>): <span class="hljs-built_in">Set</span>&lt;T&gt;;<br>    <span class="hljs-keyword">readonly</span> prototype: <span class="hljs-built_in">Set</span>&lt;<span class="hljs-built_in">any</span>&gt;;<br>&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> <span class="hljs-built_in">Set</span>: SetConstructor;<br></code></pre></td></tr></table></figure>
+
+<p>Sometimes type declarations model the type of an instance (<code>Set</code>) and the type of the class (<code>SetConstructor</code>) separately. In this case we want to merge something into <code>SetConstructor</code>.</p>
+<p>There&#39;s also an <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.iterable.d.ts#L169-L185" onclick="return trackOutboundLink('banning the evil set constructor', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es2015.iterable.d.ts#L169-L185', event);">overload of the constructor</a> in <code>lib.es2015.iterable.d.ts</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> SetConstructor &#123;<br>    <span class="hljs-keyword">new</span> &lt;T&gt;(iterable?: Iterable&lt;T&gt; | <span class="hljs-literal">null</span>): <span class="hljs-built_in">Set</span>&lt;T&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>We&#39;ll want to overload this one. Put this declaration in a <code>.d.ts</code> file somewhere in your project scope, e.g. <code>declarations/ban-evil-set-constructor.d.ts</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> SetConstructor &#123;<br>  <span class="hljs-keyword">new</span> (str: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">void</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>When this gets merged with the other <code>SetConstructor</code> declarations, the net effect is that the problematic usage will trigger a type error without affecting the others:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">setSelectedFeatureIds(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>(<span class="hljs-string">&#x27;123&#x27;</span>));<br><span class="hljs-comment">//                    ~~~~~~~~~~~~~~</span><br><span class="hljs-comment">// Argument of type &#x27;void&#x27; is not assignable to parameter</span><br><span class="hljs-comment">//   of type &#x27;ReadonlySet&lt;string&gt;&#x27;.</span><br>setSelectedFeatureIds([<span class="hljs-string">&#x27;1&#x27;</span>, <span class="hljs-string">&#x27;2&#x27;</span>, <span class="hljs-string">&#x27;3&#x27;</span>]);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="What-else-can-you-do-with-this"><a href="#What-else-can-you-do-with-this" class="headerlink" title="What else can you do with this?"></a>What else can you do with this?</h2><p>That was neat! What else can we do with this technique?</p>
+<p>A TypeScript pet peeve of mine has always been that <code>JSON.parse</code> returns a dangerous <code>any</code> type. This <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es5.d.ts#L1052-L1079" onclick="return trackOutboundLink('what else can you do with this', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.es5.d.ts#L1052-L1079', event);">declaration</a> comes from <code>lib.es5.d.ts</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> JSON &#123;<br>    parse(text: <span class="hljs-built_in">string</span>, reviver?: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">this</span>: <span class="hljs-built_in">any</span>, key: <span class="hljs-built_in">string</span>, value: <span class="hljs-built_in">any</span></span>) =&gt;</span> <span class="hljs-built_in">any</span>): <span class="hljs-built_in">any</span>;<br>    <span class="hljs-comment">// ...</span><br>&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-keyword">var</span> <span class="hljs-built_in">JSON</span>: <span class="hljs-built_in">JSON</span>;<br></code></pre></td></tr></table></figure>
+
+<p>A safer return type would be <code>unknown</code>. This type was only <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type" onclick="return trackOutboundLink('what else can you do with this', 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-0.html#new-unknown-top-type', event);">introduced in TypeScript 3.0</a> (July 2018) and changing this declaration would be a hugely breaking change for the TypeScript ecosystem as a whole. But there&#39;s no reason you can&#39;t &quot;fix&quot; it in your own project!</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// declarations/safe-json.d.ts</span><br><span class="hljs-keyword">interface</span> JSON &#123;<br>  parse(text: <span class="hljs-built_in">string</span>, reviver?: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-built_in">this</span>: <span class="hljs-built_in">any</span>, key: <span class="hljs-built_in">string</span>, value: <span class="hljs-built_in">any</span></span>) =&gt;</span> <span class="hljs-built_in">any</span>): unknown;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Now you won&#39;t be able to use the result of <code>JSON.parse</code> without going through a type assertion or type guard first:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ResponseType &#123;<br>  lastModifiedAt: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br><br><span class="hljs-keyword">const</span> obj1 = <span class="hljs-built_in">JSON</span>.parse(apiResponse);<br>obj1.lastModifiedAt;<br><span class="hljs-comment">// ~~~~~~~~~~~~~~~ Object is of type &#x27;unknown&#x27;.</span><br><br><span class="hljs-keyword">const</span> obj2 = <span class="hljs-built_in">JSON</span>.parse(apiResponse) <span class="hljs-keyword">as</span> ResponseType;<br>obj2.lastModifiedAt; <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>You can do something similar with <code>Response.prototype.json()</code>, which is used in the <code>fetch</code> API. Its <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.dom.d.ts#L2622-L2630" onclick="return trackOutboundLink('what else can you do with this', 'https://github.com/microsoft/TypeScript/blob/87c5b6a752f8ac3239ac05fbcbbb889dc7c0019d/lib/lib.dom.d.ts#L2622-L2630', event);">declaration</a> comes from <code>interface Body</code> in <code>lib.dom.d.ts</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Body &#123;<br>  <span class="hljs-keyword">readonly</span> body: ReadableStream&lt;<span class="hljs-built_in">Uint8Array</span>&gt; | <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">readonly</span> bodyUsed: <span class="hljs-built_in">boolean</span>;<br>  arrayBuffer(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">ArrayBuffer</span>&gt;;<br>  blob(): <span class="hljs-built_in">Promise</span>&lt;Blob&gt;;<br>  formData(): <span class="hljs-built_in">Promise</span>&lt;FormData&gt;;<br>  json(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">any</span>&gt;;<br>  text(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">string</span>&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>If you merge in a new declaration for <code>json()</code>, you can get <code>unknown</code> types back instead of <code>any</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// declarations/safe-json.d.ts</span><br><span class="hljs-keyword">interface</span> Body &#123;<br>  json(): <span class="hljs-built_in">Promise</span>&lt;unknown&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>Declaration merging is surprising and controversial, but it&#39;s not all bad. TypeScript uses it to great effect in modeling which library methods will be available at runtime. And you can use it modify or disallow those methods as you like for your project.</p>
+<p>A few notes to conclude:</p>
+<ul>
+<li><p>As with all type-level constructs, this only affects type checking. The runtime behavior the <code>Set</code> constructor is not affected, either in your own code or in library code.</p>
+</li>
+<li><p>This technique is best used either to make the built-in types stricter, or to disallow certain things. If you add declarations that don&#39;t reflect reality at runtime, you can create a really confusing situation. Incorrect types can be worse than no types.</p>
+</li>
+<li><p>Making a constructor return <code>void</code> isn&#39;t itself an error. So calling <code>new Set(&quot;string&quot;)</code> on its own will not cause a type error. You only get the error when you try to use the resulting value, which gets a <code>void</code> type. This is fine in our case, but if the method you want to &quot;knock out&quot; already returns <code>void</code>, then this technique won&#39;t work as well. (link to &quot;user-defined type error&quot; issue)</p>
+</li>
+</ul>
+<p>References:</p>
+<ul>
+<li>TypeScript Handbook page on <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/declaration-merging.html" onclick="return trackOutboundLink('conclusions', 'https://www.typescriptlang.org/docs/handbook/declaration-merging.html', event);">declaration merging</a>.</li>
+<li>TypeScript Handbook page on <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html#global-modifying-modules" onclick="return trackOutboundLink('conclusions', 'https://www.typescriptlang.org/docs/handbook/declaration-files/templates/global-modifying-module-d-ts.html#global-modifying-modules', event);">global augmentation</a>.</li>
+</ul>
+<!--
+
+References:
+- KCD tweet about how augmentation makes him prefer `type`: https://twitter.com/kentcdodds/status/1392678508954980353
+- Item 13: Know the Differences Between `type` and `interface`
+- Rob Palmer tweet (blog post?) about compiler performance implications of `type` vs. `interface`:
+  - https://twitter.com/robpalmer2/status/1319188885197422594?lang=en
+  - https://www.techatbloomberg.com/blog/10-insights-adopting-typescript-at-scale/
+  - "9. Generated declarations can inline types from dependencies"
+- Is "augmentation" the right term for this? Declaration merging?
+  - https://www.typescriptlang.org/docs/handbook/declaration-merging.html#global-augmentation
+  - "Declaration Merging" is the general name
+  - "Augmentation" refers specifically to patching a module or "global augmentation"
+- The TS handbook calls out global augmentation as "somewhat dangerous":
+
+Notes to hit:
+- Declaration merging is surprising
+- Merging works best for adding methods to the standard library, e.g. `lib.dom.d.ts`
+- The mistake I made with `new Set(string)`
+-->
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript" onclick="return trackOutboundLink('conclusions', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink" onclick="return trackOutboundLink('conclusions', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2021 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusions', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
