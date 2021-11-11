@@ -140,9 +140,6 @@
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Vector2 &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>  z?: <span class="hljs-built_in">never</span>;<br>&#125;<br><br><span class="hljs-comment">// OK with just --strict</span><br><span class="hljs-keyword">const</span> v: Vector2 = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">z</span>: <span class="hljs-literal">undefined</span>&#125;;<br><br><span class="hljs-comment">// Error with --exactOptionalPropertyTypes</span><br><span class="hljs-keyword">const</span> w: Vector2 = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">z</span>: <span class="hljs-literal">undefined</span>&#125;;<br><span class="hljs-comment">//                              ~</span><br><span class="hljs-comment">//    Type &#x27;undefined&#x27; is not assignable to type &#x27;never&#x27;.</span><br></code></pre></td></tr></table></figure>
 
 <p>So remember: in TypeScript, &quot;or&quot; is a union: <code>A | B</code> means either <code>A</code>, <code>B</code>, or both. Remember that &quot;both&quot; is a possibility, and you should either prevent it or handle it in your code.</p>
-<!--
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> K = <span class="hljs-string">&#x27;a&#x27;</span>;<br><span class="hljs-keyword">type</span> T = &#123;[k <span class="hljs-keyword">in</span> K]?: <span class="hljs-built_in">never</span>&#125;;<br><span class="hljs-comment">// this is &#123;a?: never&#125; with exactOptionalPropertyTypes but &#123;a?: undefined&#125; without.</span><br></code></pre></td></tr></table></figure>
-<p>---&gt;</p>
 
           </div>
         </div>
@@ -155,9 +152,9 @@
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" data-tag="subscribe newsletter">my newsletter</a>,
-          the <a href="/atom.xml" data-tag="follow RSS">RSS feed</a>,
-          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" data-tag="follow on twitter">following me</a>
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
           on Twitter.
         </div>
       </div>
@@ -181,8 +178,8 @@
               (d.head || d.body).appendChild(s);
             })();
           </script>
-        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
         </div>
       </div>
     </div>
@@ -191,9 +188,9 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
-        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
-        <a href="/mail/" data-tag="post learn more hover" class="btn btn-info btn-lg">Subscribe</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
     </div>
   </div>
@@ -202,7 +199,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more cover image">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -219,10 +216,9 @@
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2021 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>
 </body>
 </html>
---></div></div></div></div></div></section></body></html>
