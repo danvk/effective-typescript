@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Exclusive Or and the Optional never Trick</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Exclusive Or and the Optional never Trick">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Exclusive Or and the Optional never Trick">
+    <meta name="twitter:description" content="This post looks at how TypeScript&#39;s type union operator (| aka &#34;pipe&#34; or &#34;or&#34;) is really an inclusive or, and how this can come as a surprise. It presents a few options for getting an exclusive or if that&#39;s what you want, including the &#34;optional never&#34; trick.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Exclusive Or and the Optional never Trick">
+    <meta property="og:description" content="This post looks at how TypeScript&#39;s type union operator (| aka &#34;pipe&#34; or &#34;or&#34;) is really an inclusive or, and how this can come as a surprise. It presents a few options for getting an exclusive or if that&#39;s what you want, including the &#34;optional never&#34; trick.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Exclusive Or and the Optional never Trick</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2021-11-11T22:00:00.000Z" itemprop="datePublished">
+              Thu 11 November 2021
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>Apologies for the <a href="https://effectivetypescript.com/2021/06/03/interface/">long delay</a> between posts. I&#39;ve been busy <a target="_blank" rel="noopener" href="https://www.instagram.com/p/CU8hUZwJ3be/" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.instagram.com/p/CU8hUZwJ3be/', event);">getting married</a> and <a target="_blank" rel="noopener" href="https://www.instagram.com/p/CWBG_BGrl31/" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.instagram.com/p/CWBG_BGrl31/', event);">climbing</a>. With winter setting in and the wedding behind me, I hope that I&#39;ll find more time for writing.</em></p>
+<blockquote>
+<p>&quot;Do you want coffee or tea?&quot;</p>
+<p>&quot;Yes&quot;</p>
+</blockquote>
+<p>In ordinary speech, &quot;or&quot; means &quot;exclusive or.&quot; Only programmers and logicians use an <em>inclusive</em> or.</p>
+<p>In TypeScript, it&#39;s easy to get mixed up between these two:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ThingOne &#123;<br>  shirtColor: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">interface</span> ThingTwo &#123;<br>  hairColor: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">type</span> Thing = ThingOne | ThingTwo;<br></code></pre></td></tr></table></figure>
+
+<p>We usually read the last line as &quot;Type <code>Thing</code> is a <code>ThingOne</code> or <code>ThingTwo</code>.&quot; But just like JavaScript&#39;s runtime or (<code>||</code>), TypeScript&#39;s type-level or (<code>|</code>) is an <em>inclusive</em> or. There&#39;s no reason a thing can&#39;t be both a <code>ThingOne</code> <em>and</em> a <code>ThingTwo</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> allThings: Thing = &#123;<br>  shirtColor: <span class="hljs-string">&#x27;red&#x27;</span>,<br>  hairColor: <span class="hljs-string">&#x27;blue&#x27;</span>,<br>&#125;;  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>Why does this work? It&#39;s because TypeScript has a structural type system. Both the <code>ThingOne</code> and <code>ThingTwo</code> types allow additional properties that aren&#39;t declared in their interface (this fact is sometimes obscured by <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/interfaces.html#excess-property-checks" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.typescriptlang.org/docs/handbook/interfaces.html#excess-property-checks', event);">excess property checking</a>):</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> bothThings = &#123;<br>  shirtColor: <span class="hljs-string">&#x27;red&#x27;</span>,<br>  hairColor: <span class="hljs-string">&#x27;blue&#x27;</span>,<br>&#125;;<br><span class="hljs-keyword">const</span> thing1: Thing1 = bothThings;  <span class="hljs-comment">// ok</span><br><span class="hljs-keyword">const</span> thing2: Thing2 = bothThings;  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>So what if you really do want an exclusive or? What if you want to keep your <code>ThingOne</code>s and <code>ThingTwo</code>s separate? How can you model that?</p>
+<p>There&#39;s a standard trick, which is to use an <em>optional <code>never</code></em> type in your interface to disallow a property:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> OnlyThingOne &#123;<br>  shirtColor: <span class="hljs-built_in">string</span>;<br>  hairColor?: <span class="hljs-built_in">never</span>;<br>&#125;<br><span class="hljs-keyword">interface</span> OnlyThingTwo &#123;<br>  hairColor: <span class="hljs-built_in">string</span>;<br>  shirtColor?: <span class="hljs-built_in">never</span>;<br>&#125;<br><span class="hljs-keyword">type</span> ExclusiveThing = OnlyThingOne | OnlyThingTwo;<br></code></pre></td></tr></table></figure>
+
+<p>Now none of the assignments from before pass the type checker (see <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgPIgDYE8AqALUAc3RQG8BYAKGWQGcCowBhAewxagC46woiBuKjTxxgUVuygB+biAgA3aIMoBfKqEixEKdNnxEcAdxbIK1ZCLESO3WrwFC6DZmw4zkcxVGVrKYLAAOKACiAB4IGACutMCK+iCEyAC8aJi4BAkkyAA+qXoZhEYsylQILCB2yABGLGB48YS0yaaO9GIuktwA5FAQACZdADSOluKuXMhdVVEQQ1QqJZRlFWDIdUQAjNy66URZKTV1DbTKAPSnNDQAfje3yDiBEE0sMMgBUCxBjFiTo9ZQXWQcF6yFAZQAtgE4GBgNMIAA6UrlSrrBIAJm2aQaRWah3qBROVHOl2QtzuDyCz1e70+0H8kzajH+gOBKDBLEh0NhGARSJWQIwGGO3DCEWisQgDWaZmJlzJ8vujypbw+X3pXUZHQ4LJB7M5MLhiPMmv+3V6A2G5j+42600is0tCyoQA" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.typescriptlang.org/play?#code/JYOwLgpgTgZghgYwgAgPIgDYE8AqALUAc3RQG8BYAKGWQGcCowBhAewxagC46woiBuKjTxxgUVuygB+biAgA3aIMoBfKqEixEKdNnxEcAdxbIK1ZCLESO3WrwFC6DZmw4zkcxVGVrKYLAAOKACiAB4IGACutMCK+iCEyAC8aJi4BAkkyAA+qXoZhEYsylQILCB2yABGLGB48YS0yaaO9GIuktwA5FAQACZdADSOluKuXMhdVVEQQ1QqJZRlFWDIdUQAjNy66URZKTV1DbTKAPSnNDQAfje3yDiBEE0sMMgBUCxBjFiTo9ZQXWQcF6yFAZQAtgE4GBgNMIAA6UrlSrrBIAJm2aQaRWah3qBROVHOl2QtzuDyCz1e70+0H8kzajH+gOBKDBLEh0NhGARSJWQIwGGO3DCEWisQgDWaZmJlzJ8vujypbw+X3pXUZHQ4LJB7M5MLhiPMmv+3V6A2G5j+42600is0tCyoQA', event);">playground</a>):</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> thing1: OnlyThingOne = bothThings;<br><span class="hljs-comment">//    ~~~~~~ Types of property &#x27;hairColor&#x27; are incompatible.</span><br><span class="hljs-keyword">const</span> thing2: OnlyThingTwo = bothThings;<br><span class="hljs-comment">//    ~~~~~~ Types of property &#x27;shirtColor&#x27; are incompatible.</span><br><span class="hljs-keyword">const</span> allThings: ExclusiveThing = &#123;<br><span class="hljs-comment">//    ~~~~~~~~~ Types of property &#x27;shirtColor&#x27; are incompatible.</span><br>  shirtColor: <span class="hljs-string">&#x27;red&#x27;</span>,<br>  hairColor: <span class="hljs-string">&#x27;blue&#x27;</span>,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>This works because no value is assignable to a <code>never</code> type. But because the property is <em>optional</em>, there&#39;s exactly one way out: not having that property.</p>
+<p>This isn&#39;t just useful for unions. If you want to define a two dimensional vector type, for example, you might want to specifically disallow adding a third dimension:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Vector2 &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>  z?: <span class="hljs-built_in">never</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>With this type, you&#39;ll get an error if you accidentally pass a three-dimensional vector to a function like <code>norm</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">norm</span>(<span class="hljs-params">v: Vector2</span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-built_in">Math</span>.sqrt(v.x ** <span class="hljs-number">2</span> + v.y ** <span class="hljs-number">2</span>);<br>&#125;<br><span class="hljs-keyword">const</span> v = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">3</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">4</span>, <span class="hljs-attr">z</span>: <span class="hljs-number">5</span>&#125;;<br><span class="hljs-keyword">const</span> d = norm(v);<br><span class="hljs-comment">//             ~ Types of property &#x27;z&#x27; are incompatible.</span><br></code></pre></td></tr></table></figure>
+
+<p>This wouldn&#39;t be an error without the <code>z?: never</code> because the call is structurally valid, even though it&#39;s semantically incorrect.</p>
+<p>&quot;Tags&quot; are another common way to make an or exclusive:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ThingOne &#123;<br>  <span class="hljs-keyword">type</span>: <span class="hljs-string">&#x27;one&#x27;</span>;<br>  shirtColor: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">interface</span> ThingTwo &#123;<br>  <span class="hljs-keyword">type</span>: <span class="hljs-string">&#x27;two&#x27;</span>;<br>  hairColor: <span class="hljs-built_in">string</span>;<br>&#125;<br><span class="hljs-keyword">type</span> Thing = ThingOne | ThingTwo;<br></code></pre></td></tr></table></figure>
+
+<p>A string can&#39;t be both &quot;one&quot; <em>and</em> &quot;two&quot;, so there&#39;s no overlap between these types. This means there&#39;s no distinction between inclusive and exclusive or. This is one of many great reasons to use tagged unions when you can.</p>
+<p>It&#39;s a fun exercise to define an exclusive or generic:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> XOR&lt;A, B&gt; = <span class="hljs-comment">/* ??? */</span>;<br></code></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/C4TwDgpgBAGg8gJQDwEEA0UBCA+KBeKAegCooB+CqYwgbgFgAoRgSwDtgIAnAMwEMBjaHFYAbEABUAFmwDmw6AG9GUKAGdpnYAGEA9iJ2cAXGuCdZ9Bism9mnXfs5ljrCADcuFgL4t2XPoKhhMSlZcQB3HSglSyhrW3sDY1VTc2U1DW09AycoF3dOL0ZQSCgAUQAPfhEAV1VmdxDWGXxYRCQgiWkm+QwOxplwnWwLRn4dVmSoACMdYEl+1RbolXVbTIdjAHJOCAATTbQ0uLssoyhNqZqIA8ZPEYZCQigpCFVodR1qkV2oXhERabQLicAyqUbjSZzWQARmMfS6chcLRmcwWFkeKhUAD8cbjnuBXlAdNwoGAQZBNCBzscEpxNr8dlA2GMALZgXjAZiXCAAOnBE2AUChTQATHDRJ1QhFkbN5gjVOinpjcXjxATFsTSeSuKBzqtNLT6bxGcydGyOVyRLz+ZM-iIFsYKlVavUIP0lowMcqVSr8ZANSSyToKbrNvr1gYjSbWKz2ZzuXyYuHaVsdvtDjEaactpdqtcM3dGJ6ni83gyhABpG2C8bBBGwsqVGp1BoIj0xFYZFPnNM3BiFhhjAVEiX9MWN50tt1tgjLTFZjbnXP524WIA" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.typescriptlang.org/play?#code/C4TwDgpgBAGg8gJQDwEEA0UBCA+KBeKAegCooB+CqYwgbgFgAoRgSwDtgIAnAMwEMBjaHFYAbEABUAFmwDmw6AG9GUKAGdpnYAGEA9iJ2cAXGuCdZ9Bism9mnXfs5ljrCADcuFgL4t2XPoKhhMSlZcQB3HSglSyhrW3sDY1VTc2U1DW09AycoF3dOL0ZQSCgAUQAPfhEAV1VmdxDWGXxYRCQgiWkm+QwOxplwnWwLRn4dVmSoACMdYEl+1RbolXVbTIdjAHJOCAATTbQ0uLssoyhNqZqIA8ZPEYZCQigpCFVodR1qkV2oXhERabQLicAyqUbjSZzWQARmMfS6chcLRmcwWFkeKhUAD8cbjnuBXlAdNwoGAQZBNCBzscEpxNr8dlA2GMALZgXjAZiXCAAOnBE2AUChTQATHDRJ1QhFkbN5gjVOinpjcXjxATFsTSeSuKBzqtNLT6bxGcydGyOVyRLz+ZM-iIFsYKlVavUIP0lowMcqVSr8ZANSSyToKbrNvr1gYjSbWKz2ZzuXyYuHaVsdvtDjEaactpdqtcM3dGJ6ni83gyhABpG2C8bBBGwsqVGp1BoIj0xFYZFPnNM3BiFhhjAVEiX9MWN50tt1tgjLTFZjbnXP524WIA', event);">Give it a try!</a></p>
+<p>Here&#39;s <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/C4TwDgpgBAGg8gJQDwBUCMAaKKBMA+KAXgFgAoKCqACnSgDIoBvAbQGsoBLAOygFEAPAMYAbAK4ATCElYQQAewBm2HFhnyl6PAF0A-AC4oXCADcIAJwC+ASigAfMpWq56TNpx4CREqWsXZMUL4a+LoGRqaWVgDcZGTcwOYKAIaC0HBcwiAoABbcAObp0IwOUADOuWbAAMJywnJmBqXAZvkx5FDZSRxmNXVm+oYm5m0WcVwJZsmpUOmZOfkoAO5yTCWd3b31jc2tJeXd1bX1A+HDZKOkoJB8QmKlHKbzXHlEsIhIs1m5z4VYn095JZyPBtMiCORcJpQABGcmA2QBpVexXa+0qmwaUAA5GYIOIsRg1l0ekdMVjoWIIATzqDSAB6OnYbIQUrQcpyUTCcRQJLCYQw6DmMz1UpgiFQ+H5NAGf7fApGV6w+GItoMxwAP01Wuw4BZUD8YGFkEqIGx6xJfSxPNx7nBAFswElgBwKRAAHRiyHAKCS544GUZL4LZaKuEIuWlVWMyha7UoXVIg1G8ygbFow6W63Qbj2x3O10e0jgr08vmIgyeO4PCAA5FkNUx2OxnWQRNKQ1yY2prHpjFWpI2nNyB1Ol3Cd17CoZrbY3H4wntc0YgzkynU0gWWlqnIs6ADtIAaU9UIhczl0puXnujzldfaFF7pJXc-Xm+P3tPQb9FduomvNdvQhVnvDpiWXbEKVEKkFzfUggA" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://www.typescriptlang.org/play?#code/C4TwDgpgBAGg8gJQDwBUCMAaKKBMA+KAXgFgAoKCqACnSgDIoBvAbQGsoBLAOygFEAPAMYAbAK4ATCElYQQAewBm2HFhnyl6PAF0A-AC4oXCADcIAJwC+ASigAfMpWq56TNpx4CREqWsXZMUL4a+LoGRqaWVgDcZGTcwOYKAIaC0HBcwiAoABbcAObp0IwOUADOuWbAAMJywnJmBqXAZvkx5FDZSRxmNXVm+oYm5m0WcVwJZsmpUOmZOfkoAO5yTCWd3b31jc2tJeXd1bX1A+HDZKOkoJB8QmKlHKbzXHlEsIhIs1m5z4VYn095JZyPBtMiCORcJpQABGcmA2QBpVexXa+0qmwaUAA5GYIOIsRg1l0ekdMVjoWIIATzqDSAB6OnYbIQUrQcpyUTCcRQJLCYQw6DmMz1UpgiFQ+H5NAGf7fApGV6w+GItoMxwAP01Wuw4BZUD8YGFkEqIGx6xJfSxPNx7nBAFswElgBwKRAAHRiyHAKCS544GUZL4LZaKuEIuWlVWMyha7UoXVIg1G8ygbFow6W63Qbj2x3O10e0jgr08vmIgyeO4PCAA5FkNUx2OxnWQRNKQ1yY2prHpjFWpI2nNyB1Ol3Cd17CoZrbY3H4wntc0YgzkynU0gWWlqnIs6ADtIAaU9UIhczl0puXnujzldfaFF7pJXc-Xm+P3tPQb9FduomvNdvQhVnvDpiWXbEKVEKkFzfUggA', event);">what I came up with</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> XOR&lt;T1, T2&gt; =<br>    (T1 &amp; &#123;[k <span class="hljs-keyword">in</span> Exclude&lt;keyof T2, keyof T1&gt;]?: <span class="hljs-built_in">never</span>&#125;) |<br>    (T2 &amp; &#123;[k <span class="hljs-keyword">in</span> Exclude&lt;keyof T1, keyof T2&gt;]?: <span class="hljs-built_in">never</span>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>This is roughly the same as the <a target="_blank" rel="noopener" href="https://github.com/krzkaczor/ts-essentials/blob/831ba8b6f3600872559c30e875ea74450953dc8a/lib/types.ts#L441-L445" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://github.com/krzkaczor/ts-essentials/blob/831ba8b6f3600872559c30e875ea74450953dc8a/lib/types.ts#L441-L445', event);"><code>XOR</code> implementation</a> from the <a target="_blank" rel="noopener" href="https://github.com/krzkaczor/ts-essentials" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://github.com/krzkaczor/ts-essentials', event);">ts-essentials</a> library.</p>
+<p>There&#39;s one caveat to the optional <code>never</code> trick that&#39;s worth knowing: unless you set the <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#exact-optional-property-types" onclick="return trackOutboundLink('exclusive or and the optional never trick', 'https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#exact-optional-property-types', event);"><code>--exactOptionalPropertyTypes</code></a> compiler flag (added in TS 4.4), you&#39;re allowed to assign <code>undefined</code> to an optional never field:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Vector2 &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>  z?: <span class="hljs-built_in">never</span>;<br>&#125;<br><br><span class="hljs-comment">// OK with just --strict</span><br><span class="hljs-keyword">const</span> v: Vector2 = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">z</span>: <span class="hljs-literal">undefined</span>&#125;;<br><br><span class="hljs-comment">// Error with --exactOptionalPropertyTypes</span><br><span class="hljs-keyword">const</span> w: Vector2 = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">1</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">2</span>, <span class="hljs-attr">z</span>: <span class="hljs-literal">undefined</span>&#125;;<br><span class="hljs-comment">//                              ~</span><br><span class="hljs-comment">//    Type &#x27;undefined&#x27; is not assignable to type &#x27;never&#x27;.</span><br></code></pre></td></tr></table></figure>
+
+<p>So remember: in TypeScript, &quot;or&quot; is a union: <code>A | B</code> means either <code>A</code>, <code>B</code>, or both. Remember that &quot;both&quot; is a possibility, and you should either prevent it or handle it in your code.</p>
+<!--
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> K = <span class="hljs-string">&#x27;a&#x27;</span>;<br><span class="hljs-keyword">type</span> T = &#123;[k <span class="hljs-keyword">in</span> K]?: <span class="hljs-built_in">never</span>&#125;;<br><span class="hljs-comment">// this is &#123;a?: never&#125; with exactOptionalPropertyTypes but &#123;a?: undefined&#125; without.</span><br></code></pre></td></tr></table></figure>
+<p>---&gt;</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" data-tag="subscribe newsletter">my newsletter</a>,
+          the <a href="/atom.xml" data-tag="follow RSS">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" data-tag="follow on twitter">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+        <a href="/mail/" data-tag="post learn more hover" class="btn btn-info btn-lg">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more cover image">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2021 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
+--></div></div></div></div></div></section></body></html>
