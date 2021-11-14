@@ -145,3 +145,7 @@ body.post .article img {
     margin-left: auto;
     margin-right: auto;
 }
+
+.all-posts-post {
+    margin-bottom: 0.25em;
+}

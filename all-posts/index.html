@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Effective TypeScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="index">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>All Effective TypeScript Posts</h2>
+    </div>
+  </div>
+
+  
+        <div class="row">
+          <div class="col-sm-12">
+            <h4>2021</h4>
+          </div>
+        </div>
+        
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-11-11
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/11/11/optional-never/">Exclusive Or and the Optional never Trick</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-06-03
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/06/03/interface/">In defense of interface: Using declaration merging to disable &#34;bad parts&#34;</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-05-06
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/05/06/unsoundness/">The Seven Sources of Unsoundness in TypeScript</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-04-09
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/04/09/unify-over-model/">The trouble with Jsonify: Unify types instead of modeling small differences</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-03-24
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/03/24/advent-of-code/">Advent of Code 2020, this time in Rust</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-02-03
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/02/03/pet-peeves/">Four words to avoid in TypeScript writing</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-01-20
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/01/20/gentips-3-aliases/">Generic Tips Part 3: Avoid Repeating Type Expressions</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2021-01-09
+      </div>
+      <div class="col-sm-10">
+        <a href="/2021/01/09/top-posts-2020/">Top Posts of 2020</a>
+      </div>
+    </div>
+  
+        <div class="row">
+          <div class="col-sm-12">
+            <h4>2020</h4>
+          </div>
+        </div>
+        
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-12-09
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/12/09/gentips-2-intersect/">Generic Tips Part 2: Intersect what you have with whatever TypeScript wants</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-12-04
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/12/04/gentips-1-curry/">Generic Tips Part 1: Use Classes and Currying to create new inference sites</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-11-05
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/11/05/template-literal-types/">TypeScript Splits the Atom!</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-10-20
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/10/20/tsprune/">Finding dead code (and dead types) in TypeScript</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-10-01
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/10/01/prop-drilling/">Repeat yourself a little less: Strategies for mitigating prop drilling with React and TypeScript</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-09-10
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/09/10/problem-sets/">TypeScript Exercises</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-08-12
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/08/12/generics-golden-rule/">The Golden Rule of Generics</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-07-27
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/07/27/safe-queryselector/">Writing a safe querySelector: the one-way street from values to types</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-06-30
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/06/30/literate-ts/">Type-safe blogs and books with literate-ts</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-06-16
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/06/16/typed-identity-functions/">Use typed identity functions to guide type inference</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-05-26
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/05/26/iterate-objects/">Item 54: Know How to Iterate Over Objects</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-05-12
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/05/12/unionize-objectify/">Unionize and Objectify: A Trick for Applying Conditional Types to Objects</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-04-28
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/04/28/avoid-inferable/">Item 19: Avoid Cluttering Your Code with Inferable Types</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-04-09
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/04/09/jsonify/">What&#39;s the type of JSON.parse(​JSON.stringify(x))?</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-03-24
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/03/24/null-values-to-perimeter/">Item 31: Push Null Values to the Perimeter of Your Types</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-03-09
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/03/09/evolving-any/">Item 41: Understand Evolving any</a>
+      </div>
+    </div>
+  
+    <div class="row all-posts-post">
+      <div class="col-sm-2">
+        2020-03-06
+      </div>
+      <div class="col-sm-10">
+        <a href="/2020/03/06/hello-world/">Welcome to Effective TypeScript!</a>
+      </div>
+    </div>
+  
+</div>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2021 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('all effective typescript posts', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
