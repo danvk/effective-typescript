@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>TypeScript Types: The First 500 Years (tsconf 2021 talk)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: TypeScript Types: The First 500 Years (tsconf 2021 talk)">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; TypeScript Types: The First 500 Years (tsconf 2021 talk)">
+    <meta name="twitter:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; TypeScript Types: The First 500 Years (tsconf 2021 talk)">
+    <meta property="og:description" content="Effective TypeScript: 62 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>TypeScript Types: The First 500 Years (tsconf 2021 talk)</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2021-12-10T14:25:00.000Z" itemprop="datePublished">
+              Fri 10 December 2021
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>My talk from tsconf 2021, <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=uN1zuV4DGRY&list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'https://www.youtube.com/watch?v=uN1zuV4DGRY&list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe', event);"><em>TypeScript Types: The First 500 Years</em></a>, is up on YouTube (<a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1HYknblfcAnbjbdDe4MYTyRQpCw_gV72n2cj88xH7z8c/edit?usp=sharing" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'https://docs.google.com/presentation/d/1HYknblfcAnbjbdDe4MYTyRQpCw_gV72n2cj88xH7z8c/edit?usp=sharing', event);">slides here</a>). Check it out!</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/uN1zuV4DGRY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<p>The talk tries to answer the question &quot;what is a type?&quot; It seems simple but it&#39;s actually quite tricky! The talk explains how sets can be built constructively (<code>&quot;A&quot; | &quot;B&quot; | &quot;C&quot;</code>), but that the more common approach in TypeScript is best thought of as a subtractive process, where you start from the raw, undifferentiated <code>unknown</code> type and then whittle your way down:</p>
+<img src="/images/unknown-marble.jpg" width="527" height="395" alt="Large block of marble with the word unknown on it" style="max-height: 395px">
+
+<p>It then talks about how TypeScript has given us the ability to &quot;carve&quot; out finer and finer details in our types over time, and how that lets us capture more and more errors in our code.</p>
+<p>Overall I&#39;m happy with how the talk turned out. Let me know what you think! All the <a target="_blank" rel="noopener" href="https://www.youtube.com/playlist?list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'https://www.youtube.com/playlist?list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe', event);">tsconf 2021</a> talks are online now. The Anders <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=V5OnAN63vls&list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe&index=2" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'https://www.youtube.com/watch?v=V5OnAN63vls&list=PL2z7rCjEG2kubUfEAHu-08-aK3Tyn9Zxe&index=2', event);">keynote</a> is always a highlight.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="disqus_thread"></div>
+          <script>
+            var disqus_config = function () {
+              this.page.identifier = document.location.pathname;  // Replace PAGE_URL with your page's canonical URL variable
+              this.page.url = 'https://effectivetypescript.com' + this.page.identifier;
+              };
+            (function() { // DON'T EDIT BELOW THIS LINE
+              var d = document, s = d.createElement('script');
+              s.src = 'https://effective-typescript.disqus.com/embed.js';
+              s.setAttribute('data-timestamp', +new Date());
+              (d.head || d.body).appendChild(s);
+            })();
+          </script>
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2021 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('typescript types the first  years tsconf  talk', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
