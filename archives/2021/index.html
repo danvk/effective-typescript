@@ -316,15 +316,15 @@
 
     <div class="entry-content">
       
-        <p><em>This is part of an ongoing series on tips I learned for working with TypeScript generics from building the <a href="https://github.com/danvk/crosswalk" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library. Check out <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">part 1</a> for more background.</em></p>
+        <p><em>This is part of an ongoing series on tips I learned for working with TypeScript generics from building the <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library. Check out <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">part 1</a> for more background.</em></p>
 <ul>
 <li>Part 0: <a href="/2020/08/12/generics-golden-rule/">The Golden Rule of Generics</a></li>
 <li>Part 1: <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">Use Classes and Currying to create new inference sites</a></li>
 <li>Part 2: <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">Intersect what you have with whatever TypeScript wants</a></li>
 <li>Part 3: Avoid Repeating Type Expressions</li>
-<li>Part 4: ???</li>
+<li>Part 4: <a href="https://effectivetypescript.com/2022/02/25/gentips-4-display/">The Display of Types</a></li>
 </ul>
-<p>Recently there&#39;s been some <a href="https://twitter.com/kentcdodds/status/1348016701632221184" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://twitter.com/kentcdodds/status/1348016701632221184', event);">chatter</a> online about how you should use <a href="https://fettblog.eu/tidy-typescript-name-your-generics/" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://fettblog.eu/tidy-typescript-name-your-generics/', event);">long names for generic types</a> (i.e. longer than just <code>T</code>). I&#39;d generalize all this a bit to say:</p>
+<p>Recently there&#39;s been some <a target="_blank" rel="noopener" href="https://twitter.com/kentcdodds/status/1348016701632221184" onclick="return trackOutboundLink('recent blog posts', 'https://twitter.com/kentcdodds/status/1348016701632221184', event);">chatter</a> online about how you should use <a target="_blank" rel="noopener" href="https://fettblog.eu/tidy-typescript-name-your-generics/" onclick="return trackOutboundLink('recent blog posts', 'https://fettblog.eu/tidy-typescript-name-your-generics/', event);">long names for generic types</a> (i.e. longer than just <code>T</code>). I&#39;d generalize all this a bit to say:</p>
 <p><strong>Just because you&#39;re writing generics, don&#39;t forget everything you&#39;ve learned about programming!</strong></p>
 <p>So yes, give long-lived variables meaningful names. But also avoid repeating yourself by factoring out common expressions.</p>
 <p>This post presents a few patterns for reducing repetition in generics. None of them are perfect, but they&#39;re worth learning because they&#39;re usually better than repeating yourself!</p>
