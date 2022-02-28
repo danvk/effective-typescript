@@ -179,59 +179,6 @@ Let&#39;s dive in to the strange world of type display!
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>While it may seem that you&#39;re stuck with however TypeScript chooses to display your type, that&#39;s not actually the case! You do have a few levers at your disposal. The <code>Resolve</code> alias is wonderful for removing implementation details from generic types. And where it doesn&#39;t work, you can sometimes add a special case to get the display that you want.</p>
 <p>Remember that <a target="_blank" rel="noopener" href="https://twitter.com/SeaRyanC/status/1414347018646921216" onclick="return trackOutboundLink('conclusion', 'https://twitter.com/SeaRyanC/status/1414347018646921216', event);">all representations are equally valid</a>, and that the TypeScript team might choose to change the display of your type at any time (as <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#smarter-type-alias-preservation" onclick="return trackOutboundLink('conclusion', 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-2.html#smarter-type-alias-preservation', event);">happened</a> with <code>keyof</code> in TypeScript 4.2). So once you&#39;ve got your types displaying the way you like, it&#39;s worth writing some tests to make sure they stay that way. Tools like <a target="_blank" rel="noopener" href="https://medium.com/hackernoon/testing-types-an-introduction-to-dtslint-b178f9b18ac8" onclick="return trackOutboundLink('conclusion', 'https://medium.com/hackernoon/testing-types-an-introduction-to-dtslint-b178f9b18ac8', event);">dtslint</a> and <a href="https://effectivetypescript.com/2020/06/30/literate-ts/">literate-ts</a>, which make assertions about the textual display of types, are the way to go here.</p>
 <p>Do you have other tricks for controlling type display? Let me know <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('conclusion', 'https://twitter.com/danvdk', event);">on Twitter</a> or in the comments below.</p>
-<hr>
-<!--
-## Accumulator-style recursive types
-
-In [TypeScript Splits the Atom][split-atom], I discussed the `ExtractRouteParams` generic, which extracts parameter types from Express routes:
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Another use of <a target="_blank" rel="noopener" href="https://twitter.com/typescript?ref_src=twsrc%5Etfw">@TypeScript</a> 4.1&#39;s template literal types: extracting the URL parameters from an express route. Pretty amazing you can do this in the type system! <a target="_blank" rel="noopener" href="https://t.co/gfZQy70whg">https://t.co/gfZQy70whg</a> <a target="_blank" rel="noopener" href="https://t.co/aEyfMwjjqX">pic.twitter.com/aEyfMwjjqX</a></p>&mdash; Dan Vanderkam (@danvdk) <a target="_blank" rel="noopener" href="https://twitter.com/danvdk/status/1301707026507198464?ref_src=twsrc%5Etfw">September 4, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-Here's a simplified version of that generic (Jan Sommer has a [nice writeup][extract-writeup] with more details on how this works):
-
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> ExtractRouteParams&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>&gt; =<br>  T <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">$&#123;infer _Start&#125;</span>:<span class="hljs-subst">$&#123;infer Param&#125;</span>/<span class="hljs-subst">$&#123;infer Rest&#125;</span>`</span><br>  ? &#123;[k <span class="hljs-keyword">in</span> Param]: <span class="hljs-built_in">string</span>&#125; &amp; ExtractRouteParams&lt;Rest&gt;<br>  : T <span class="hljs-keyword">extends</span> <span class="hljs-string">`<span class="hljs-subst">$&#123;infer _Start&#125;</span>:<span class="hljs-subst">$&#123;infer Param&#125;</span>`</span><br>  ? &#123;[k <span class="hljs-keyword">in</span> Param]: <span class="hljs-built_in">string</span>&#125;<br>  : &#123;&#125;;<br><br><span class="hljs-keyword">type</span> P = ExtractRouteParams&lt;<span class="hljs-string">&#x27;/posts/:postId&#x27;</span>&gt;;<br><span class="hljs-comment">//   ^? type P = &#123;postId: string&#125;</span><br></code></pre></td></tr></table></figure>
-
-<p>The idea is that we pull off the first <code>:param</code> piece and intersect it with the result of calling <code>ExtractRouteParams</code> recursively on the rest of the string. Neat! But unfortunately, this has an ugly display for routes with multiple params:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> C = ExtractRouteParams&lt;<span class="hljs-string">&#x27;/posts/:postId/:commentId&#x27;</span>&gt;;<br><span class="hljs-comment">//   ^? type C = &#123; postId: string &#125; &amp; &#123; commentId: string &#125;</span><br></code></pre></td></tr></table></figure>
-
-<p>It would be nice to get rid of that intersection type in the display. <code>Resolve</code> is up to the task:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> C = Resolve&lt;ExtractRouteParams&lt;<span class="hljs-string">&#x27;/posts/:postId/:commentId&#x27;</span>&gt;&gt;;<br><span class="hljs-comment">//   ^? type C = &#123; postId: string; commentId: string &#125;</span><br></code></pre></td></tr></table></figure>
-
-<p>But this requires wrapping the generic. An alternative approach is</p>
-<p>... looking back on this I actually much prefer the intersection + resolve approach since it has better support for things like optional params ...</p>
-<p>Some techniques to cover:</p>
-<ul>
-<li>Using &quot;accumulator style&quot; for recursive types, rather than the more straightforward approach.</li>
-<li>Using the <code>unknown &amp;</code> or <code>&#123;&#125; &amp;</code> trick.</li>
-<li>Using <code>Simplify&lt;T&gt; = &#123;[K in keyof T]: T[K]&#125;</code> (is this the same as <code>unknown &amp;</code>?) Do you need the <code>NOP</code> thing from my Stack Overflow question?</li>
-<li>There&#39;s also <code>Exclude&lt;K, never&gt;</code> for <code>keyof</code> expansion (see <a target="_blank" rel="noopener" href="https://twitter.com/danvdk/status/1414343269522227207">my-gripe-about-keyof</a>).</li>
-</ul>
-<p>When do you use each of these? How do you catch these sorts of breakages?</p>
-<p>What exactly and when exactly was the break in display of <code>keyof</code>? And is it the same as the issue with <code>db/utils.ts</code>? (crosswalk actually seems OK.)</p>
-<p>This has a not very useful type when you mouse over it in recent TypeScripts:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> getEvaluationById = selectOneBy(<span class="hljs-string">&#x27;evaluation&#x27;</span>, [<span class="hljs-string">&#x27;study_id&#x27;</span>, <span class="hljs-string">&#x27;slug&#x27;</span>]);<br></code></pre></td></tr></table></figure>
-
-<p>As of 4.4 it&#39;s this:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> getEvaluationById: <span class="hljs-function">(<span class="hljs-params">db: Queryable, select: Pick&lt;DBEvaluation, <span class="hljs-string">&quot;study_id&quot;</span> | <span class="hljs-string">&quot;slug&quot;</span>&gt;</span>) =&gt;</span> <span class="hljs-built_in">Promise</span>&lt;DBEvaluation | <span class="hljs-literal">null</span>&gt;<br></code></pre></td></tr></table></figure>
-
-<p>I&#39;d rather it expand the <code>Pick</code>, like it does when you write:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> P = Pick&lt;DBEvaluation, <span class="hljs-string">&#x27;study_id&#x27;</span> | <span class="hljs-string">&#x27;slug&#x27;</span>&gt;;<br></code></pre></td></tr></table></figure>
-
-<p>Mousing over <code>P</code> shows:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> P = &#123;<br>    slug: <span class="hljs-built_in">string</span>;<br>    study_id: <span class="hljs-built_in">string</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>So whence the difference?</p>
-<p>No combination of <code>unknown &amp;</code> seems to help. Inlining the definition of <code>Pick</code> actually makes it worse (<code>SelectType</code> is internal to <code>selectWhere</code>):</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> getEvaluationsByStudyIdRaw: <span class="hljs-function">(<span class="hljs-params">db: Queryable, select: SelectType</span>) =&gt;</span> <span class="hljs-built_in">Promise</span>&lt;DBEvaluation[]&gt;<br></code></pre></td></tr></table></figure>
-
-<p>This post gives this as an example:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// type is &#123;</span><br><span class="hljs-comment">//   name: string;</span><br><span class="hljs-comment">//   age: number;</span><br><span class="hljs-comment">//   greet: never;</span><br><span class="hljs-comment">// &#125;</span><br></code></pre></td></tr></table></figure>
-
-<p>vs.</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// type is &#123;</span><br><span class="hljs-comment">//   name: string;</span><br><span class="hljs-comment">//   age: number;</span><br><span class="hljs-comment">// &#125;</span><br></code></pre></td></tr></table></figure>
-
-<p><a href="https://effectivetypescript.com/2020/05/12/unionize-objectify/">https://effectivetypescript.com/2020/05/12/unionize-objectify/</a></p>
-<p>--&gt;</p>
 
           </div>
         </div>
@@ -244,9 +191,9 @@ Here's a simplified version of that generic (Jan Sommer has a [nice writeup][ext
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" data-tag="subscribe newsletter">my newsletter</a>,
-          the <a href="/atom.xml" data-tag="follow RSS">RSS feed</a>,
-          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" data-tag="follow on twitter">following me</a>
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
           on Twitter.
         </div>
       </div>
@@ -270,8 +217,8 @@ Here's a simplified version of that generic (Jan Sommer has a [nice writeup][ext
               (d.head || d.body).appendChild(s);
             })();
           </script>
-        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="http://disqus.com/?ref_noscript" onclick="return trackOutboundLink('conclusion', 'http://disqus.com/?ref_noscript', event);">comments powered by Disqus.</a></noscript>
+        <a target="_blank" rel="noopener" href="http://disqus.com" class="dsq-brlink" onclick="return trackOutboundLink('conclusion', 'http://disqus.com', event);">comments powered by <span class="logo-disqus">Disqus</span></a>
         </div>
       </div>
     </div>
@@ -280,9 +227,9 @@ Here's a simplified version of that generic (Jan Sommer has a [nice writeup][ext
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
-        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
-        <a href="/mail/" data-tag="post learn more hover" class="btn btn-info btn-lg">Subscribe</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
     </div>
   </div>
@@ -291,7 +238,7 @@ Here's a simplified version of that generic (Jan Sommer has a [nice writeup][ext
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more cover image">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -308,10 +255,9 @@ Here's a simplified version of that generic (Jan Sommer has a [nice writeup][ext
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2022 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusion', 'https://hexo.io/', event);">Hexo</a></div>
     </address>
   </div>
 </footer>
 </body>
 </html>
---></div></div></div></div></div></section></body></html>
