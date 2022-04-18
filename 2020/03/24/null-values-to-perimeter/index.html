@@ -94,12 +94,12 @@
             </time>
           </div>
           <div class="entry-content">
-            <p><em>Chapter 4 of <a href="https://amzn.to/38s1oCK" target="_blank" rel="noopener" onclick="return trackOutboundLink('', 'https://amzn.to/38s1oCK', event);">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. Design your types well and you&#39;ll have a happy, productive relationship with the type checker. Design them poorly and you&#39;ll find yourself constantly fighting unproductive battles with it. This item discusses a frequent source of problems in type design: where to put your <code>null</code> types.</em></p>
+            <p><em>Chapter 4 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('item  push null values to the perimeter of your types', 'https://amzn.to/38s1oCK', event);">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. Design your types well and you&#39;ll have a happy, productive relationship with the type checker. Design them poorly and you&#39;ll find yourself constantly fighting unproductive battles with it. This item discusses a frequent source of problems in type design: where to put your <code>null</code> types.</em></p>
 <p>When you first turn on <code>strictNullChecks</code>, it may seem as though you have to add scores of <code>if</code> statements checking for <code>null</code> and <code>undefined</code> values throughout your code. This is often because the relationships between null and non-null values are implicit: when variable A is non-null, you know that variable B is also non-null and vice versa. These implicit relationships are confusing both for human readers of your code and for the type checker.</p>
 <p>Values are easier to work with when they&#39;re either completely null or completely non-null, rather than a mix. You can model this by pushing the null values out to the perimeter of your structures.</p>
 <p>Suppose you want to calculate the min and max of a list of numbers. We&#39;ll call this the &quot;extent.&quot; Here&#39;s an attempt:</p>
 <!-- verifier:tsconfig:strictNullChecks=false -->
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num <span class="hljs-keyword">of</span> nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>The code type checks (without <code>strictNullChecks</code>) and has an inferred return type of <code>number[]</code>, which seems fine. But it has a bug and a design flaw:</p>
 <ul>
@@ -109,16 +109,16 @@
 <p>Turning on <code>strictNullChecks</code> makes both of these issues more apparent:</p>
 <!-- verifier:reset -->
 <!-- verifier:prepend-to-following -->
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>                  <span class="hljs-comment">// ~~~ Argument of type 'number | undefined' is not</span><br>                  <span class="hljs-comment">//     assignable to parameter of type 'number'</span><br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> min, max;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num <span class="hljs-keyword">of</span> nums) &#123;<br>    <span class="hljs-keyword">if</span> (!min) &#123;<br>      min = num;<br>      max = num;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      min = <span class="hljs-built_in">Math</span>.min(min, num);<br>      max = <span class="hljs-built_in">Math</span>.max(max, num);<br>                  <span class="hljs-comment">// ~~~ Argument of type &#x27;number | undefined&#x27; is not</span><br>                  <span class="hljs-comment">//     assignable to parameter of type &#x27;number&#x27;</span><br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> [min, max];<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>The return type of <code>extent</code> is now inferred as <code>(number | undefined)[]</code>, which makes the design flaw more apparent. This is likely to manifest as a type error wherever you call <code>extent</code>:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> [min, max] = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);<br><span class="hljs-keyword">const</span> span = max - min;<br>          <span class="hljs-comment">// ~~~   ~~~ Object is possibly 'undefined'</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> [min, max] = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);<br><span class="hljs-keyword">const</span> span = max - min;<br>          <span class="hljs-comment">// ~~~   ~~~ Object is possibly &#x27;undefined&#x27;</span><br></code></pre></td></tr></table></figure>
 
 <p>The error in the implementation of <code>extent</code> comes about because you&#39;ve excluded <code>undefined</code> as a value for <code>min</code> but not <code>max</code>. The two are initialized together, but this information isn&#39;t present in the type system. You could make it go away by adding a check for <code>max</code>, too, but this would be doubling down on the bug.</p>
 <p>A better solution is to put the min and max in the same object and make this object either fully <code>null</code> or fully non-<code>null</code>:</p>
 <!-- verifier:reset -->
 <!-- verifier:prepend-to-following -->
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> result: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>] | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num of nums) &#123;<br>    <span class="hljs-keyword">if</span> (!result) &#123;<br>      result = [num, num];<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      result = [<span class="hljs-built_in">Math</span>.min(num, result[<span class="hljs-number">0</span>]), <span class="hljs-built_in">Math</span>.max(num, result[<span class="hljs-number">1</span>])];<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: <span class="hljs-built_in">number</span>[]</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> result: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>] | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num <span class="hljs-keyword">of</span> nums) &#123;<br>    <span class="hljs-keyword">if</span> (!result) &#123;<br>      result = [num, num];<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      result = [<span class="hljs-built_in">Math</span>.min(num, result[<span class="hljs-number">0</span>]), <span class="hljs-built_in">Math</span>.max(num, result[<span class="hljs-number">1</span>])];<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> result;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>The return type is now <code>[number, number] | null</code>, which is easier for clients to work with. The min and max can be retrieved with either a non-null assertion:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> [min, max] = extent([<span class="hljs-number">0</span>, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>])!;<br><span class="hljs-keyword">const</span> span = max - min;  <span class="hljs-comment">// OK</span><br></code></pre></td></tr></table></figure>
@@ -133,11 +133,11 @@
 // verifier:prepend-to-following
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> UserInfo &#123; name: <span class="hljs-built_in">string</span> &#125;<br><span class="hljs-keyword">interface</span> Post &#123; post: <span class="hljs-built_in">string</span> &#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchUser</span>(<span class="hljs-params">userId: <span class="hljs-built_in">string</span></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">UserInfo</span>&gt;</span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fetchPostsForUser</span>(<span class="hljs-params">userId: <span class="hljs-built_in">string</span></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">Post</span>[]&gt;</span>;<br></code></pre></td></tr></table></figure>
 <p>--&gt;</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">class</span> UserPosts &#123;<br>  user: UserInfo | <span class="hljs-literal">null</span>;<br>  posts: Post[] | <span class="hljs-literal">null</span>;<br><br>  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"></span>) &#123;<br>    <span class="hljs-keyword">this</span>.user = <span class="hljs-literal">null</span>;<br>    <span class="hljs-keyword">this</span>.posts = <span class="hljs-literal">null</span>;<br>  &#125;<br><br>  <span class="hljs-keyword">async</span> init(userId: <span class="hljs-built_in">string</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-keyword">this</span>.user = <span class="hljs-keyword">await</span> fetchUser(userId),<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-keyword">this</span>.posts = <span class="hljs-keyword">await</span> fetchPostsForUser(userId)<br>    ]);<br>  &#125;<br><br>  getUserName() &#123;<br>    <span class="hljs-comment">// ...?</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserPosts</span> </span>&#123;<br>  user: UserInfo | <span class="hljs-literal">null</span>;<br>  posts: Post[] | <span class="hljs-literal">null</span>;<br><br>  <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-built_in">this</span>.user = <span class="hljs-literal">null</span>;<br>    <span class="hljs-built_in">this</span>.posts = <span class="hljs-literal">null</span>;<br>  &#125;<br><br>  <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-title">init</span>(<span class="hljs-params">userId: <span class="hljs-built_in">string</span></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all([<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-built_in">this</span>.user = <span class="hljs-keyword">await</span> fetchUser(userId),<br>      <span class="hljs-keyword">async</span> () =&gt; <span class="hljs-built_in">this</span>.posts = <span class="hljs-keyword">await</span> fetchPostsForUser(userId)<br>    ]);<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-title">getUserName</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-comment">// ...?</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>While the two network requests are loading, the <code>user</code> and <code>posts</code> properties will be <code>null</code>. At any time, they might both be <code>null</code>, one might be <code>null</code>, or they might both be non-<code>null</code>. There are four possibilities. This complexity will seep into every method on the class. This design is almost certain to lead to confusion, a proliferation of <code>null</code> checks, and bugs.</p>
 <p>A better design would wait until all the data used by the class is available:</p>
-<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">class</span> UserPosts &#123;<br>  user: UserInfo;<br>  posts: Post[];<br><br>  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">user: UserInfo, posts: Post[]</span>) &#123;<br>    <span class="hljs-keyword">this</span>.user = user;<br>    <span class="hljs-keyword">this</span>.posts = posts;<br>  &#125;<br><br>  <span class="hljs-keyword">static</span> <span class="hljs-keyword">async</span> init(userId: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">Promise</span>&lt;UserPosts&gt; &#123;<br>    <span class="hljs-keyword">const</span> [user, posts] = <span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.all([<br>      fetchUser(userId),<br>      fetchPostsForUser(userId)<br>    ]);<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> UserPosts(user, posts);<br>  &#125;<br><br>  getUserName() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.user.name;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserPosts</span> </span>&#123;<br>  user: UserInfo;<br>  posts: Post[];<br><br>  <span class="hljs-function"><span class="hljs-title">constructor</span>(<span class="hljs-params">user: UserInfo, posts: Post[]</span>)</span> &#123;<br>    <span class="hljs-built_in">this</span>.user = user;<br>    <span class="hljs-built_in">this</span>.posts = posts;<br>  &#125;<br><br>  <span class="hljs-keyword">static</span> <span class="hljs-keyword">async</span> init(userId: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">Promise</span>&lt;UserPosts&gt; &#123;<br>    <span class="hljs-keyword">const</span> [user, posts] = <span class="hljs-keyword">await</span> <span class="hljs-built_in">Promise</span>.all([<br>      fetchUser(userId),<br>      fetchPostsForUser(userId)<br>    ]);<br>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> UserPosts(user, posts);<br>  &#125;<br><br>  <span class="hljs-function"><span class="hljs-title">getUserName</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.user.name;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>Now the <code>UserPosts</code> class is fully non-<code>null</code>, and it&#39;s easy to write correct methods on it. Of course, if you need to perform operations while data is partially loaded, then you&#39;ll need to deal with the multiplicity of <code>null</code> and non-<code>null</code> states.</p>
 <p>(Don&#39;t be tempted to replace nullable properties with Promises. This tends to lead to even more confusing code and forces all your methods to be async. Promises clarify the code that loads data but tend to have the opposite effect on the class that uses that data.)</p>
@@ -147,7 +147,7 @@
 <li>Consider creating a fully non-<code>null</code> class and constructing it when all values are available.</li>
 <li>While <code>strictNullChecks</code> may flag many issues in your code, it&#39;s indispensable for surfacing the behavior of functions with respect to null values.</li>
 </ul>
--->
+
           </div>
         </div>
       </div>
@@ -159,9 +159,9 @@
       <div class="row">
         <div class="col-md-12">
           Like this post? Consider subscribing to
-          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
-          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
-          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          <a href="/mail/" data-tag="subscribe newsletter">my newsletter</a>,
+          the <a href="/atom.xml" data-tag="follow RSS">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" data-tag="follow on twitter">following me</a>
           on Twitter.
         </div>
       </div>
@@ -172,7 +172,13 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          <script src="https://utteranc.es/client.js"
+                  repo="danvk/effective-typescript"
+                  issue-term="title"
+                  label="💬 blog comments"
+                  theme="github-light"
+                  crossorigin="anonymous"
+                  async>
           </script>
         </div>
       </div>
@@ -182,9 +188,9 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
-        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
-        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+        <a href="/mail/" data-tag="post learn more hover" class="btn btn-info btn-lg">Subscribe</a>
       </div>
     </div>
   </div>
@@ -193,7 +199,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" data-tag="post learn more cover image">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
@@ -210,9 +216,10 @@
   <div class="container">
     <address id="about" class="vcard body">
       &copy; 2019 - 2022 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
-      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('item  push null values to the perimeter of your types', 'https://hexo.io/', event);">Hexo</a></div>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></div>
     </address>
   </div>
 </footer>
 </body>
 </html>
+--></div></div></div></div></div></section></body></html>
