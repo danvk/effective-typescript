@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>A new way to test types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: A new way to test types">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; A new way to test types">
+    <meta name="twitter:description" content="Readers of Effective TypeScript and followers of this blog will know that testing types is a long-standing interest of mine. In this post I show how eslint-plugin-expect-type provides new syntax and tooling to make testing types so easy and fun that you&#39;ll want to do it!
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; A new way to test types">
+    <meta property="og:description" content="Readers of Effective TypeScript and followers of this blog will know that testing types is a long-standing interest of mine. In this post I show how eslint-plugin-expect-type provides new syntax and tooling to make testing types so easy and fun that you&#39;ll want to do it!
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>A new way to test types</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2022-05-28T21:55:00.000Z" itemprop="datePublished">
+              Sat 28 May 2022
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Readers of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('a new way to test types', 'https://amzn.to/38s1oCK', event);">Effective TypeScript</a> and followers of this blog will know that testing types is a long-standing interest of mine:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/typings-checker" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/danvk/typings-checker', event);">typings-checker</a> (2017) implemented <code>$ExpectType</code> and <code>$ExpectError</code> directives and helped to influence <a target="_blank" rel="noopener" href="https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint', event);">dtslint</a>, which is used to test types on DefinitelyTyped.</li>
+<li>I gave a talk at TSConf 2019 entitled <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=nygcFEwOG8w" onclick="return trackOutboundLink('a new way to test types', 'https://www.youtube.com/watch?v=nygcFEwOG8w', event);">Testing Types: An Introduction to dtslint</a>.</li>
+<li>I included Item 52: Be Aware of the Pitfalls of Testing Types in <em>Effective TypeScript</em> (2019)</li>
+<li>I created <a href="https://effectivetypescript.com/2020/06/30/literate-ts/">literate-ts</a> (2020) to type check Effective TypeScript and this blog.</li>
+</ul>
+<p>There are many tools out there for testing types, from tricks with <code>tsc</code> to <a target="_blank" rel="noopener" href="https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint', event);">dtslint</a>, <a target="_blank" rel="noopener" href="https://github.com/SamVerschueren/tsd" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/SamVerschueren/tsd', event);">tsd</a> and <a href="https://effectivetypescript.com/2020/06/30/literate-ts/">literate-ts</a>. But I can&#39;t say I really love any of them. I&#39;ve always felt like I was writing tests because I should do it, rather than because it was fun and I wanted to.</p>
+<p>When I started working on <a target="_blank" rel="noopener" href="https://github.com/danvk/crudely-typed" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/danvk/crudely-typed', event);">crudely-typed</a>, I wondered whether there might be a better way. In the years since <em>Effective TypeScript</em> came out, largely thanks to Orta&#39;s advocacy, <a target="_blank" rel="noopener" href="https://shikijs.github.io/twoslash/" onclick="return trackOutboundLink('a new way to test types', 'https://shikijs.github.io/twoslash/', event);">twoslash</a> has become a widespread standard. You can <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/MYewdgzgLgBGCuBbCMC8MDaBGANDATHgMx4AsAugNwCwAUKJLAB5pxIQB0ATgKYAm8YDwAUwpngCeASjQA+GCwDUMaTVoB6dTG0wAegH46QA" onclick="return trackOutboundLink('a new way to test types', 'https://www.typescriptlang.org/play?#code/MYewdgzgLgBGCuBbCMC8MDaBGANDATHgMx4AsAugNwCwAUKJLAB5pxIQB0ATgKYAm8YDwAUwpngCeASjQA+GCwDUMaTVoB6dTG0wAegH46QA', event);">see this</a> on the TypeScript playground: if you write a twoslash comment (<code>// ^?</code>) then the TypeScript language service&#39;s &quot;quick info&quot; appears next to it:</p>
+<img src="/images/twoslash-play.png" title="twoslash comment showing an inferred type on the TypeScript playground" width="364" height="69">
+
+<p>This <a target="_blank" rel="noopener" href="https://twitter.com/danvdk/status/1505209336414547968" onclick="return trackOutboundLink('a new way to test types', 'https://twitter.com/danvdk/status/1505209336414547968', event);">got me thinking</a>: what if we used this same syntax to do type assertions?</p>
+<p>So rather than <a target="_blank" rel="noopener" href="https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/microsoft/DefinitelyTyped-tools/tree/master/packages/dtslint', event);">dtslint</a>&#39;s:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> x = nums.reduce(<span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> x + y); <span class="hljs-comment">// $ExpectType number</span><br></code></pre></td></tr></table></figure>
+
+<p>or <a href="https://effectivetypescript.com/2020/06/30/literate-ts/">literate-ts</a>&#39;s:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> x = nums.reduce(<span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> x + y);<br><span class="hljs-comment">// type is number</span><br></code></pre></td></tr></table></figure>
+
+<p>or <a target="_blank" rel="noopener" href="https://github.com/SamVerschueren/tsd" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/SamVerschueren/tsd', event);">tsd</a>&#39;s:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> x = nums.reduce(<span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> x + y);<br>expectType&lt;<span class="hljs-built_in">number</span>&gt;(x);<br></code></pre></td></tr></table></figure>
+
+<p>you could just write a twoslash comment:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> x = nums.reduce(<span class="hljs-function">(<span class="hljs-params">x, y</span>) =&gt;</span> x + y);<br><span class="hljs-comment">//    ^? const x: number</span><br></code></pre></td></tr></table></figure>
+
+<p>And have something enforce that this comment matched the real Quick Info.</p>
+<p>This has a few nice properties:</p>
+<ol>
+<li>It&#39;s a syntax that&#39;s already widely used.</li>
+<li>It&#39;s unambiguous which symbol the assertion refers to: it&#39;s the one one the caret (<code>^</code>) points at. (This is a source of ambiguity for dtslint and literate-ts.)</li>
+<li>It&#39;s clearly distinct from runtime code and is making an assertion about the <a href="https://effectivetypescript.com/2022/02/25/gentips-4-display/">display</a> of the type, rather than its structure. (Structural checks will happily let you replace a nice-looking type with something cryptic but equivalent, or even with <code>any</code>.)</li>
+</ol>
+<p>There was an existing eslint plugin, <a target="_blank" rel="noopener" href="https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type', event);"><code>eslint-plugin-expect-type</code></a>, which did something similar. So I set about <a href="https://effectivetypescript.com/2022/04/18/twitch-expect-type/">adding support for twoslash syntax</a>. One really nice thing came out of this: eslint makes it easy to write and test auto-fixers, so doing type assertions has some of the same feel as Jest&#39;s <a target="_blank" rel="noopener" href="https://jestjs.io/docs/snapshot-testing" onclick="return trackOutboundLink('a new way to test types', 'https://jestjs.io/docs/snapshot-testing', event);">snapshot testing</a>.</p>
+<p>Here&#39;s a GIF of the autofixing in action:</p>
+<p><img src="https://user-images.githubusercontent.com/98301/162592605-184fe6e5-e069-4a63-aa87-387f4e1b85df.gif" alt="Animation of eslint-plugin-expect-type filling in the correct type assertion"></p>
+<p>More than anything else, this autofixer is what&#39;s made writing type tests fun!</p>
+<p>Here&#39;s an example of a type test from <a target="_blank" rel="noopener" href="https://github.com/danvk/crudely-typed" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/danvk/crudely-typed', event);">crudely-typed</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> typedDb = <span class="hljs-keyword">new</span> TypedSQL(tables);<br><span class="hljs-keyword">const</span> docTable = typedDb.table(<span class="hljs-string">&#x27;doc&#x27;</span>);<br><span class="hljs-keyword">const</span> update = docTable.update(&#123;<span class="hljs-attr">where</span>: [<span class="hljs-string">&#x27;title&#x27;</span>]&#125;);<br><span class="hljs-comment">//    ^? const update: (db: Queryable, where: &#123;</span><br><span class="hljs-comment">//           title: string | null;</span><br><span class="hljs-comment">//       &#125;, update: Partial&lt;Doc&gt;) =&gt; Promise&lt;Doc[]&gt;</span><br><span class="hljs-keyword">const</span> newDoc = <span class="hljs-keyword">await</span> update(<br>    mockDb,<br>    &#123;<span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;Great Expectations&#x27;</span>&#125;,<br>    &#123;<span class="hljs-attr">created_by</span>: <span class="hljs-string">&#x27;Charles Dickens&#x27;</span>&#125;,<br>);<br>newDoc;<br><span class="hljs-comment">// ^? const newDoc: Doc[]</span><br></code></pre></td></tr></table></figure>
+
+<p>crudely-typed uses <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">many</a> of the <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">fancy types</a> that I&#39;ve <a href="https://effectivetypescript.com/2021/01/20/gentips-3-aliases/">written about</a> on this blog. But users of the library should never be aware of any of this chicanery. The types that come out should make sense in the context of the types that go in. They shouldn&#39;t require you to understand the internals of the library. It&#39;s easy to <a href="https://effectivetypescript.com/2022/02/25/gentips-4-display/">accidentally break</a> this property while refactoring, for example to make the type of <code>newDoc</code> display as something more complicated than <code>Doc[]</code> in the example above. Testing how types <em>display</em> gives you the freedom to refactor without the fear that you&#39;ll inadvertently worsen the experience of your library&#39;s users. And the autofixer makes it a delight to do so!</p>
+<p>If you&#39;re writing a TypeScript library that makes use of any heavy type machinery, I&#39;d highly recommend writing tests with <a target="_blank" rel="noopener" href="https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type', event);">eslint-plugin-expect-type</a>. You can see examples of how to wire this up on <a target="_blank" rel="noopener" href="https://github.com/danvk/crudely-typed/pull/18/files#diff-46e9201b2cf8dec2bcf89b7b86965fdbfe1210504118198f3b33b2cb9b94dc27" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/danvk/crudely-typed/pull/18/files#diff-46e9201b2cf8dec2bcf89b7b86965fdbfe1210504118198f3b33b2cb9b94dc27', event);">crudely-typed</a> and <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk/pull/35" onclick="return trackOutboundLink('a new way to test types', 'https://github.com/danvk/crosswalk/pull/35', event);">crosswalk</a>.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2022 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('a new way to test types', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
