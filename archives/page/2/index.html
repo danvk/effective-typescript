@@ -136,6 +136,31 @@
 
   <div class="container">
   
+    <div class="row hentry" id="advent-of-code">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2021/03/24/advent-of-code/">Advent of Code 2020, this time in Rust</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2021-03-24T04:00:00.000Z" itemprop="datePublished">
+        Wed 24 March 2021
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p>There&#39;s been <a target="_blank" rel="noopener" href="https://fettblog.eu/learning-rust-and-go/" onclick="return trackOutboundLink('recent blog posts', 'https://fettblog.eu/learning-rust-and-go/', event);">lots of interest</a> in Rust in the JavaScript and TypeScript community over the past few years, both because <a target="_blank" rel="noopener" href="https://rustwasm.github.io/book/" onclick="return trackOutboundLink('recent blog posts', 'https://rustwasm.github.io/book/', event);">it can target WebAssembly</a> and because <a target="_blank" rel="noopener" href="https://github.com/denoland/deno" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/denoland/deno', event);">deno</a> is written in Rust.</p>
+<p>Last year I decided to learn Rust by doing the <a target="_blank" rel="noopener" href="https://adventofcode.com/" onclick="return trackOutboundLink('recent blog posts', 'https://adventofcode.com/', event);">Advent of Code</a> in it: two puzzles every day of December leading up to Christmas. I had a great time and learned a lot about Rust, and I&#39;d highly recommend this as a way to learn a language.</p>
+<p>Since this is a bit off-topic for the <em>Effective TypeScript</em> blog, I posted my writeup on Medium. If you&#39;re interested in Rust, check it out: <a target="_blank" rel="noopener" href="https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc" onclick="return trackOutboundLink('recent blog posts', 'https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc', event);">Advent of Code 2020 (this time in Rust)</a>.</p>
+<p>TL;DR: Rust is an interesting language that works great for a specific niche, but it&#39;s a bit annoying to work with and I wouldn&#39;t choose to use it unless I was working in its niche. Also, this year&#39;s Advent of Code was too easy!</p>
+
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="pet-peeves">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -352,39 +377,6 @@ Strategies for mitigating prop drilling with React and TypeScript</a>.</p>
         <p>I&#39;d never describe problem sets as &quot;fun,&quot; but there&#39;s a reason teachers assign them. It&#39;s one thing to nod your head as you read a book (&quot;yes, that makes sense&quot;) but quite another to apply what you&#39;ve learned. Software is very much a &quot;learn by doing&quot; field. You retain knowledge better when you actively use it.</p>
 <p>I would have liked to include exercises in <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('recent blog posts', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> but never quite got around to it. Fortunately, there are several excellent sources of TypeScript exercises and puzzles online. Here are a few:</p>
         <a class="read-more" href="/2020/09/10/problem-sets/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="generics-golden-rule">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2020/08/12/generics-golden-rule/">The Golden Rule of Generics</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2020-08-12T19:30:00.000Z" itemprop="datePublished">
-        Wed 12 August 2020
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        <img src="/images/ruler.png" alt="Golden Ruler" style="float:right" width="300" height="180">
-
-<p>The <a target="_blank" rel="noopener" href="https://microsoft.github.io/TypeScript-New-Handbook/everything/" onclick="return trackOutboundLink('recent blog posts', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/', event);">New TypeScript Handbook</a> has some real gems in it. Here&#39;s <a target="_blank" rel="noopener" href="https://microsoft.github.io/TypeScript-New-Handbook/everything/#guidelines-for-writing-good-generic-functions" onclick="return trackOutboundLink('recent blog posts', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/#guidelines-for-writing-good-generic-functions', event);">what it has to say about generics</a>:</p>
-<blockquote>
-<p>Writing generic functions is fun, and it can be easy to get carried away with type parameters. Having too many type parameters or using constraints where they aren&#39;t needed can make inference less successful, frustrating callers of your function.</p>
-</blockquote>
-<p>It goes on to offer a few specific pieces of advice about how to use generics, including one that I&#39;ve started to think of as the <a target="_blank" rel="noopener" href="https://microsoft.github.io/TypeScript-New-Handbook/everything/#type-parameters-should-appear-twice" onclick="return trackOutboundLink('recent blog posts', 'https://microsoft.github.io/TypeScript-New-Handbook/everything/#type-parameters-should-appear-twice', event);">&quot;Golden Rule of Generics&quot;</a>:</p>
-<blockquote>
-<h5 id="Type-Parameters-Should-Appear-Twice"><a href="#Type-Parameters-Should-Appear-Twice" class="headerlink" title="Type Parameters Should Appear Twice"></a>Type Parameters Should Appear Twice</h5><p>Type parameters are for relating the types of multiple values. If a type parameter is only used once in the function signature, it&#39;s not relating anything.</p>
-<p><strong>Rule: If a type parameter only appears in one location, strongly reconsider if you actually need it.</strong></p>
-</blockquote>
-<p>I love this rule because it&#39;s so concrete. It gives you a specific way to tell whether any use of generics is good or bad.</p>
-        <a class="read-more" href="/2020/08/12/generics-golden-rule/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
   </div>

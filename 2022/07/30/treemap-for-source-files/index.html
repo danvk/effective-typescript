@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>What&#39;s TypeScript compiling? Use a treemap to find out.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: What&#39;s TypeScript compiling? Use a treemap to find out.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; What&#39;s TypeScript compiling? Use a treemap to find out.">
+    <meta name="twitter:description" content="Has TypeScript gotten slow for you? Run this one magic command to visualize what TypeScript is compiling, and maybe get to the root of the issue.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; What&#39;s TypeScript compiling? Use a treemap to find out.">
+    <meta property="og:description" content="Has TypeScript gotten slow for you? Run this one magic command to visualize what TypeScript is compiling, and maybe get to the root of the issue.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>What&#39;s TypeScript compiling? Use a treemap to find out.</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2022-07-30T18:30:00.000Z" itemprop="datePublished">
+              Sat 30 July 2022
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>What would you be most excited to see in the next set of TypeScript <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/', event);">release notes</a>? Perhaps a fancy new language feature that makes generic types <a href="https://effectivetypescript.com/2020/11/05/template-literal-types/">more powerful</a>? A new way to do <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">type inference</a>? Or maybe a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/29988" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://github.com/microsoft/TypeScript/issues/29988', event);">new refactor</a> in the language service?</p>
+<p>Now would you rather have that shiny new feature, or would you rather have TypeScript build your code 20% faster? In terms of your daily happiness and productivity, the speedup will almost certainly be the bigger win.</p>
+<p>TypeScript performance is an important and sometimes frustrating part of the developer experience. Projects tend to start small and fast, but as they grow, type checking (<code>tsc</code>) and editor interactions (<code>tsserver</code>) get slower and TypeScript becomes less of a joy to use.</p>
+<p>How can you make TypeScript run faster? Microsoft has a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/wiki/Performance" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://github.com/microsoft/TypeScript/wiki/Performance', event);">guide</a> to TypeScript performance, and that&#39;s a great place to start. This post will talk about one particularly easy and effective way to debug performance issues: looking at what TypeScript is compiling using a treemap visualization.</p>
+<p>Before we get started, let&#39;s be clear what we mean by performance. This is <em>not</em> the runtime performance of your code. For the most part, TypeScript is compiled to JavaScript by stripping out all the type annotations. So it cannot affect the runtime performance of your code. (If you see claims that TS affects runtime performance, for example this <a target="_blank" rel="noopener" href="https://hackaday.com/2021/11/18/c-is-the-greenest-programming-language/" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://hackaday.com/2021/11/18/c-is-the-greenest-programming-language/', event);">notoriously shoddy</a> paper, be very skeptical!) When I say &quot;performance&quot;, I mean compiler performance and language service performance: How long does it take <code>tsc</code> to compile your code and report type errors? And how long does it take after you edit a source file for errors to appear and disapper in your editor? These affect developer experience (DX) directly, but not user experience (UX).</p>
+<p>One of the best ways to be fast is to do less stuff. In the case of TypeScript, that means compiling fewer lines of code.</p>
+<p>The <code>tsc</code> command has a handy <code>--listFiles</code> option that will show you exactly what it&#39;s looking at when it compiles your code:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">$ tsc --listFiles<br>...&#x2F;lib&#x2F;node_modules&#x2F;typescript&#x2F;lib&#x2F;lib.es5.d.ts<br>...&#x2F;lib&#x2F;node_modules&#x2F;typescript&#x2F;lib&#x2F;lib.es2015.d.ts<br>...&#x2F;lib&#x2F;node_modules&#x2F;typescript&#x2F;lib&#x2F;lib.es2016.d.ts<br>...&#x2F;lib&#x2F;node_modules&#x2F;typescript&#x2F;lib&#x2F;lib.es2017.d.ts<br>...<br></code></pre></td></tr></table></figure>
+
+<p>If TypeScript has gotten sluggish on your project, then you should look at this list! There might be source files that surprise you.</p>
+<p>For a large project, this list can include thousands of source files, so you&#39;ll want some way to visualize it. My preferred approach is a <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Treemapping" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://en.wikipedia.org/wiki/Treemapping', event);">treemap</a>, which you can quickly generate using the <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/webtreemap-cli" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://www.npmjs.com/package/webtreemap-cli', event);">webtreemap-cli</a> package. Since <code>tsc</code> will spend more time on a large file than a small file, we&#39;ll want to visualize the number of bytes in each file being compiled.</p>
+<p>Here&#39;s the magic incantation:</p>
+<pre><code># macOS / BSD
+tsc --noEmit --listFiles | xargs stat -f &quot;%z %N&quot; | npx webtreemap-cli
+
+# Linux:
+???</code></pre><p>For my project, here&#39;s what that looks like:</p>
+<img src="https://effectivetypescript.com/images/googleapis-treemap.png" alt="Treemap visualization showing googleapis contribution 80MB of source" style="max-height: 458px; max-width: 100%">
+
+<p>First off: that&#39;s a <em>lot</em> of code! Over 111 megabytes. With that much source to churn through, it&#39;s no wonder TypeScript has gotten sluggish.</p>
+<p>Second: my project is mostly <code>googleapis</code>? That&#39;s surprising. We do use the Google Cloud Storage API and the Google Sheets API, but that&#39;s it. And yet <code>tsc</code> reports that it&#39;s pulling in 80+ MB of Google APIs, including multiple versions of APIs that I never use (e.g. compute alpha, beta, v1).</p>
+<p>This is exactly the sort of insight that treemaps are good at producing! Before I saw that visualization, I hadn&#39;t thought much about my project&#39;s usage of <code>googleapis</code>. Now I can&#39;t think about anything else!</p>
+<p>The root issue here is that Google distributes all 300+ of its APIs as a single npm package. This has been a <a target="_blank" rel="noopener" href="https://github.com/googleapis/google-api-nodejs-client/issues/806" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://github.com/googleapis/google-api-nodejs-client/issues/806', event);">long-standing issue</a> with Google&#39;s Node.js APIs. Fortunately for us, the issue was <a target="_blank" rel="noopener" href="https://github.com/googleapis/google-api-nodejs-client/pull/2557" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://github.com/googleapis/google-api-nodejs-client/pull/2557', event);">recently fixed</a>! Google now publishes individual packages for each API. Instead of depending on all of <code>googleapis</code>, you can now depend on just <code>@googleapis/sheets</code>.</p>
+<p>After this change, the treemap for my project looks substantially different:</p>
+<img src="https://effectivetypescript.com/images/treemap-after.png" alt="Treemap showing many fewer googleapis" style="max-height: 459px; max-width: 100%">
+
+<p>The most important change is the top-line number: there&#39;s 80MB (70%) less source code for <code>tsc</code> to churn through. It&#39;s interesting to note that many of the large blocks that remain (<code>@octokit</code>, <code>csstype</code>, <code>firestore</code>) have the same problem as <code>googleapis</code>, if less egregiously so: they ship a single giant source file containing every API you could ever depend on.</p>
+<p>Now for the big question… did this make my build faster? At least in this case, the answer is a clear &quot;yes&quot;. I ran:</p>
+<pre><code>time tsc --noEmit --incremental=false</code></pre><p>five times before and after my change. The average time went from 35.7s → 28.9s, a 20% speedup. Not bad! And while it&#39;s harder to measure language service (<code>tsserver</code>) performance, one hopes that this change will help there, too. It&#39;s notable that the 20% speedup doesn&#39;t match the 70% reduction in source code. Just reading all those unused type declarations doesn&#39;t take as much time as type checking the code that is used. Still, this is a nice win.</p>
+<p>Try running the magic command to visualize your TypeScript code as a treemap. You might be surprised what&#39;s making it into your build!</p>
+<pre><code>tsc --noEmit --listFiles | xargs stat -f &quot;%z %N&quot; | npx webtreemap-cli</code></pre><p>In a future post, we&#39;ll look at strategies for reducing how much code you have to import, both as a library author and a consumer.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2022 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
