@@ -105,12 +105,12 @@
 
 <p>If TypeScript has gotten sluggish on your project, then you should look at this list! There might be source files that surprise you.</p>
 <p>For a large project, this list can include thousands of source files, so you&#39;ll want some way to visualize it. My preferred approach is a <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Treemapping" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://en.wikipedia.org/wiki/Treemapping', event);">treemap</a>, which you can quickly generate using the <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/webtreemap-cli" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://www.npmjs.com/package/webtreemap-cli', event);">webtreemap-cli</a> package. Since <code>tsc</code> will spend more time on a large file than a small file, we&#39;ll want to visualize the number of bytes in each file being compiled.</p>
-<p>Here&#39;s the magic incantation:</p>
+<p>Here&#39;s the magic incantation (see <a target="_blank" rel="noopener" href="https://unix.stackexchange.com/a/22227/139786" onclick="return trackOutboundLink('whats typescript compiling use a treemap to find out', 'https://unix.stackexchange.com/a/22227/139786', event);">here</a> for the &quot;stat&quot; syntax):</p>
 <pre><code># macOS / BSD
 tsc --noEmit --listFiles | xargs stat -f &quot;%z %N&quot; | npx webtreemap-cli
 
 # Linux:
-???</code></pre><p>For my project, here&#39;s what that looks like:</p>
+tsc --noEmit --listFiles | xargs stat -c &quot;%s %n&quot; | npx webtreemap-cli</code></pre><p>For my project, here&#39;s what that looks like:</p>
 <img src="https://effectivetypescript.com/images/googleapis-treemap.png" alt="Treemap visualization showing googleapis contribution 80MB of source" style="max-height: 458px; max-width: 100%">
 
 <p>First off: that&#39;s a <em>lot</em> of code! Over 111 megabytes. With that much source to churn through, it&#39;s no wonder TypeScript has gotten sluggish.</p>
