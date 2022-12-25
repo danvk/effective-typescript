@@ -139,7 +139,7 @@
 
 <p>Explicit type annotations are still required in some situations where TypeScript doesn’t have enough context to determine a type on its own. You have seen one of these before: function parameters.</p>
 <p>Some languages will infer types for parameters based on their eventual usage, but TypeScript does not. In TypeScript, a variable&#39;s type is generally determined when it is first introduced.</p>
-<p>Ideal TypeScript code includes type annotations for function&#x2F;method signatures but not for the local variables created in their bodies. This keeps noise to a minimum and lets readers focus on the implementation logic.</p>
+<p>Ideal TypeScript code includes type annotations for function/method signatures but not for the local variables created in their bodies. This keeps noise to a minimum and lets readers focus on the implementation logic.</p>
 <p>There are some situations where you can leave the type annotations off of function parameters, too. When there’s a default value, for example:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parseNumber</span>(<span class="hljs-params">str: <span class="hljs-built_in">string</span>, base=<span class="hljs-number">10</span></span>) </span>&#123;<br>  <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
@@ -195,7 +195,7 @@
 <p>If you are using a linter, the eslint rule <code>no-inferrable-types</code> (note the variant spelling) can help ensure that all your type annotations are really necessary.</p>
 <h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
 <li>Avoid writing type annotations when TypeScript can infer the same type.</li>
-<li>Ideally your code has type annotations in function&#x2F;method signatures but not on local variables in their bodies.</li>
+<li>Ideally your code has type annotations in function/method signatures but not on local variables in their bodies.</li>
 <li>Consider using explicit annotations for object literals and function return types even when they can be inferred. This will help prevent implementation errors from surfacing in user code.</li>
 </ul>
 

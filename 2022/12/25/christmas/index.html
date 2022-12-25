@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>All I Want for Christmas Is… These Seven TypeScript Improvements</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: All I Want for Christmas Is… These Seven TypeScript Improvements">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; All I Want for Christmas Is… These Seven TypeScript Improvements">
+    <meta name="twitter:description" content="It&#39;s Christmastime and I&#39;ve been happily working through this year&#39;s Advent of Code in Deno (look forward to a blog post in the new year). What with all the presents, it&#39;s a good time to think about what we&#39;d most like to see from TypeScript in the new year. Here are my top seven feature requests for 2023. Yes, that&#39;s a lot, but really I&#39;d be thrilled with just one or two. Pretty please?
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; All I Want for Christmas Is… These Seven TypeScript Improvements">
+    <meta property="og:description" content="It&#39;s Christmastime and I&#39;ve been happily working through this year&#39;s Advent of Code in Deno (look forward to a blog post in the new year). What with all the presents, it&#39;s a good time to think about what we&#39;d most like to see from TypeScript in the new year. Here are my top seven feature requests for 2023. Yes, that&#39;s a lot, but really I&#39;d be thrilled with just one or two. Pretty please?
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>All I Want for Christmas Is… These Seven TypeScript Improvements</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2022-12-25T19:00:00.000Z" itemprop="datePublished">
+              Sun 25 December 2022
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><a target="_blank" rel="noopener" href="https://freesvg.org/vector-clip-art-of-cartoon-presents-under-christmas-tree" onclick="return trackOutboundLink('all i want for christmas is these seven typescript improvements', 'https://freesvg.org/vector-clip-art-of-cartoon-presents-under-christmas-tree', event);"><img src="/images/christmas-tree.png" width="200" height="200" style="float: right" alt="Christmas tree with presents"></a> It&#39;s Christmastime and I&#39;ve been happily working through this year&#39;s <a target="_blank" rel="noopener" href="https://adventofcode.com" onclick="return trackOutboundLink('all i want for christmas is these seven typescript improvements', 'https://adventofcode.com', event);">Advent of Code</a> in Deno (look forward to a blog post in the new year). What with all the presents, it&#39;s a good time to think about what we&#39;d most like to see from TypeScript in the new year. Here are my top seven feature requests for 2023. Yes, that&#39;s a lot, but really I&#39;d be thrilled with just one or two. Pretty please?</p>
+<h2 id="A-faster-language-service"><a href="#A-faster-language-service" class="headerlink" title="A faster language service"></a>A faster language service</h2><p>When you install TypeScript, you get two executables:</p>
+<ul>
+<li><code>tsc</code>, which checks your code for type errors and converts it to executable JavaScript</li>
+<li><code>tsserver</code>, which provides language services for your editor.</li>
+</ul>
+<p>(This is discussed in Item 6 of <em>Effective TypeScript</em>: Use Your Editor to Interrogate and Explore the Type System.)</p>
+<p>The faster these two programs can do their job, the happier you&#39;ll be as a developer. The TypeScript team is acutely aware of this: the release notes for new versions of TypeScript always talk about performance improvements in addition to new language features. The sluggishness of <code>tsc</code> remains a pain point for many developers, though. One of them even got so frustrated that he <a target="_blank" rel="noopener" href="https://www.totaltypescript.com/rewriting-typescript-in-rust" onclick="return trackOutboundLink('a faster language service', 'https://www.totaltypescript.com/rewriting-typescript-in-rust', event);">decided to rewrite <code>tsc</code> in Rust!</a>.</p>
+<p>Personally, I don&#39;t care much about the performance of <code>tsc</code>. I only tend to run as part of a continuous integration service or in &quot;watch&quot; mode without type checking via <code>webpack</code> or <code>ts-node</code>. The performance there is good enough for me.</p>
+<p>What I <em>do</em> care about is the performance of <code>tsserver</code>. When you apply a refactor or change a type and have to wait for the red squiggly lines to catch up, that&#39;s <code>tsserver</code> being slow. Here&#39;s a GIF showing the language service having trouble keeping up:</p>
+<img src="/images/sluggish-ts-comment-with-user.gif" with="636" height="488" alt="A type error appearing and disappearing slowly after changing an import" style="max-height: 488px">
+
+<p>These performance issues impact your moment-to-moment experience of TypeScript: did that red squiggle go away because I fixed the error, or because I&#39;m waiting for <code>tsserver</code> to catch up? They&#39;re also hard to isolate for a bug report. If <code>tsc</code> is slow, I can point the TS team at my repo and report how long <code>tsc</code> takes to run. But to reproduce language server issues, you have to open a repo in your editor and then perform a particular action. It&#39;s not automated. And performance is inconsistent since it depends on caching.</p>
+<p>So for 2023, I&#39;d love to see a faster <code>tsserver</code>. Maybe we should rewrite that in Rust, too!</p>
+<h2 id="A-typed-pipe"><a href="#A-typed-pipe" class="headerlink" title="A typed pipe"></a>A typed <code>pipe</code></h2><p>When you compose several functions:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">f(g(h(x)))<br></code></pre></td></tr></table></figure>
+
+<p>the functions are run in the right-to-left order: first <code>h</code> then <code>g</code> then <code>f</code>. This is counter to how code typically executes: top to bottom, left to right.</p>
+<p>The <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-pipeline-operator" onclick="return trackOutboundLink('a typed pipe', 'https://github.com/tc39/proposal-pipeline-operator', event);">pipeline proposal</a> aims to offer a more readable alternative by introducing a new operator, <code>|&gt;</code>:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">x<br>|&gt; h<br>|&gt; g<br>|&gt; f<br></code></pre></td></tr></table></figure>
+
+<p>The <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-pipeline-operator" onclick="return trackOutboundLink('a typed pipe', 'https://github.com/tc39/proposal-pipeline-operator', event);">proposal page</a> has lots of great material about why this is a good idea and is well worth reading. Unfortunately, though, there are two competing operator proposals and I don&#39;t anticipate this making it into JavaScript (and hence TypeScript) anytime soon. Axel Rauschmayer&#39;s blog has a good writeup on the <a target="_blank" rel="noopener" href="https://2ality.com/2022/01/pipe-operator.html" onclick="return trackOutboundLink('a typed pipe', 'https://2ality.com/2022/01/pipe-operator.html', event);">current state of things</a>.</p>
+<p>There&#39;s an alternative, though: we can implement a function (commonly called <a target="_blank" rel="noopener" href="https://ramdajs.com/docs/#pipe" onclick="return trackOutboundLink('a typed pipe', 'https://ramdajs.com/docs/#pipe', event);"><code>pipe</code></a>, or <a target="_blank" rel="noopener" href="https://lodash.com/docs/4.17.15#flow" onclick="return trackOutboundLink('a typed pipe', 'https://lodash.com/docs/4.17.15#flow', event);"><code>flow</code></a> in lodash) that composes the functions in the order we expect:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> square = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n ** <span class="hljs-number">2</span>;<br><span class="hljs-keyword">const</span> add1 = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n + <span class="hljs-number">1</span>;<br><span class="hljs-keyword">const</span> halve = <span class="hljs-function">(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) =&gt;</span> n / <span class="hljs-number">2</span>;<br><span class="hljs-keyword">const</span> f = pipe(square, add1, halve, <span class="hljs-built_in">String</span>);<br><span class="hljs-comment">//    ^? (arg: number) =&gt; string</span><br><span class="hljs-keyword">const</span> x = f(<span class="hljs-number">2</span>);  <span class="hljs-comment">// &quot;2.5&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>Here <code>square</code> is applied first, then <code>add1</code>, then <code>halve</code> and finally <code>String</code> to convert the number to a <code>string</code>.</p>
+<p>This solves the pipelining problem nicely but it has a problem: it&#39;s impossible to type. For details, see this <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/39094#issuecomment-647042984" onclick="return trackOutboundLink('a typed pipe', 'https://github.com/microsoft/TypeScript/pull/39094#issuecomment-647042984', event);">Anders comment</a>. The issue is that there needs to be a relationship between each of the arguments to <code>pipe</code>: the parameter type of each argument needs to match the return type of the previous one. And this just can&#39;t be modeled with TS.</p>
+<p>The lodash and Ramda typings resort to the classic <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-4-0/#:~:text=like%20to%20call%20%E2%80%9C-,death%20by%20a%20thousand%20overloads,-%E2%80%9D%2C%20and%20it%20doesn%E2%80%99t" onclick="return trackOutboundLink('a typed pipe', 'https://devblogs.microsoft.com/typescript/announcing-typescript-4-0/#:~:text=like%20to%20call%20%E2%80%9C-,death%20by%20a%20thousand%20overloads,-%E2%80%9D%2C%20and%20it%20doesn%E2%80%99t', event);">&quot;death by a thousand overloads&quot;</a> solution: define safe versions for a small number of arguments (<a target="_blank" rel="noopener" href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/266cf9b006800a1de3836257443920b828c2e589/types/lodash/common/util.d.ts#L169-L204" onclick="return trackOutboundLink('a typed pipe', 'https://github.com/DefinitelyTyped/DefinitelyTyped/blob/266cf9b006800a1de3836257443920b828c2e589/types/lodash/common/util.d.ts#L169-L204', event);">seven</a> in lodash&#39;s case, <a target="_blank" rel="noopener" href="https://github.com/DefinitelyTyped/DefinitelyTyped/blob/76ebb1cce06b08cc5ef2f31d718fd84cb9df7cc6/types/ramda/index.d.ts#L1458-L1513" onclick="return trackOutboundLink('a typed pipe', 'https://github.com/DefinitelyTyped/DefinitelyTyped/blob/76ebb1cce06b08cc5ef2f31d718fd84cb9df7cc6/types/ramda/index.d.ts#L1458-L1513', event);">ten in Ramda&#39;s</a>) and give up on typing larger invocations.</p>
+<p>This probably works fine in 99% of cases, but it doesn&#39;t feel right! I&#39;d love to see the TypeScript type system expand to be able to type <code>pipe</code>, or see some form of the pipeline operator proposal adopted.</p>
+<h2 id="Records-and-Tuples"><a href="#Records-and-Tuples" class="headerlink" title="Records and Tuples"></a>Records and Tuples</h2><p>I&#39;m cheating here since this is more of a JavaScript Christmas wish. But JS is TS, right? The <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-record-tuple" onclick="return trackOutboundLink('records and tuples', 'https://github.com/tc39/proposal-record-tuple', event);">Records and Tuples proposal</a>, currently at Stage 2, seeks to add two new data structures to JavaScript. As the proposal puts it:</p>
+<blockquote>
+<p>This proposal introduces two new deeply immutable data structures to JavaScript:</p>
+<ul>
+<li><code>Record</code>, a deeply immutable Object-like structure #{ x: 1, y: 2 }</li>
+<li><code>Tuple</code>, a deeply immutable Array-like structure #[1, 2, 3, 4]</li>
+</ul>
+</blockquote>
+<p>TypeScript already has a notion of tuple <em>types</em> (<code>[number, number]</code>). This proposal would add tuple values, which would neatly resolve a number of ambiguities in type inference.</p>
+<p>For example, if you write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> pt = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]<br></code></pre></td></tr></table></figure>
+
+<p>then what should the type of <code>pt</code> be? It could be:</p>
+<ul>
+<li>a tuple type (<code>[number, number]</code>)</li>
+<li>a readonly type (<code>readonly [number, number]</code>)</li>
+<li>a mutable list (<code>number[]</code>)</li>
+<li>an immutable list (<code>readonly number[]</code>)</li>
+</ul>
+<p>Without more information, TypeScript has to guess. In this case it infers the mutable list, <code>number[]</code>. You can use a <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/66993264/what-does-the-as-const-mean-in-typescript-and-what-is-its-use-case" onclick="return trackOutboundLink('records and tuples', 'https://stackoverflow.com/questions/66993264/what-does-the-as-const-mean-in-typescript-and-what-is-its-use-case', event);">const assertion</a> (<code>as const</code>) to get (<code>readonly [number, number]</code>) or a <a href="https://effectivetypescript.com/2020/06/16/typed-identity-functions/">typed identity function</a> to get one of the others.</p>
+<p>With this proposal, you&#39;d write:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> pt = #[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>];<br></code></pre></td></tr></table></figure>
+
+<p>and it would be unambiguous that you want a tuple type. This is just the tip of the iceberg: functional programming and static typing work much better when you don&#39;t have to worry about mutability (see Item 27 of <em>Effective TypeScript</em>: Use Functional Constructs and Libraries to Help Types Flow).</p>
+<p>The other great thing about this proposal is that we&#39;d be able to use <code>===</code> to do structural comparisons between tuples and records:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; [1, 2] &#x3D;&#x3D;&#x3D; [1, 2]<br>false<br>&gt; #[1, 2] &#x3D;&#x3D;&#x3D; #[1, 2]<br>true<br></code></pre></td></tr></table></figure>
+
+<p>The first comparison is <code>false</code> because the two arrays aren&#39;t the same object. Tuples have a more intuitive behavior. There is some risk of the Array / Tuple distinction being confusing, but Python has this and generally it works great.</p>
+<p>We&#39;d also be able to use tuples as keys in <code>Set</code> and <code>Map</code> structures. This is top of mind because tuples would have been wildly useful in the Advent of Code this year (see my <a target="_blank" rel="noopener" href="https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd#9719" onclick="return trackOutboundLink('records and tuples', 'https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd#9719', event);">2020 post</a> about using tuples as <code>dict</code> keys in Python).</p>
+<h2 id="Optional-generics"><a href="#Optional-generics" class="headerlink" title="Optional generics"></a>Optional generics</h2><p>While building the <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('optional generics', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> and <a target="_blank" rel="noopener" href="https://github.com/danvk/crudely-typed" onclick="return trackOutboundLink('optional generics', 'https://github.com/danvk/crudely-typed', event);">crudely-typed</a> libraries, I frequently ran into this situation: you have a function that takes several generic arguments, you want the user to provide one of them explicitly, but you want TypeScript to infer the others.</p>
+<p>Here&#39;s an example of what this would like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">makeLookup</span>&lt;<span class="hljs-title">T</span>, <span class="hljs-title">K</span> <span class="hljs-title">extends</span> <span class="hljs-title">keyof</span> <span class="hljs-title">T</span>&gt;(<span class="hljs-params">k: K</span>): (<span class="hljs-params">obj: T</span>) =&gt; <span class="hljs-title">T</span>[<span class="hljs-title">K</span>] </span>&#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">obj: T</span>) =&gt;</span> obj[k];<br>&#125;<br><br><span class="hljs-keyword">interface</span> Student &#123;<br>  name: <span class="hljs-built_in">string</span>;<br>  age: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> lookupName = makeLookup&lt;Student&gt;(<span class="hljs-string">&#x27;name&#x27;</span>);<br><span class="hljs-comment">//    ^? const lookupName: (obj: Student) =&gt; string;</span><br><span class="hljs-keyword">const</span> lookupAge = makeLookup&lt;Student&gt;(<span class="hljs-string">&#x27;age&#x27;</span>);<br><span class="hljs-comment">//    ^? const lookupAge: (obj: Student) =&gt; number;</span><br></code></pre></td></tr></table></figure>
+
+<p>TypeScript doesn&#39;t let you do this. If you <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/GYVwdgxgLglg9mABAWwIYGsCmAZOd0gAOAPACoA0iA0opgB5SZgAmAzolgJ5zCKkB8ACnQAuagEoxguACMAVmNLjEAXn58A2lQC6iAN4BYAFCJEAJ0xQQZpNPmLlaxLLkb02gNzGAvseMwwRjNgVAhMRABlK2YmKH1jUzBUZEwxVigzAIBzLxNEVCzUxDAQZBlMM1zfI2MIBHTEABs8AkIAOWTwlRQMHBaiYiiQGMChAHIklLHxXIB6WdNTAD0AfkQ6sAbm-CIOlKkXMSGRqEd1dMywHNr6uO3WgEFC1R6sXB2SY9jxgsxpuYWi1W61uTX6hCeRTsCki0ViZ2KpXKlSAA" onclick="return trackOutboundLink('optional generics', 'https://www.typescriptlang.org/play?#code/GYVwdgxgLglg9mABAWwIYGsCmAZOd0gAOAPACoA0iA0opgB5SZgAmAzolgJ5zCKkB8ACnQAuagEoxguACMAVmNLjEAXn58A2lQC6iAN4BYAFCJEAJ0xQQZpNPmLlaxLLkb02gNzGAvseMwwRjNgVAhMRABlK2YmKH1jUzBUZEwxVigzAIBzLxNEVCzUxDAQZBlMM1zfI2MIBHTEABs8AkIAOWTwlRQMHBaiYiiQGMChAHIklLHxXIB6WdNTAD0AfkQ6sAbm-CIOlKkXMSGRqEd1dMywHNr6uO3WgEFC1R6sXB2SY9jxgsxpuYWi1W61uTX6hCeRTsCki0ViZ2KpXKlSAA', event);">try it on the TypeScript playground</a> you&#39;ll get this error: &quot;Expected 2 type arguments, but got 1.&quot; Generics are all or nothing.</p>
+<p>I wrote about two workarounds back in 2020: <a href="https://effectivetypescript.com/2020/12/04/gentips-1-curry/">Use Classes and Currying to create new inference sites</a>. But these are workarounds. I&#39;d really love to have a way to do this without having to change my API!</p>
+<p>The canonical issue for this feature request is <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/10571" onclick="return trackOutboundLink('optional generics', 'https://github.com/microsoft/TypeScript/issues/10571', event);">#10571</a>. There was <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/26349" onclick="return trackOutboundLink('optional generics', 'https://github.com/microsoft/TypeScript/pull/26349', event);">some work on it in 2018</a> and I put up a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/42388" onclick="return trackOutboundLink('optional generics', 'https://github.com/microsoft/TypeScript/issues/42388', event);">proposal</a> two years ago, but it hasn&#39;t seen much attention recently.</p>
+<h2 id="quot-Evolving-quot-function-types"><a href="#quot-Evolving-quot-function-types" class="headerlink" title="&quot;Evolving&quot; function types"></a>&quot;Evolving&quot; function types</h2><p>TypeScript typically does a great job of inferring function parameter types from whatever context it has:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> squares = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>].map(<span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x ** <span class="hljs-number">2</span>);<br><span class="hljs-comment">//                            ^? (parameter) x: number</span><br></code></pre></td></tr></table></figure>
+
+<p>The key point here is that you don&#39;t need to write <code>(x: number) =&gt; x ** 2</code>: TypeScript is able to infer that <code>x</code> is of type <code>number</code> from the types of <code>[1, 2, 3]</code> and the type of <code>Array.prototype.map</code>.</p>
+<p>Now try factoring out a <code>square</code> function:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> square = <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x ** <span class="hljs-number">2</span>;<br><span class="hljs-comment">// Parameter &#x27;x&#x27; implicitly has an &#x27;any&#x27; type. (7006)</span><br><span class="hljs-keyword">const</span> squares = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>].map(square);<br></code></pre></td></tr></table></figure>
+
+<p>What worked so well in the first example completely fails here. This code is correct and is a simple refactor of the other code, but TypeScript demands a type annotation here. This is a frequent source of frustration in React components, where factoring out a callback can require writing out some very complex types. I wrote a blog post about this in 2019: <a target="_blank" rel="noopener" href="https://blog.logrocket.com/how-typescript-breaks-referential-transparency-7a82c0345f2c/" onclick="return trackOutboundLink('quotevolvingquot function types', 'https://blog.logrocket.com/how-typescript-breaks-referential-transparency-7a82c0345f2c/', event);">How TypeScript breaks referential transparency
+…and what to do about it</a>.</p>
+<p>Why doesn&#39;t TypeScript infer the type of <code>square</code> (and hence <code>x</code>) from its usage on the next line? Anders is famously skeptical of &quot;spooky action at a distance&quot; where changing code in one place can cause a type to change and produce errors in other places that aren&#39;t obviously related.</p>
+<p>But it does have one limited form of this: &quot;evolving <code>any</code>&quot;, which is discussed in <em>Effective TypeScript</em> Item 41: <a href="https://effectivetypescript.com/2020/03/09/evolving-any/">Understand Evolving any</a>. The gist is that TypeScript will sometimes let the type of a symbol change based on subsequent usage:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> out = [];<br>out.push(<span class="hljs-number">1</span>);<br>out.push(<span class="hljs-number">2</span>);<br> out<br><span class="hljs-comment">// ^? const out: number[]</span><br></code></pre></td></tr></table></figure>
+
+<p>I have a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/38083" onclick="return trackOutboundLink('quotevolvingquot function types', 'https://github.com/microsoft/TypeScript/issues/38083', event);">three year old proposal</a> to expand this behavior to local function variables and make the <code>square</code> example valid. React developers around the world don&#39;t know that they want this feature for Christmas, but they do!</p>
+<h2 id="ES-Module-clarity"><a href="#ES-Module-clarity" class="headerlink" title="ES Module clarity"></a>ES Module clarity</h2><p>The JavaScript world is finally moving to ES modules (<code>import</code> and <code>export</code>). I&#39;ve been blissfully ignoring some of the <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#control-over-module-detection" onclick="return trackOutboundLink('es module clarity', 'https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-7.html#control-over-module-detection', event);">changes</a> that Node.js and TypeScript have been making to support them, but I get the <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/51302" onclick="return trackOutboundLink('es module clarity', 'https://github.com/microsoft/TypeScript/issues/51302', event);">sense</a> that this is an awkward transition for both of them. Hopefully we&#39;ll be through this by the end of 2023!</p>
+<h2 id="A-canonical-types-→-runtime-path"><a href="#A-canonical-types-→-runtime-path" class="headerlink" title="A canonical types → runtime path"></a>A canonical types → runtime path</h2><p>One of the keys to really understanding TypeScript is recognizing that TypeScript types don&#39;t exist at runtime. They are <em>erased</em>. This is so fundamental that it&#39;s Item 1 in <em>Effective TypeScript</em> (&quot;Understand the Relationship Between TypeScript and JavaScript&quot;).</p>
+<p>But sometimes you really do want access to your TypeScript types at runtime, perhaps to do validation on untrusted inputs. There&#39;s a proliferation of libraries that let you define types in JavaScript and derive TypeScript types from them: <a target="_blank" rel="noopener" href="https://github.com/colinhacks/zod" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://github.com/colinhacks/zod', event);">zod</a>, <a target="_blank" rel="noopener" href="https://github.com/jquense/yup" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://github.com/jquense/yup', event);">yup</a>, <a target="_blank" rel="noopener" href="https://github.com/gcanti/io-ts" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://github.com/gcanti/io-ts', event);">io-ts</a> and <a target="_blank" rel="noopener" href="https://reactjs.org/docs/typechecking-with-proptypes.html" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://reactjs.org/docs/typechecking-with-proptypes.html', event);">React PropTypes</a> are just a few. Here&#39;s how you&#39;d define a <code>Student</code> type with Zod, for example:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> Student = z.object(&#123;<br>  name: z.string(),<br>  age: z.number(),<br>&#125;);<br><br><span class="hljs-keyword">type</span> Student = z.infer&lt;<span class="hljs-keyword">typeof</span> Student&gt;;<br><span class="hljs-comment">// type Student = &#123; name: string; age: number; &#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>The advantage of defining a type in this way (rather than with a TypeScript <code>interface</code>) is that you can do runtime validation using the <code>Student</code> value (which you cannot do with the <code>Student</code> <em>type</em>):</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> missingAge = Student.parse(&#123;<span class="hljs-attr">name</span>: <span class="hljs-string">&quot;Bobby&quot;</span>&#125;);<br><span class="hljs-comment">// throws an error at runtime.</span><br></code></pre></td></tr></table></figure>
+
+<p>I prefer a different approach, though. TypeScript already has a great language for defining types and the relationships between them. Why learn another one? In <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://github.com/danvk/crosswalk', event);">crosswalk</a>, I use <a target="_blank" rel="noopener" href="https://github.com/YousefED/typescript-json-schema" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://github.com/YousefED/typescript-json-schema', event);">typescript-json-schema</a> to generate JSON Schema from my TypeScript type declarations. This JSON Schema is used to validate requests and generate Swagger/OpenAPI documentation.</p>
+<p>But again, all these approaches are workarounds for the root issue: there&#39;s no way to get access to a TypeScript type at runtime. I&#39;d love it if there were a canonical solution to this problem, so that we could all use the same solution. Perhaps <a target="_blank" rel="noopener" href="https://2ality.com/2022/10/javascript-decorators.html" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://2ality.com/2022/10/javascript-decorators.html', event);">decorators</a> can help.</p>
+<p>This would be a big change for TypeScript, and would generally go against its design philosophy. So while I have some hope for my other wishes, I have very little hope for this last one.</p>
+<hr>
+<p>Would you be excited about any of these changes? What&#39;s on the top of your TypeScript Christmas list? Let me know in the comments or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://twitter.com/danvdk', event);">on Twitter</a>.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2022 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('a canonical types  runtime path', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
