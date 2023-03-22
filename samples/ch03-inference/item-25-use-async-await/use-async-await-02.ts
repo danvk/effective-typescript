@@ -1,6 +1,8 @@
 // HIDE
 function fetchURL(url: string, cb: (response: string) => void) {
-  cb(url);
+  setTimeout(() => {
+    cb(url);
+  }, 10);
 }
 const url1 = '1';
 const url2 = '2';
