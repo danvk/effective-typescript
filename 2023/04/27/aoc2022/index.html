@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>A first look at Deno through the Advent of Code 2022</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: A first look at Deno through the Advent of Code 2022">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; A first look at Deno through the Advent of Code 2022">
+    <meta name="twitter:description" content="Every year I do the Advent of Code in a different programming language. If you aren&amp;#39;t familiar, it&amp;#39;s an online coding competition with a new two-part problem every day from December 1st to the 25th. Thousands of programmers participate and share their solutions. It&amp;#39;s a great way to learn a language and bond over coding. In 2019 I used Python, in 2020 I used Rust and in 2021 I used Go. I also post an increasingly-belated writeup of my experience and impressions of the language so, at the end of April, here&amp;#39;s 2022! (As a partial excuse, I have been writing on a very different blog!)
+This past December I chose TypeScript, specifically Deno, which brands itself as &amp;quot;a new way to TypeScript&amp;quot;. While TypeScript certainly isn&amp;#39;t a new language for me, Deno is a new way to use it. I was also curious how JavaScript/TypeScript would do on AoC-style coding competitions and, frankly, I hadn&amp;#39;t been doing much coding of late and was keen to have an excuse to use my favorite language more.
+This post is broken into three parts: thoughts on Deno, thoughts on TypeScript/JavaScript for coding competitions, and my thoughts on this year&amp;#39;s Advent of Code.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; A first look at Deno through the Advent of Code 2022">
+    <meta property="og:description" content="Every year I do the Advent of Code in a different programming language. If you aren&amp;#39;t familiar, it&amp;#39;s an online coding competition with a new two-part problem every day from December 1st to the 25th. Thousands of programmers participate and share their solutions. It&amp;#39;s a great way to learn a language and bond over coding. In 2019 I used Python, in 2020 I used Rust and in 2021 I used Go. I also post an increasingly-belated writeup of my experience and impressions of the language so, at the end of April, here&amp;#39;s 2022! (As a partial excuse, I have been writing on a very different blog!)
+This past December I chose TypeScript, specifically Deno, which brands itself as &amp;quot;a new way to TypeScript&amp;quot;. While TypeScript certainly isn&amp;#39;t a new language for me, Deno is a new way to use it. I was also curious how JavaScript/TypeScript would do on AoC-style coding competitions and, frankly, I hadn&amp;#39;t been doing much coding of late and was keen to have an excuse to use my favorite language more.
+This post is broken into three parts: thoughts on Deno, thoughts on TypeScript/JavaScript for coding competitions, and my thoughts on this year&amp;#39;s Advent of Code.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-769809-4');
+
+      var trackOutboundLink = function(category, url, e) {
+        if (!window.google_tag_manager) {
+          console.log('blocked!');
+          return true;  // probably blocked
+        }
+
+        // No need to use event_callback if the link is opening in a new tab.
+        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+        gtag('event', 'click', {
+            'event_category': category,
+            'event_label': url,
+            'transport_type': 'beacon',
+            'event_callback': !newTab ? function() {
+              document.location = url;
+            } : undefined
+        });
+
+        return newTab;
+      }
+    </script>
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>A first look at Deno through the Advent of Code 2022</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2023-04-27T21:00:00.000Z" itemprop="datePublished">
+              Thu 27 April 2023
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><img src="https://effectivetypescript.com/images/advent-of-code.png" title="Advent of Code Logo" width="64" height="64" style="float: right; margin-left: 10px;">Every year I do the <a target="_blank" rel="noopener" href="https://adventofcode.com/" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://adventofcode.com/', event);">Advent of Code</a> in a different programming language. If you aren&#39;t familiar, it&#39;s an online coding competition with a new two-part problem every day from December 1st to the 25th. Thousands of programmers participate and share their solutions. It&#39;s a great way to learn a language and bond over coding. In <a target="_blank" rel="noopener" href="https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd', event);">2019</a> I used Python, in <a target="_blank" rel="noopener" href="https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc', event);">2020</a> I used Rust and in <a href="https://effectivetypescript.com/2022/02/06/advent-of-code-2021-golang/">2021</a> I used Go. I also post an increasingly-belated writeup of my experience and impressions of the language so, at the end of April, here&#39;s 2022! (As a partial excuse, I have been writing on a <a target="_blank" rel="noopener" href="https://danvk.org/catskills/" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://danvk.org/catskills/', event);">very different blog</a>!)</p>
+<p>This past December I chose TypeScript, specifically <a target="_blank" rel="noopener" href="https://deno.land" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://deno.land', event);">Deno</a>, which <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=1gIiZfSbEAE" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://www.youtube.com/watch?v=1gIiZfSbEAE', event);">brands itself</a> as &quot;a new way to TypeScript&quot;. While TypeScript certainly isn&#39;t a new language for me, Deno is a new way to use it. I was also curious how JavaScript/TypeScript would do on AoC-style coding competitions and, frankly, I hadn&#39;t been doing much coding of late and was keen to have an excuse to use my favorite language more.</p>
+<p>This post is broken into three parts: thoughts on Deno, thoughts on TypeScript/JavaScript for coding competitions, and my thoughts on this year&#39;s Advent of Code.</p>
+<span id="more"></span>
+
+<p>My code and more notes on each day&#39;s puzzles can be found on GitHub at <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022" onclick="return trackOutboundLink('a first look at deno through the advent of code', 'https://github.com/danvk/aoc2022', event);">danvk/aoc2022</a>.</p>
+<h2 id="Deno"><a href="#Deno" class="headerlink" title="Deno"></a>Deno</h2><p>Deno brands itself as a more secure JavaScript runtime that&#39;s more standards-compliant and easier to use. The comparison here is obviously Node.js. Deno was created by <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Ryan_Dahl" onclick="return trackOutboundLink('deno', 'https://en.wikipedia.org/wiki/Ryan_Dahl', event);">Ryan Dahl</a>, who also created Node.js, and it&#39;s fair to think of it as a &quot;take two&quot; on Node that avoids some of its questionable decisions.</p>
+<p>Overall these claims hold up well. Deno is much easier to set up than Node: it already uses TypeScript, it has a built-in linter and formatter, and it comes with a system for unit tests. These are all things you <em>can</em> set up with Node, but it takes an extra step. That&#39;s a hurdle for beginners, and an opportunity for mistakes for all of us. For the most part, writing code in Deno feels just like writing TypeScript in any other environment, only with much less configuration.</p>
+<p>(Just like a browser, Deno <a target="_blank" rel="noopener" href="https://deno.com/manual@v1.32.1/advanced/typescript/overview" onclick="return trackOutboundLink('deno', 'https://deno.com/manual@v1.32.1/advanced/typescript/overview', event);">doesn&#39;t run your TypeScript directly</a>. It translates it to JavaScript first using <a target="_blank" rel="noopener" href="https://swc.rs/" onclick="return trackOutboundLink('deno', 'https://swc.rs/', event);">swc</a> and then runs that.)</p>
+<p>Deno&#39;s sandboxing is a great security feature. Unless you specifically allow a capability (such as reading or writing to the file system), Deno won&#39;t allow it. This makes it safer to run programs that you download from the internet. Since I was running mostly my own code for the Advent of Code, in practice this meant that every solution started with this <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Shebang_(Unix)" onclick="return trackOutboundLink('deno', 'https://en.wikipedia.org/wiki/Shebang_(Unix)', event);">shebang line</a>:</p>
+<pre><code>#!/usr/bin/env -S deno run --allow-read --allow-write</code></pre><p>Deno tries to embrace web standards to the extent that it makes sense. Rather than using a library to make HTTP requests, you use <code>fetch</code>, just like you would in a web browser. Perhaps the most notable example of this comes with dependencies. Rather than a <code>require</code> statement or running <code>npm install</code>, you depend on third-party libraries by using a standard ES <code>import</code> statement from a URL:</p>
+<pre><code>import &#123; assert &#125; from &quot;https://deno.land/std@0.166.0/testing/asserts.ts&quot;;</code></pre><p>The version goes right there in the import URL. If you&#39;re used to npm, you probably have a few objections in your head right now! Rest assured, the Deno folks have thought through them:</p>
+<ul>
+<li>What if someone takes over deno.land and swaps in a malicious version of the library? You can use a <a target="_blank" rel="noopener" href="https://deno.com/manual@v1.32.5/basics/modules/integrity_checking" onclick="return trackOutboundLink('deno', 'https://deno.com/manual@v1.32.5/basics/modules/integrity_checking', event);">lock file</a> for integrity checking.</li>
+<li>Won&#39;t this be unwieldy? In practice, the Deno team recommends <a target="_blank" rel="noopener" href="https://deno.com/manual@v1.32.5/basics/modules#it-seems-unwieldy-to-import-urls-everywhere" onclick="return trackOutboundLink('deno', 'https://deno.com/manual@v1.32.5/basics/modules#it-seems-unwieldy-to-import-urls-everywhere', event);">creating a <code>deps.ts</code> file</a> that consolidates all these imports in one place. This replaces <code>package.json</code>. It&#39;s a good example of Deno&#39;s preference using JS standards. I have some misgivings about this, though, see below.</li>
+<li>What about dev dependencies? I haven&#39;t seen anything written about this explicitly, but I assume the suggestion is to have a <code>dev-deps.ts</code> file or some such.</li>
+<li>Won&#39;t this cause an explosion of versions in transitive dependencies?</li>
+</ul>
+<p>To see why this might happen, imagine that module A depends on <code>lodash@4.17.20</code> and module B depends on <code>lodash@4.17.21</code>. With deno imports, you wind up with two versions of lodash:</p>
+<p><img src="/images/aoc2022/deps-deno.png" alt="Dependencies in Deno yield two copies of lodash"></p>
+<p>When you import from a URL that includes the full version, all your (transitive) dependencies are pinned. Node.js avoids this by specifying compatible ranges in dependencies. Perhaps A just requires <code>lodash&gt;=4</code> and B requires <code>lodash&gt;=4.10</code>. In that case, we can get down to a single version:</p>
+<p><img src="/images/aoc2022/deps-node.png" alt="Dependencies in Node.js yield one copy of lodash"></p>
+<p>The Deno answer to this dilemma is an <a target="_blank" rel="noopener" href="https://deno.com/manual@v1.32.5/basics/import_maps" onclick="return trackOutboundLink('deno', 'https://deno.com/manual@v1.32.5/basics/import_maps', event);">import map</a>, which lets you reach in and tweak the versions. Again, this is a <a target="_blank" rel="noopener" href="https://github.com/WICG/import-maps" onclick="return trackOutboundLink('deno', 'https://github.com/WICG/import-maps', event);">JavaScript standard</a>, but it feels a bit unwieldy. Would you actually do this to reduce the number of dependencies in your code? And how would you know which versions of <code>lodash</code> a module is compatible with unless it specifies.</p>
+<p>I didn&#39;t personally run into any issues with this in the Advent of Code since I only had one or two dependencies. But projects I&#39;ve worked on professionally have had thousands, and I&#39;m nervous about any patterns that would lead to an even greater proliferation of dependencies. If you have experience building larger projects in Deno and have run into this (or not), I&#39;d love to hear about it in the comments.</p>
+<p>I also have some concerns about the <code>deps.ts</code> system. It&#39;s clever to use a plain old TypeScript file as a <code>package.json</code> replacement in this way. But because it&#39;s a TypeScript file, my concern is that you&#39;ll be tempted to write real code in it, i.e. logic. Why is this a problem? Just look at the mess that is <code>setup.py</code> in Python land. In general it&#39;s impossible to know how a package is configured without executing <code>setup.py</code>, which could cause any number of side effects. This makes analysis harder, for example writing tools like dependabot. Simpler configuration enables more accurate, powerful tools. (<a target="_blank" rel="noopener" href="https://deno.com/blog/v1.31#packagejson-support" onclick="return trackOutboundLink('deno', 'https://deno.com/blog/v1.31#packagejson-support', event);">Deno 1.31</a> added support for <code>package.json</code> to ease transitioning from Node but still recommends using import maps.)</p>
+<p>While Deno works best when you import other Deno modules (from <code>deno.land</code>), the headline feature of <a target="_blank" rel="noopener" href="https://deno.com/blog/v1.28" onclick="return trackOutboundLink('deno', 'https://deno.com/blog/v1.28', event);">Deno 1.28</a> was support for npm modules. Here&#39;s what this looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; chalk &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;npm:chalk@5&quot;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>Easy, right? But what about TypeScript? Often the type declarations for npm libraries are hosted in a different package via DefinitelyTyped. I struggled mightily to get typings for lodash (see some <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/64979829/deno-import-lodash-from-deno-land-x/66073607#66073607" onclick="return trackOutboundLink('deno', 'https://stackoverflow.com/questions/64979829/deno-import-lodash-from-deno-land-x/66073607#66073607', event);">crazy solutions</a> on Stack Overflow) before asking for help <a target="_blank" rel="noopener" href="https://twitter.com/danvdk/status/1598502672319057925" onclick="return trackOutboundLink('deno', 'https://twitter.com/danvdk/status/1598502672319057925', event);">on Twitter</a>. Here&#39;s where I wound up:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// @deno-types=&quot;npm:@types/lodash&quot;</span><br><span class="hljs-keyword">import</span> &#123;<span class="hljs-keyword">default</span> <span class="hljs-keyword">as</span> ld&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;npm:lodash&quot;</span>;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> _ = ld;<br></code></pre></td></tr></table></figure>
+
+<p>So much for standards! But in fairness to Deno, once I had this magic in place I never had to think about it again.</p>
+<p>Another pain point: I ran into <a target="_blank" rel="noopener" href="https://github.com/denoland/deno/issues/17055" onclick="return trackOutboundLink('deno', 'https://github.com/denoland/deno/issues/17055', event);">several</a> different <a target="_blank" rel="noopener" href="https://github.com/denoland/deno/issues/17056" onclick="return trackOutboundLink('deno', 'https://github.com/denoland/deno/issues/17056', event);">issues</a> with the VS Code extension, including one that changed my code to give me a wrong answer! To the Deno team&#39;s credit, they fixed both issues that I reported quickly, before Christmas. Deno is a relatively new project that is moving fast, but this also means you&#39;re more likely to run into glitches like this.</p>
+<p>In the end, Deno is pretty nice to work with. If we were starting from scratch, it would be a much better choice than Node.js. But the Node/npm ecosystem has a ten year headstart on Deno, and I&#39;d like to give the npm integration story a bit more time to play out before I commit to using Deno on a larger project.</p>
+<p>For a more glowing endorsement of Deno, see <a target="_blank" rel="noopener" href="https://matklad.github.io/2023/02/12/a-love-letter-to-deno.html" onclick="return trackOutboundLink('deno', 'https://matklad.github.io/2023/02/12/a-love-letter-to-deno.html', event);">A Love Letter to Deno</a> by <a target="_blank" rel="noopener" href="https://matklad.github.io/" onclick="return trackOutboundLink('deno', 'https://matklad.github.io/', event);">Alex Kladov</a>.</p>
+<h2 id="TypeScript-JavaScript-for-Coding-Competitions"><a href="#TypeScript-JavaScript-for-Coding-Competitions" class="headerlink" title="TypeScript/JavaScript for Coding Competitions"></a>TypeScript/JavaScript for Coding Competitions</h2><p>TypeScript is a more natural fit for web programming and servers than for coding competitions, which are more the home turf for Python. So I was curious to see how doing AoC in TypeScript would feel.</p>
+<p>JavaScript is famous for its <a target="_blank" rel="noopener" href="https://en.wiktionary.org/wiki/footgun" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://en.wiktionary.org/wiki/footgun', event);">footguns</a> and TypeScript/Deno inherit many of these. One of them got me on the <a target="_blank" rel="noopener" href="https://adventofcode.com/2022/day/1" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://adventofcode.com/2022/day/1', event);">very first problem</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> sums = [<span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">10</span>];<br>sums.sort();<br><span class="hljs-built_in">console</span>.log(sums);<br><span class="hljs-comment">// logs [1, 10, 2] -- the sort is lexicographic!</span><br></code></pre></td></tr></table></figure>
+
+<p>Yes, this is one of many reasons why we always use lodash!</p>
+<p>I&#39;d hoped that this year&#39;s Advent of Code would force me to play around more with <code>BigInt</code> (for huge numbers) and web workers (for parallelism), but neither of these proved to be necessary this year.</p>
+<p>I did make extensive use of ES2015&#39;s <code>Set</code> and <code>Map</code> classes. These make amends for the &quot;original sin of JavaScript&quot;, namely the conflation of objects and associative arrays. While <code>Set</code> and <code>Map</code> do fix many of the issues with objects (accessing <code>prototype</code>, supporting non-<code>string</code> keys), they have some footguns of their own.</p>
+<p>For example, I learned back in 2019 that a map with (x, y) tuples as keys is often a <a target="_blank" rel="noopener" href="https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd#9719" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://danvdk.medium.com/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd#9719', event);">more convenient way</a> to represent a grid than a 2D array. Python handles this pattern nicely with its built-in tuple type:</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><code class="hljs python">grid = &#123;&#125;<br>grid[(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)] = <span class="hljs-number">3</span><br>print(grid[(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>)])<br><span class="hljs-comment"># prints 3</span><br></code></pre></td></tr></table></figure>
+
+<p>The equivalent in JS/TS doesn&#39;t work as you&#39;d hope:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> grid = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>&lt;[<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>], <span class="hljs-built_in">number</span>&gt;();<br>grid.set([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>], <span class="hljs-number">3</span>);<br><span class="hljs-built_in">console</span>.log(grid.get([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]));<br><span class="hljs-comment">// logs undefined</span><br></code></pre></td></tr></table></figure>
+
+<p>The issue is that <code>Map</code> and <code>Set</code> keys are (<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/56195369/how-does-same-value-zero-algorithm-works" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://stackoverflow.com/questions/56195369/how-does-same-value-zero-algorithm-works', event);">roughly</a>) compared using <code>===</code>, which tests for reference equality, not value equality:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">&gt; [1, 2] &#x3D;&#x3D;&#x3D; [1, 2]<br>false<br></code></pre></td></tr></table></figure>
+
+<p>This situation will be improved greatly if the <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-record-tuple" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://github.com/tc39/proposal-record-tuple', event);">Records and Tuples proposal</a> is ratified by TC39 (<a target="_blank" rel="noopener" href="https://rickbutton.github.io/record-tuple-playground/#eyJjb250ZW50IjoiY29uc29sZS5sb2coI1sxLCAyXSA9PT0gI1sxLCAyXSk7XG5cbmNvbnN0IGdyaWQgPSBuZXcgTWFwKCk7XG5ncmlkLnNldCgjWzEsIDJdLCAzKTtcbmNvbnNvbGUubG9nKGdyaWQuZ2V0KCNbMSwgMl0pKTtcbiIsInN5bnRheCI6Imhhc2giLCJkb21Nb2RlIjpmYWxzZX0=" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://rickbutton.github.io/record-tuple-playground/#eyJjb250ZW50IjoiY29uc29sZS5sb2coI1sxLCAyXSA9PT0gI1sxLCAyXSk7XG5cbmNvbnN0IGdyaWQgPSBuZXcgTWFwKCk7XG5ncmlkLnNldCgjWzEsIDJdLCAzKTtcbmNvbnNvbGUubG9nKGdyaWQuZ2V0KCNbMSwgMl0pKTtcbiIsInN5bnRheCI6Imhhc2giLCJkb21Nb2RlIjpmYWxzZX0=', event);">playground link</a>):</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-built_in">console</span>.log(#[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>] === #[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]);<br><span class="hljs-comment">// logs true</span><br><br><span class="hljs-keyword">const</span> grid = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>();<br>grid.set(#[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>], <span class="hljs-number">3</span>);<br><span class="hljs-built_in">console</span>.log(grid.get(#[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>]));<br><span class="hljs-comment">// logs 3</span><br></code></pre></td></tr></table></figure>
+
+<p>Here&#39;s hoping! Without this, my implementations of standard algorithms like <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm', event);">shortest path</a> required lots of <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022/blob/da3b5af9aef99cff8c1f739d07958d7c75a5794a/dijkstra.ts#L18-L19" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://github.com/danvk/aoc2022/blob/da3b5af9aef99cff8c1f739d07958d7c75a5794a/dijkstra.ts#L18-L19', event);">serialization and deserialization code</a>.</p>
+<p>Another JS/TS feature that I really embraced was Iterators and Generators. Say you have a <code>sum</code> function that takes an array of numbers:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">xs: <span class="hljs-built_in">number</span>[]</span>): <span class="hljs-title">number</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> total = <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> x <span class="hljs-keyword">of</span> xs) &#123;<br>    total += x;<br>  &#125;<br>  <span class="hljs-keyword">return</span> total;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>What if you want this to accept the output of a <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*', event);">generator function</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span>* <span class="hljs-title">squares</span>(<span class="hljs-params">n: <span class="hljs-built_in">number</span></span>) </span>&#123;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) &#123;<br>    <span class="hljs-keyword">yield</span> n ** <span class="hljs-number">2</span>;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>TypeScript will give you an error if you try to compose these:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> sumto5 = sum(squares(<span class="hljs-number">5</span>));<br><span class="hljs-comment">//                 ~~~~~~~~~~ Argument of type &#x27;Generator&lt;number, void, unknown&gt;&#x27;</span><br><span class="hljs-comment">//                            is not assignable to parameter of type &#x27;number[]&#x27;.</span><br></code></pre></td></tr></table></figure>
+
+<p>Interestingly, though, this works at runtime and gives the correct answer (125)! To make it type check, we just need to loosen the parameter type for <code>sum</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sum</span>(<span class="hljs-params">xs: Iterable&lt;<span class="hljs-built_in">number</span>&gt;</span>): <span class="hljs-title">number</span> </span>&#123;<br>  <span class="hljs-keyword">let</span> total = <span class="hljs-number">0</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> x <span class="hljs-keyword">of</span> xs) &#123;<br>    total += x;<br>  &#125;<br>  <span class="hljs-keyword">return</span> total;<br>&#125;<br><span class="hljs-keyword">const</span> sumto5 = sum(squares(<span class="hljs-number">5</span>));  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>Whenever I write functions that accept arrays now, I&#39;m going to ask &quot;could this take an Iterable instead?&quot; Often the answer is yes, and this gives you more flexibility in how you call the function. I found this particularly nice for callbacks that returned arrays, which are often cleaner to write as generators. See <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022/commit/c81b90e25db7617f42f8e78d6b76276f9c8a039c" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://github.com/danvk/aoc2022/commit/c81b90e25db7617f42f8e78d6b76276f9c8a039c', event);">this commit</a>.</p>
+<p>Iterators are a great feature, but they are somewhat held back by their <a target="_blank" rel="noopener" href="https://github.com/lodash/lodash/issues/737" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://github.com/lodash/lodash/issues/737', event);">lack of support</a> in lodash. There&#39;s a TC39 proposal to add <a target="_blank" rel="noopener" href="https://2ality.com/2022/12/iterator-helpers.html" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://2ality.com/2022/12/iterator-helpers.html', event);">iterator helpers</a> to the standard library.</p>
+<p>Because JavaScript doesn&#39;t have a built-in <a target="_blank" rel="noopener" href="https://immutable-js.com/docs/v4.2.2/List/" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://immutable-js.com/docs/v4.2.2/List/', event);">deque</a> structure, I just used an <code>Array</code> in a very suboptimal way when I implemented <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm', event);">Dijkstra</a>. After wrapping up the whole competition, I tried <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022/compare/57c04a892ca52a1909d872e674984d557a59c86e...08f25f52ef4d018094a08df92c38dd8f15a87aae" onclick="return trackOutboundLink('typescriptjavascript for coding competitions', 'https://github.com/danvk/aoc2022/compare/57c04a892ca52a1909d872e674984d557a59c86e...08f25f52ef4d018094a08df92c38dd8f15a87aae', event);">plugging in</a> a priority queue. Suddenly some of my code ran 100x faster! Asymptotic performance: sometimes it matters!</p>
+<p>Overall using TypeScript for the Advent of Code was OK but not great. It was a good excuse to try out a few new features of JavaScript, but it left me really wanting a few other proposals to get adopted!</p>
+<h2 id="Advent-of-Code-2022"><a href="#Advent-of-Code-2022" class="headerlink" title="Advent of Code 2022"></a>Advent of Code 2022</h2><p>This was probably the easiest Advent of Code I&#39;ve done (easier than 2018, 2019, 2020, 2021). Again, there were no dependencies between days. There was also no matrix math, which was a change from previous years.</p>
+<p>I usually do some kind of warmup project in a new language before day 1, traditionally implementing a <a target="_blank" rel="noopener" href="https://github.com/danvk/rusty-boggle" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/rusty-boggle', event);">Boggle Solver</a>. Since I&#39;d already implemented <a target="_blank" rel="noopener" href="https://github.com/danvk/bogglets" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/bogglets', event);">Boggle in TypeScript</a>, I decided to do the first few puzzles of the 2018 Advent of Code instead. This was fun and very effective at preparing me for the 2022 Advent of Code. But it was a dangerous decision! Once I started the 2018 puzzles, I couldn&#39;t stop. So I wound up doing two Advents of Code simultaneously. This really highlighted that the 2018 Advent of Code was more difficult than 2022.</p>
+<p>I tend to solve AoC problems in the morning: I&#39;m usually asleep well before midnight when they&#39;re posted on the east coast. But I&#39;d always been curious to try solving one at midnight to see what my global rank would be. I finally did it on day 15 this year. It was a roller coaster experience. Debugging while sleepy was unpleasant and really took me back to college. But I did manage to finish both parts before 1 AM and got my first-ever top 1000 finish:</p>
+<p><img src="/images/aoc2022/rank-831.png" alt="Rank #831 on Day 15 part 2"></p>
+<p>I was lucky -- had I tried this on day 16, which was much harder, I would have been up until 3 AM! Falling asleep after racing to solve a puzzle isn&#39;t easy.</p>
+<p>I&#39;d hoped to stay up late enough to solve the final puzzle live. I was in Costa Rica at that point so it only would have been 11 PM and the Christmas is usually an easy puzzle. But by 10 PM I was in bed and couldn&#39;t keep my eyes open, so I just wrapped things up the next morning. I was finisher #5127 overall.</p>
+<p>There were a few standout problems this year:</p>
+<p><img src="/images/aoc2022/dans-cube.jpg" alt="My cube for day 222"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-22-8786--4298" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-22-8786--4298', event);">Day 22</a>: The Cube. Not hard, just very annoying. Though I did enjoy seeing photos of everyone&#39;s <a target="_blank" rel="noopener" href="https://www.reddit.com/r/adventofcode/comments/zsct8w/2022_day_22_solutions/" onclick="return trackOutboundLink('advent of code', 'https://www.reddit.com/r/adventofcode/comments/zsct8w/2022_day_22_solutions/', event);">cubes</a>.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-24-6284--6073" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-24-6284--6073', event);">Day 24</a>: Blizzards, a fun application of Dijkstra where the state space isn&#39;t just your coordinate.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-20-7780--6961" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-20-7780--6961', event);">Day 20</a>: Memorable for a pernicious off-by-one error.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-19-7649--6570" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-19-7649--6570', event);">Day 19</a>: Robot Factories. This was the hardest one of the year for me. I never produced a fully correct solution, but I did discover <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Beam_search" onclick="return trackOutboundLink('advent of code', 'https://en.wikipedia.org/wiki/Beam_search', event);">beam search</a> which is something that will stick with me.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-16-6564--4162" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-16-6564--4162', event);">Day 16</a>: Valves; this was probably the second hardest problem.</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2022#day-9-31369--23800" onclick="return trackOutboundLink('advent of code', 'https://github.com/danvk/aoc2022#day-9-31369--23800', event);">Day 9</a>: Snake; really have to trust your implementation on this one. I was very glad to not have a bug!</li>
+</ul>
+<p>Overall, though, my favorite problem was probably <a target="_blank" rel="noopener" href="https://adventofcode.com/2018/day/23" onclick="return trackOutboundLink('advent of code', 'https://adventofcode.com/2018/day/23', event);">2018 day 23</a>.</p>
+<p>So there you have it, Advent of Code 2022 in Deno. See you next December (or maybe April!).</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2023 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('advent of code', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
