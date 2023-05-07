@@ -24,36 +24,36 @@
     <meta property="og:url" content="https://effectivetypescript.com/">
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-1NXE8EL9YT');
-      var trackOutboundLink = function(category, url, e) {
-        if (!window.google_tag_manager) {
-          console.log('blocked!');
-          return true;  // probably blocked
-        }
-
-        // No need to use event_callback if the link is opening in a new tab.
-        var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
-        gtag('event', 'click', {
-            'event_category': category,
-            'event_label': url,
-            'transport_type': 'beacon',
-            'event_callback': !newTab ? function() {
-              document.location = url;
-            } : undefined
-        });
-
-        return newTab;
-      }
-    </script>
   <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
 
 <body class="mail">
   <div class="header">
