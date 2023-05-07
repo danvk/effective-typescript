@@ -25,14 +25,14 @@
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -92,7 +92,7 @@
             </time>
           </div>
           <div class="entry-content">
-            <p>TypeScript tends to do a very good job of inferring types when you leave off explicit annotations. (Chapter 3 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> is devoted to this topic.) But when you use tuples or string literal types, this will sometimes go wrong. This post explores using identity functions with carefully constructed type signatures to guide inference towards alternative types. <span id="more"></span></p>
+            <p>TypeScript tends to do a very good job of inferring types when you leave off explicit annotations. (Chapter 3 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> is devoted to this topic.) But when you use tuples or string literal types, this will sometimes go wrong. This post explores using identity functions with carefully constructed type signatures to guide inference towards alternative types. <span id="more"></span></p>
 <p>Say you have a function to calculate the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Pythagorean_theorem" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://en.wikipedia.org/wiki/Pythagorean_theorem', event);">distance between two points</a>:</p>
 <!-- verifier:prepend-to-following -->
 <!-- #point -->
@@ -113,7 +113,7 @@
 <p>But in this post I want to talk about a slightly different approach, which is to use identity functions that adjust the inferred type. Here&#39;s one way you could use an identity(ish) function to get a <code>Point</code>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> Point = (x: <span class="hljs-built_in">number</span>, <span class="hljs-attr">y</span>: <span class="hljs-built_in">number</span>): <span class="hljs-function"><span class="hljs-params">Point</span> =&gt;</span> [x, y];<br><br><span class="hljs-keyword">const</span> p1 = Point(<span class="hljs-number">0</span>, <span class="hljs-number">0</span>);<br><span class="hljs-keyword">const</span> p2 = Point(<span class="hljs-number">3</span>, <span class="hljs-number">4</span>);<br><span class="hljs-keyword">let</span> d = dist(p1, p2);  <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
 
-<p>The <code>Point</code> function is a value, so it&#39;s fine that it has the same name as the <code>Point</code> type, which exists in a separate namespace (Item 8 in <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> discusses how to know if a symbol is in type or value space). The &quot;<code>: Point</code>&quot; declares the return type of the function. This is preferable to <code>as Point</code>, which <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/41964087/in-typescript-is-there-a-reason-to-prefer-const-foo-type-or-const-foo" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://stackoverflow.com/questions/41964087/in-typescript-is-there-a-reason-to-prefer-const-foo-type-or-const-foo', event);">would not perform excess property checking</a>.</p>
+<p>The <code>Point</code> function is a value, so it&#39;s fine that it has the same name as the <code>Point</code> type, which exists in a separate namespace (Item 8 in <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> discusses how to know if a symbol is in type or value space). The &quot;<code>: Point</code>&quot; declares the return type of the function. This is preferable to <code>as Point</code>, which <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/41964087/in-typescript-is-there-a-reason-to-prefer-const-foo-type-or-const-foo" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://stackoverflow.com/questions/41964087/in-typescript-is-there-a-reason-to-prefer-const-foo-type-or-const-foo', event);">would not perform excess property checking</a>.</p>
 <p>This certainly solves the problem and is sometimes more convenient than using declarations. Examples of this pattern in the wild include Material-UI&#39;s <a target="_blank" rel="noopener" href="https://material-ui.com/guides/typescript/#using-createstyles-to-defeat-type-widening" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://material-ui.com/guides/typescript/#using-createstyles-to-defeat-type-widening', event);"><code>createStyles</code></a> and React Native&#39;s <a target="_blank" rel="noopener" href="https://reactnative.dev/docs/style" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://reactnative.dev/docs/style', event);"><code>StyleSheet.create</code></a>.</p>
 <p>In the case of a tuple, though, there&#39;s a neat trick (which I learned from Boris Cherny&#39;s <a target="_blank" rel="noopener" href="https://www.amazon.com/Programming-TypeScript-Making-JavaScript-Applications/dp/1492037656" onclick="return trackOutboundLink('use typed identity functions to guide type inference', 'https://www.amazon.com/Programming-TypeScript-Making-JavaScript-Applications/dp/1492037656', event);"><em>Programming TypeScript</em></a>) to solve this more generally. You can use a generic identity function to get TypeScript to infer a tuple type, rather than an array:</p>
 <!-- verifier:prepend-subset-to-following:1-1 -->
@@ -205,7 +205,7 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -216,7 +216,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>

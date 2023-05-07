@@ -27,14 +27,14 @@
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -102,7 +102,7 @@
 <li>Part 4: <a href="https://effectivetypescript.com/2022/02/25/gentips-4-display/">The Display of Types</a></li>
 </ul>
 <p>Perhaps the best thing about <a target="_blank" rel="noopener" href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" onclick="return trackOutboundLink('generic tips part  use classes and currying to create new inference sites', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html', event);">Effective-style books</a> is that they present hard-earned lessons learned from years of experience using a language. The author has spent years falling into traps and digging out of them so that you don&#39;t have to! But this also makes <em>Effective</em> books difficult to write. You can&#39;t just read the documentation on a new feature and write an Item about it. You need to use that feature, make mistakes with it, and eventually learn how to use it well. This takes time.</p>
-<p><a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('generic tips part  use classes and currying to create new inference sites', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> has relatively little to say about &quot;advanced&quot; topics like conditional types. That&#39;s largely because I didn&#39;t have enough practical experience working with them when I wrote the book. That&#39;s changed this year because of work that eventually made its way into the open source <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('generic tips part  use classes and currying to create new inference sites', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library.</p>
+<p><a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('generic tips part  use classes and currying to create new inference sites', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> has relatively little to say about &quot;advanced&quot; topics like conditional types. That&#39;s largely because I didn&#39;t have enough practical experience working with them when I wrote the book. That&#39;s changed this year because of work that eventually made its way into the open source <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('generic tips part  use classes and currying to create new inference sites', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library.</p>
 <p>I found writing the types for crosswalk extremely difficult this spring, but I found it much easier when I reworked it for open source this fall. So I must have learned something! This is the first in a series of posts that will explain some of the tips I&#39;ve picked up along the way. I&#39;ll aim to post one each week for the rest of this month.</p>
 <p>Of course, any discussion of generics and &quot;fancy&quot; types should start with Rule Zero: don&#39;t use them unless you need to! My previous post on the <a href="/2020/08/12/generics-golden-rule/">&quot;Golden Rule of Generics&quot;</a> can help you tell whether this is the case.</p>
 <h2 id="The-problem"><a href="#The-problem" class="headerlink" title="The problem"></a>The problem</h2><p>In <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('the problem', 'https://github.com/danvk/crosswalk', event);">crosswalk</a>, you define an API using a TypeScript <code>interface</code> that looks something like this:</p>
@@ -196,7 +196,7 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -207,7 +207,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>

@@ -27,14 +27,14 @@
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -142,7 +142,7 @@
 <p>The problem is that express wants the <code>path</code> parameter to be a <code>string</code> (or a <code>RegExp</code>), but in TypeScript, <code>keyof API</code> is a <code>PropertyKey</code>, which is <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/blob/4dc82fdfba577085a087db6535a4ad2cc755e503/lib/lib.es5.d.ts#L105" onclick="return trackOutboundLink('generic tips part  intersect what you have with whatever typescript wants', 'https://github.com/microsoft/TypeScript/blob/4dc82fdfba577085a087db6535a4ad2cc755e503/lib/lib.es5.d.ts#L105', event);">defined in the standard library</a> as:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">type</span> PropertyKey = <span class="hljs-built_in">string</span> | <span class="hljs-built_in">number</span> | symbol;<br></code></pre></td></tr></table></figure>
 
-<p>The <code>number</code> is a lie (Item 16 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('generic tips part  intersect what you have with whatever typescript wants', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a>, &quot;Prefer Arrays, Tuples, and ArrayLike to number Index Signatures&quot;, explains this in great detail). But <code>path</code> could certainly be a <code>string</code> or <code>symbol</code>. We don&#39;t care about the <code>symbol</code> or <code>number</code> cases, though. We only want the <code>string</code>. To get down to this, you can use an intersection type:</p>
+<p>The <code>number</code> is a lie (Item 16 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('generic tips part  intersect what you have with whatever typescript wants', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a>, &quot;Prefer Arrays, Tuples, and ArrayLike to number Index Signatures&quot;, explains this in great detail). But <code>path</code> could certainly be a <code>string</code> or <code>symbol</code>. We don&#39;t care about the <code>symbol</code> or <code>number</code> cases, though. We only want the <code>string</code>. To get down to this, you can use an intersection type:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">- get&lt;Path extends keyof API&gt;(<br>+ get&lt;Path extends keyof API &amp; string&gt;(<br></code></pre></td></tr></table></figure>
 
 <p>This eliminates the error with <code>router.get</code>! This intersection trick winds up being an extremely useful way to get rid of TypeScript errors with generics. As it turns out, it&#39;s this week&#39;s tip!</p>
@@ -217,7 +217,7 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -228,7 +228,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>

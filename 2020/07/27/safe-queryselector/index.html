@@ -27,14 +27,14 @@
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -131,7 +131,7 @@
 <p>But what about the case where you need a more specific type? It&#39;s tempting to plug in a generic type parameter and try to implement something like this:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeQuerySelector</span>&lt;<span class="hljs-title">T</span> <span class="hljs-title">extends</span> <span class="hljs-title">Element</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  parent: Document|Element, selector: <span class="hljs-built_in">string</span></span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">T</span> </span>&#123;<br>  <span class="hljs-keyword">const</span> el = checkedQuerySelector(parent, selector);<br>  <span class="hljs-keyword">if</span> (!(el <span class="hljs-keyword">instanceof</span> T)) &#123;<br>                   <span class="hljs-comment">// ~ &#x27;T&#x27; only refers to a type, but is</span><br>                   <span class="hljs-comment">//    being used as a value here.</span><br>    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Selector <span class="hljs-subst">$&#123;selector&#125;</span> returned the wrong type.`</span>);<br>  &#125;<br>  <span class="hljs-keyword">return</span> el;<br><span class="hljs-comment">// ~~~~~~~~~ Type &#x27;Element&#x27; is not assignable to type &#x27;T&#x27;.</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>The error on the <code>instanceof</code> check is a fundamental one that cannot be worked around. <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof', event);"><code>instanceof</code></a> is an operator that is evaluated at runtime. As Item 3 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> (&quot;Understand That Code Generation Is Independent of Types&quot;) and <a target="_blank" rel="noopener" href="http://neugierig.org/software/blog/2016/04/typescript-types.html" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'http://neugierig.org/software/blog/2016/04/typescript-types.html', event);">many other sites</a> explain, TypeScript types <em>do not exist at runtime</em>. So referencing them in a runtime expression is nonsensical. You can&#39;t get a value at runtime from a TypeScript type. It just won&#39;t work.</p>
+<p>The error on the <code>instanceof</code> check is a fundamental one that cannot be worked around. <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof', event);"><code>instanceof</code></a> is an operator that is evaluated at runtime. As Item 3 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> (&quot;Understand That Code Generation Is Independent of Types&quot;) and <a target="_blank" rel="noopener" href="http://neugierig.org/software/blog/2016/04/typescript-types.html" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'http://neugierig.org/software/blog/2016/04/typescript-types.html', event);">many other sites</a> explain, TypeScript types <em>do not exist at runtime</em>. So referencing them in a runtime expression is nonsensical. You can&#39;t get a value at runtime from a TypeScript type. It just won&#39;t work.</p>
 <p>You <em>can</em> go the other way, however! Given a value, you can get a TypeScript type using <code>typeof</code>. And fortunately for us, there are runtime values corresponding to all the DOM types, just as there are for all classes. <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement" onclick="return trackOutboundLink('writing a safe queryselector the oneway street from values to types', 'https://developer.mozilla.org/en-US/docs/Web/API/HTMLButtonElement', event);"><code>HTMLButtonElement</code></a> in TypeScript can refer to either a type or a value depending on the context.</p>
 <p>So instead of passing in the type we want, let&#39;s pass in a value. Here&#39;s a sketch:</p>
 <!-- verifier:skip because it's incomplete -->
@@ -206,7 +206,7 @@
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -217,7 +217,7 @@
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>

@@ -31,14 +31,14 @@ One of the best ways to fight against this ramp-up of complexity is to simply re
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -141,7 +141,7 @@ One of the best ways to fight against this ramp-up of complexity is to simply re
 <figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">$ ts-prune -p tsconfig.ts-prune.json | grep -v &#39;used in module&#39;<br>src&#x2F;example.ts:4 - bar<br></code></pre></td></tr></table></figure>
 
 <p>The <code>-p</code> points <code>ts-prune</code> at your special <code>tsconfig.json</code>. Since you never <code>import</code> tests, they wind up being ignored for purposes of detecting alive vs. dead code. The same goes for un-<code>import</code>ed modules.</p>
-<p>The <code>grep</code> filters out the second category of problems from the above list. I have no problem exporting symbols that are never imported (in fact, I recommend it in Item 47 <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('finding dead code and dead types in typescript', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a>: Export All Types That Appear in Public APIs).</p>
+<p>The <code>grep</code> filters out the second category of problems from the above list. I have no problem exporting symbols that are never imported (in fact, I recommend it in Item 47 <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('finding dead code and dead types in typescript', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a>: Export All Types That Appear in Public APIs).</p>
 <p><em>(Sidebar: why? Two main reasons. First, you often wind up needing to import them later, and exporting them makes it possible for tsserver to offer auto-import. Second, you&#39;re effectively exporting them already if they&#39;re part of a public API. You may as well make it easy.)</em></p>
 <p>The output of ts-prune tells us that the <code>bar</code> symbol is unused despite being exported. This is exactly what we wanted to know!</p>
 <p>I highly recommend setting up ts-prune for your project. You might find some dead code that you&#39;d forgotten about! It also works great with more exotic setups like media imports and generated code. Two examples of this from my own projects:</p>
@@ -204,7 +204,7 @@ Anecdotes:
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -215,7 +215,7 @@ Anecdotes:
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>

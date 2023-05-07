@@ -33,14 +33,14 @@ To understand template literal types, let&amp;#39;s start with a seemingly simpl
 
     <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-769809-4"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-769809-4');
 
+      gtag('config', 'G-1NXE8EL9YT');
       var trackOutboundLink = function(category, url, e) {
         if (!window.google_tag_manager) {
           console.log('blocked!');
@@ -182,7 +182,7 @@ To understand template literal types, let&amp;#39;s start with a seemingly simpl
 <p>With template literal types, it will be possible to fix this. I wouldn&#39;t be surprised if it becomes common practice to replace calls to <code>getElementById</code> with equivalent calls to <code>querySelector</code>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> el1 = <span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&#x27;foo&#x27;</span>);<br><span class="hljs-comment">// type is Element | null</span><br><span class="hljs-keyword">const</span> div = <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">&#x27;div#foo&#x27;</span>);<br><span class="hljs-comment">// type is HTMLDivElement | null</span><br></code></pre></td></tr></table></figure>
 
-<p>This will no doubt require me to rewrite Item 55 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a> (&quot;Understand the DOM hierarchy&quot;). Oh well!</p>
+<p>This will no doubt require me to rewrite Item 55 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> (&quot;Understand the DOM hierarchy&quot;). Oh well!</p>
 </li>
 <li><p>Parsing options in <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/commander" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://www.npmjs.com/package/commander', event);">Commander</a> or <a target="_blank" rel="noopener" href="https://github.com/docopt/docopt.coffee" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://github.com/docopt/docopt.coffee', event);">docopt</a>: <strong>a small win</strong></p>
 <p>With <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/commander" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://www.npmjs.com/package/commander', event);">Commander</a>, you define your command line tool&#39;s arguments using something like this:</p>
@@ -199,7 +199,7 @@ To understand template literal types, let&amp;#39;s start with a seemingly simpl
 </li>
 </ul>
 <p>Template literal types open up many new doors for TypeScript library authors and should improve the overall experience of using TypeScript for everyone by capturing more JavaScript patterns in the type system.</p>
-<p>I&#39;d like to conclude by pointing out that this is a very <em>TypeScripty</em> solution to this problem. TypeScript is full of &quot;puns&quot; between value and type syntax. Depending on the context, <code>&quot;foo&quot;</code> could either be the literal value <code>&quot;foo&quot;</code> or a type consisting of the single value <code>&quot;foo&quot;</code>. (I explore this in Item 8 of <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://amzn.to/38s1oCK', event);"><em>Effective TypeScript</em></a>, &quot;Know How to Tell Whether a Symbol Is in the Type Space or Value Space&quot;). Another famous example is <a target="_blank" rel="noopener" href="https://basarat.gitbook.io/typescript/type-system/index-signatures" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://basarat.gitbook.io/typescript/type-system/index-signatures', event);">index types</a>:</p>
+<p>I&#39;d like to conclude by pointing out that this is a very <em>TypeScripty</em> solution to this problem. TypeScript is full of &quot;puns&quot; between value and type syntax. Depending on the context, <code>&quot;foo&quot;</code> could either be the literal value <code>&quot;foo&quot;</code> or a type consisting of the single value <code>&quot;foo&quot;</code>. (I explore this in Item 8 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a>, &quot;Know How to Tell Whether a Symbol Is in the Type Space or Value Space&quot;). Another famous example is <a target="_blank" rel="noopener" href="https://basarat.gitbook.io/typescript/type-system/index-signatures" onclick="return trackOutboundLink('what can should you do with template literal types', 'https://basarat.gitbook.io/typescript/type-system/index-signatures', event);">index types</a>:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> obj = &#123;<span class="hljs-attr">x</span>: <span class="hljs-number">12</span>&#125;;<br><span class="hljs-keyword">const</span> value = obj[<span class="hljs-string">&#x27;x&#x27;</span>];  <span class="hljs-comment">// JS index operator, value at runtime is 12.</span><br><span class="hljs-keyword">type</span> T = (<span class="hljs-keyword">typeof</span> obj)[<span class="hljs-string">&#x27;x&#x27;</span>];  <span class="hljs-comment">// TS index operator, type is number.</span><br></code></pre></td></tr></table></figure>
 
 <p>Template literal types continue this pattern by repurposing a runtime JavaScript syntax (template strings) into something that makes sense in the type system (template literal types). The <code>concat</code> function really hammers this home:</p>
@@ -263,7 +263,7 @@ link to the awesome list somewhere
   <div class="promotion">
     <div class="row">
       <div class="col-sm-12 text-center">
-        <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/38s1oCK', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
         <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
         <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
       </div>
@@ -274,7 +274,7 @@ link to the awesome list somewhere
     <div class="container">
       <div class="row">
         <div class="col-md-12">
-          <a target="_blank" rel="noopener" href="https://amzn.to/38s1oCK" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/38s1oCK', event);">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
             <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
           </a>
           <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
