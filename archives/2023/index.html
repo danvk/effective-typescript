@@ -136,6 +136,32 @@
 
   <div class="container">
   
+    <div class="row hentry" id="jsdoc-repeat">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2023/05/31/jsdoc-repeat/">Item 30: Don’t Repeat Type Information in Documentation</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2023-05-31T15:36:00.000Z" itemprop="datePublished">
+        Wed 31 May 2023
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p><em>Chapter 4 of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('recent blog posts', 'https://amzn.to/3HIrQN6', event);">Effective TypeScript</a> covers type design: the process of crafting your types to accurately model your domain. This item has always been a favorite of mine because of how immediately actionable it is. When you review code, be on the lookout for violations!</em></p>
+<p>What’s wrong with this code?</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Returns a string with the foreground color.</span><br><span class="hljs-comment"> * Takes zero or one arguments. With no arguments, returns the</span><br><span class="hljs-comment"> * standard foreground color. With one argument, returns the foreground color</span><br><span class="hljs-comment"> * for a particular page.</span><br><span class="hljs-comment"> */</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getForegroundColor</span>(<span class="hljs-params">page?: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>  <span class="hljs-keyword">return</span> page === <span class="hljs-string">&#x27;login&#x27;</span> ? &#123;<span class="hljs-attr">r</span>: <span class="hljs-number">127</span>, <span class="hljs-attr">g</span>: <span class="hljs-number">127</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">127</span>&#125; : &#123;<span class="hljs-attr">r</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">g</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">b</span>: <span class="hljs-number">0</span>&#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>The code and the comment disagree! Without more context it’s hard to say which is right, but something is clearly amiss. As a professor of mine used to say, &quot;when your code and your comments disagree, they’re both wrong!&quot;</p>
+        <a class="read-more" href="/2023/05/31/jsdoc-repeat/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="aoc2022">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -261,7 +287,7 @@
 <ol start="28">
 <li>Prefer Types That Always Represent Valid States</li>
 <li>Be Liberal in What You Accept and Strict in What You Produce</li>
-<li>Don’t Repeat Type Information in Documentation</li>
+<li><a href="/2023/05/31/jsdoc-repeat/">Don’t Repeat Type Information in Documentation</a></li>
 <li><a href="/2020/03/24/null-values-to-perimeter/">Push Null Values to the Perimeter of Your Types</a></li>
 <li>Prefer Unions of Interfaces to Interfaces of Unions</li>
 <li>Prefer More Precise Alternatives to String Types</li>
