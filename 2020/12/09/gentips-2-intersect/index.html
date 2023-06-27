@@ -160,7 +160,7 @@
 <p>You can improve things with a short helper:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> LooseKey&lt;T, K&gt; = T[K &amp; keyof T];<br></code></pre></td></tr></table></figure>
 
-<p>This is like <code>T[K]</code> except that it doesn&#39;t require evidence that <code>K</code> is actually a key of <code>T</code>. (If it&#39;s not, it will resolve to <code>never</code>.) The win here is that while <code>T</code> appears twice in the definition of <code>LooseKey</code>, it only appears once when you use it. Here&#39;s how you can use it to simplify the monstruous type expression from earlier:</p>
+<p>This is like <code>T[K]</code> except that it doesn&#39;t require evidence that <code>K</code> is actually a key of <code>T</code>. (If it&#39;s not, it will resolve to <code>never</code>.) The win here is that while <code>T</code> appears twice in the definition of <code>LooseKey</code>, it only appears once when you use it. Here&#39;s how you can use it to simplify the monstrous type expression from earlier:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">- Promise&lt;API[Path][&#39;get&#39; &amp; keyof API[Path]][&#39;response&#39; &amp; keyof API[Path][&quot;get&quot; &amp; keyof API[Path]]]&gt;<br>+ Promise&lt;LooseKey&lt;LooseKey&lt;API[Path], &#39;get&#39;&gt;, &#39;response&#39;&gt;&gt;<br></code></pre></td></tr></table></figure>
 
 <p>As before, this still resolves all our types perfectly. You could even define a <code>LooseKey2</code> to simplify things a bit more:</p>
