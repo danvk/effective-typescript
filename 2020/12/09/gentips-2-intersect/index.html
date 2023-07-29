@@ -112,7 +112,7 @@
 
 <p>There are a few issues with this from a TypeScript perspective:</p>
 <ol>
-<li>The type of <code>request.params</code> is <code>any</code>. This means that <code>userId</code> also gets an <code>any</code> type, and this destructuring assignment is completely unsafe.</li>
+<li>The type of <code>request.params</code> is <code>any</code>. This means that <code>userId</code> also gets an <code>any</code> type, and this destructuring assignment is completely unsafe. (<em>Update: this is <a target="_blank" rel="noopener" href="https://github.com/DefinitelyTyped/DefinitelyTyped/pull/51262#issuecomment-848052084" onclick="return trackOutboundLink('generic tips part  intersect what you have with whatever typescript wants', 'https://github.com/DefinitelyTyped/DefinitelyTyped/pull/51262#issuecomment-848052084', event);">no longer the case</a> if you&#39;re using a version of <code>@types/express</code> later than 4.17.2</em>)</li>
 <li>The call to <code>response.json()</code> doesn&#39;t check the type of its argument. In fact, nothing checks that we call <code>response.json</code> at all.</li>
 </ol>
 <p>Crosswalk defines a typed wrapper so that the registration looks like this:</p>
