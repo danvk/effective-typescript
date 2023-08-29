@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>TypeScript and SQL: Six Ways to Bridge the Divide</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: TypeScript and SQL: Six Ways to Bridge the Divide">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; TypeScript and SQL: Six Ways to Bridge the Divide">
+    <meta name="twitter:description" content="If you develop server code with TypeScript, you&#39;ll inevitably come up against the question of how to interact with your database. There&#39;s lots of type information in your database (the structure of the tables) and it&#39;s not immediately clear how to share that type information between the DB and TypeScript.
+
+This post and its accompanying video present six ways to solve this problem and offer some advice gleaned from years of experience combining Postgres and TypeScript.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; TypeScript and SQL: Six Ways to Bridge the Divide">
+    <meta property="og:description" content="If you develop server code with TypeScript, you&#39;ll inevitably come up against the question of how to interact with your database. There&#39;s lots of type information in your database (the structure of the tables) and it&#39;s not immediately clear how to share that type information between the DB and TypeScript.
+
+This post and its accompanying video present six ways to solve this problem and offer some advice gleaned from years of experience combining Postgres and TypeScript.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>TypeScript and SQL: Six Ways to Bridge the Divide</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2023-08-29T21:30:00.000Z" itemprop="datePublished">
+              Tue 29 August 2023
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>Last year I gave about TypeScript and databases at the <a target="_blank" rel="noopener" href="https://portal.gitnation.org/events/typescript-congress-2022/talks" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://portal.gitnation.org/events/typescript-congress-2022/talks', event);">inaugural TypeScript Congress</a>. The post below includes a link to that video and describes the content of the talk. I had a nice time and plan to attend again this September 21 and 22nd. <a target="_blank" rel="noopener" href="https://portal.gitnation.org/events/typescript-congress-2023/" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://portal.gitnation.org/events/typescript-congress-2023/', event);">TypeScript Congress</a> has generously offered a discount to readers of the Effective TypeScript blog, use code <a target="_blank" rel="noopener" href="https://ti.to/gitnation/typescript-congress-2023/discount/EFTS2023" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://ti.to/gitnation/typescript-congress-2023/discount/EFTS2023', event);"><strong>EFTS2023</strong></a> at checkout. They&#39;ve also agreed to raffle off two free tickets. If you&#39;re interested, <a href="mailto:danvdk@gmail.com">shoot me an email!</a> In any case, enjoy the post and see you at <a target="_blank" rel="noopener" href="https://portal.gitnation.org/events/typescript-congress-2023/" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://portal.gitnation.org/events/typescript-congress-2023/', event);">TS Congress</a>!</em></p>
+<p>If you develop server code with TypeScript, you&#39;ll inevitably come up against the question of how to interact with your database. There&#39;s lots of type information in your database (the structure of the tables) and it&#39;s not immediately clear how to share that type information between the DB and TypeScript.</p>
+<p>Over many years of working with TypeScript and <a target="_blank" rel="noopener" href="https://www.postgresql.org/" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://www.postgresql.org/', event);">Postgres</a>, one of the most popular open source databases, I&#39;ve developed some opinions and hard-earned knowledge. This post lays out the decision tree you face as you work with TypeScript and a database and presents my preferred techniques.</p>
+<p>If you&#39;d like to watch in video form, I gave a <a target="_blank" rel="noopener" href="https://portal.gitnation.org/contents/typescript-and-the-database-who-owns-the-types" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://portal.gitnation.org/contents/typescript-and-the-database-who-owns-the-types', event);">30 minute talk on this</a> at last year&#39;s TS Congress. Watching it again 16 months later, I have to say that it&#39;s pretty good! It goes into more detail on each option than this post does. You can follow along with the <a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1OsLdyLMtJ79fvuylYgmjlCrPNS_NK9xIAXKqoAyW3SI/edit#slide=id.p" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://docs.google.com/presentation/d/1OsLdyLMtJ79fvuylYgmjlCrPNS_NK9xIAXKqoAyW3SI/edit#slide=id.p', event);">slides</a> and <a target="_blank" rel="noopener" href="https://github.com/danvk/ts-sql-tscongress2022" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://github.com/danvk/ts-sql-tscongress2022', event);">sample repo</a> if you like.</p>
+<p><a target="_blank" rel="noopener" href="https://portal.gitnation.org/contents/typescript-and-the-database-who-owns-the-types" onclick="return trackOutboundLink('typescript and sql six ways to bridge the divide', 'https://portal.gitnation.org/contents/typescript-and-the-database-who-owns-the-types', event);"><img src="https://effectivetypescript.com/images/tscongress-talk.jpg" alt="Dan speaking at TS Congress April 22, 2022" style="max-height: 458px; max-width: 100%"></a></p>
+<p>The DB Schema looks something like this:</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">CREATE</span> <span class="hljs-keyword">TABLE</span> book(<br>  id uuid <span class="hljs-keyword">DEFAULT</span> gen_random_uuid() <span class="hljs-keyword">PRIMARY</span> KEY,<br>  title <span class="hljs-type">varchar</span> <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span>,<br>  publication_year <span class="hljs-type">integer</span> <span class="hljs-keyword">NOT</span> <span class="hljs-keyword">NULL</span>,<br>);<br></code></pre></td></tr></table></figure>
+
+<h2 id="Raw-SQL-Hand-coded-types"><a href="#Raw-SQL-Hand-coded-types" class="headerlink" title="Raw SQL + Hand-coded types"></a>Raw SQL + Hand-coded types</h2><p>Say you write a query to fetch all the books in your database using <a target="_blank" rel="noopener" href="https://node-postgres.com/" onclick="return trackOutboundLink('raw sql  handcoded types', 'https://node-postgres.com/', event);">node-postgres</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> dbPool.query(<span class="hljs-string">`SELECT * FROM book`</span>);<br><span class="hljs-comment">//    ^? const books: any[]</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> book <span class="hljs-keyword">of</span> books) &#123;<br>  <span class="hljs-built_in">console</span>.log(book.title, book.year);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This code has a bug: it should be <code>book.publication_year</code>, not <code>book.year</code>. But because the the query returns an <code>any</code> type, TypeScript hasn&#39;t been able to flag it. No problem, we&#39;ll just write out an <code>interface</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Book &#123;<br>  id: <span class="hljs-built_in">string</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>  publication_year: <span class="hljs-built_in">number</span>;<br>&#125;<br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> dbPool.query&lt;Book&gt;(<span class="hljs-string">`SELECT * FROM book`</span>);<br><span class="hljs-comment">//    ^? const books: Book[]</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> book <span class="hljs-keyword">of</span> books) &#123;<br>  <span class="hljs-built_in">console</span>.log(book.title, book.year);<br>  <span class="hljs-comment">//                           ~~~~ Property &#x27;year&#x27; does not exist on type &#x27;Book&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Voila! TypeScript flags the error and we can easily fix it by changing <code>year</code> to <code>publication_year</code>.</p>
+<p>This <em>is</em> a big improvement over untyped code, and this tends to be the approach that developers fall into by default if they don&#39;t step back back and think about the problem of TypeScript and SQL.</p>
+<p>But this approach also has a big problem: there&#39;s no <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Single_source_of_truth" onclick="return trackOutboundLink('raw sql  handcoded types', 'https://en.wikipedia.org/wiki/Single_source_of_truth', event);">single source of truth</a>. If the database changes (say because of a migration) then our TypeScript types won&#39;t update. And nothing ensures that they types are accurate to begin with.</p>
+<p>On the other hand, this approach has some strengths: it doesn&#39;t introduce any abstractions (you&#39;re just writing TypeScript and SQL) and it doesn&#39;t introduce any sort of build step into your project.</p>
+<p><strong>Pros and Cons of Raw SQL and Hand-Coded Types</strong></p>
+<ul>
+<li>Pros<ul>
+<li>Zero abstraction</li>
+<li>You do get some type safety</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>Repetition between DB + TS</li>
+<li>Types don&#39;t stay in sync:</li>
+<li>No Single Source of Truth</li>
+</ul>
+</li>
+</ul>
+<h2 id="ORMs-TypeORM-Sequelize-Waterline-Prisma-…"><a href="#ORMs-TypeORM-Sequelize-Waterline-Prisma-…" class="headerlink" title="ORMs (TypeORM, Sequelize, Waterline, Prisma, …)"></a>ORMs (TypeORM, Sequelize, Waterline, Prisma, …)</h2><p>So you want a single source of truth. The first big question you have to ask is &quot;where is the source of truth?&quot; Since we&#39;re dealing with TypeScript and SQL, the two obvious choices are… TypeScript and SQL. If you want to make TypeScript your source of truth, then you&#39;ll be using an <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1279613/what-is-an-orm-how-does-it-work-and-how-should-i-use-one" onclick="return trackOutboundLink('orms typeorm sequelize waterline prisma', 'https://stackoverflow.com/questions/1279613/what-is-an-orm-how-does-it-work-and-how-should-i-use-one', event);">ORM</a>, aka an Object-Relational Mapper.</p>
+<p>Here&#39;s how we might define a <code>Book</code> table using <a target="_blank" rel="noopener" href="https://typeorm.io/" onclick="return trackOutboundLink('orms typeorm sequelize waterline prisma', 'https://typeorm.io/', event);">TypeORM</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; Entity, PrimaryGeneratedColumn, Column &#125; form <span class="hljs-string">&#x27;typeorm&#x27;</span>;<br><br><span class="hljs-meta">@Entity</span>()<br><span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Book</span> </span>&#123;<br>  <span class="hljs-meta">@PrimaryGeneratedColumn</span>()<br>  id!: <span class="hljs-built_in">number</span>;<br><br>  <span class="hljs-meta">@Column</span>()<br>  title!: <span class="hljs-built_in">string</span>;<br><br>  <span class="hljs-meta">@Column</span>(<span class="hljs-string">&#x27;integer&#x27;</span>, &#123;<span class="hljs-attr">nullable</span>: <span class="hljs-literal">true</span>&#125;)<br>  publication_year!: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>TypeORM handles the messy business of converting this class to SQL for us. And now we can use the <code>Book</code> class in our code:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> entityManager.find(Book);<br><span class="hljs-comment">//    ^? const books: Book[]</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> book <span class="hljs-keyword">of</span> books) &#123;<br>  <span class="hljs-built_in">console</span>.log(book.title, book.publication_year);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>And we have types! There&#39;s a single source of truth. Another nice property of ORMs is that they can often generate migrations for you, so that you don&#39;t have to write the SQL out by hand.</p>
+<p>On the downside, ORMs are the classic example of a <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Leaky_abstraction" onclick="return trackOutboundLink('orms typeorm sequelize waterline prisma', 'https://en.wikipedia.org/wiki/Leaky_abstraction', event);">&quot;leaky abstraction&quot;</a>. The theory with an ORM is that you can treat the database as an implementation detail and you can just work in TypeScript. But in practice, that doesn&#39;t really work. To use an ORM effectively, you need to know SQL, you need to know TypeScript, and you need to know how to use the ORM. If you want to fine tune the performance of a query, say, you&#39;ll wind up working with your ORM to try to produce a really specific SQL query, which is just adding overhead over writing the SQL query directly. And if you work in an environment where there are multiple users of your database, perhaps working with other languages, then they&#39;ll feel like second class citizens since the database certainly won&#39;t be an implementation detail for them.</p>
+<p>Using an ORM <a target="_blank" rel="noopener" href="https://www.reddit.com/r/typescript/comments/jcw28f/typeorm_sucks_something_i_wanted_to_talk_about/" onclick="return trackOutboundLink('orms typeorm sequelize waterline prisma', 'https://www.reddit.com/r/typescript/comments/jcw28f/typeorm_sucks_something_i_wanted_to_talk_about/', event);">won&#39;t make you popular</a> on Hacker News, but they are undeniably popular. You probably already know how you feel about them. Personally I&#39;m not a fan, but they are ubiquitous and you&#39;ll eventually find yourself working on a project that uses one.</p>
+<p><strong>Pros and Cons of ORMs</strong></p>
+<ul>
+<li>Pros<ul>
+<li>Keep your types &amp; DB in sync: single source of truth!</li>
+<li>Generate migrations for you</li>
+<li>Low boilerplate for simple queries</li>
+<li>ORMs are undeniably popular</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>The classic &quot;leaky abstraction&quot;: You need to know SQL, TypeScript, <em>and</em> your ORM</li>
+<li>Performance is confusing</li>
+<li>They make other users of your DB second-class citizens</li>
+<li>Lots more churn in ORMs than in databases</li>
+</ul>
+</li>
+</ul>
+<h2 id="Schema-Generator-e-g-pg-to-ts"><a href="#Schema-Generator-e-g-pg-to-ts" class="headerlink" title="Schema Generator (e.g. pg-to-ts)"></a>Schema Generator (e.g. pg-to-ts)</h2><p>So what if you&#39;re not going to use an ORM? Then your database will be the source of truth. But it&#39;s undeniably useful to have a TypeScript version of your database schema. So you can generate TypeScript from your live database. A tool that does this is called a Schema Generator, and they&#39;re an essential part of any system that uses the database as the source of truth.</p>
+<p>The granddaddy in this space is <a target="_blank" rel="noopener" href="https://github.com/PSYT/schemats" onclick="return trackOutboundLink('schema generator eg pgtots', 'https://github.com/PSYT/schemats', event);">SchemaTS</a>, which got a lot of GitHub stars but was abandoned in 2018. So lots of people forked it. One popular one was <a target="_blank" rel="noopener" href="https://github.com/SweetIQ/schemats" onclick="return trackOutboundLink('schema generator eg pgtots', 'https://github.com/SweetIQ/schemats', event);">PyST/SchemaTS</a>, but that was abandoned in 2020. I needed to add some Postgres-specific features so I forked that one, updated it and re-released it as <a target="_blank" rel="noopener" href="https://github.com/danvk/pg-to-ts" onclick="return trackOutboundLink('schema generator eg pgtots', 'https://github.com/danvk/pg-to-ts', event);">pg-to-ts</a>. Give it a star! 😊</p>
+<p>The idea with pg-to-ts (or any other Schema Generator) is that you point it to your live database and it outputs a <code>dbschema.ts</code> file:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ npx pg-to-ts generate -c <span class="hljs-string">&#x27;postgres://dbhost/database&#x27;</span> --output dbschema.ts<br></code></pre></td></tr></table></figure>
+
+<p>Here&#39;s what the <code>dbschema.ts</code> file looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// Table book</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> Book &#123;<br>  id: <span class="hljs-built_in">string</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>  publication_year: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span>;<br>&#125;<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> BookInput &#123;<br>  id?: <span class="hljs-built_in">string</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>  publication_year?: <span class="hljs-built_in">number</span> | <span class="hljs-literal">null</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>For each table in your database you get two types: one for a complete row (i.e. the result of a <code>SELECT</code> statement) and one with just the properties you need to insert a new row (note the optional fields).</p>
+<p>You can use this to adapt the &quot;Raw SQL + Hand-coded types&quot; example code:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; Book &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./dbschema&#x27;</span>;<br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> dbPool.query&lt;Book&gt;(<span class="hljs-string">`SELECT * FROM book`</span>);<br><span class="hljs-comment">//    ^? const books: Book[]</span><br><span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> book <span class="hljs-keyword">of</span> books) &#123;<br>  <span class="hljs-built_in">console</span>.log(book.title, book.publication_year);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This is exactly the same as the hand-coded version, except that we don&#39;t have to write the types by hand. Superficially this doesn&#39;t seem like a big change, but it&#39;s actually a huge win! In practice you&#39;d generate <code>dbschema.ts</code> on your CI to make sure it stays in sync with the database.</p>
+<p>This does add a build step. But schemas tend to change less frequently than code, so in practice most changes don&#39;t require this step.</p>
+<p>Another issue is that we still had to manually add the <code>Book</code> annotation to our query to get the desired type out. For a more complex query, you may wind up writing duplicating logic with complicated <code>Pick</code> expressions or new <code>interfaces</code> based on your <code>dbschema</code>.</p>
+<p>Schema Generators are a key building block for other tools (more on that below), so if you&#39;re not using an ORM then you should absolutely use a Schema Generator.</p>
+<p><strong>Pros and Cons of Schema Generators</strong></p>
+<ul>
+<li>Pros<ul>
+<li>Keep your types &amp; DB in sync</li>
+<li>Key building block (more on this later!)</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>Add a build step</li>
+<li>Still have to manually add types to queries</li>
+<li>Some DB types are hard to model in TS (e.g. integers)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Query-Builder-e-g-knex-js"><a href="#Query-Builder-e-g-knex-js" class="headerlink" title="Query Builder (e.g. knex.js)"></a>Query Builder (e.g. knex.js)</h2><p>The next question to ask is whether you want to write raw SQL or use a query builder. Probably the most popular query builder for TypeScript is <a target="_blank" rel="noopener" href="https://knexjs.org/" onclick="return trackOutboundLink('query builder eg knexjs', 'https://knexjs.org/', event);">knex.js</a>. Here&#39;s what it looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; knex &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;knex&#x27;</span>;<br><span class="hljs-keyword">const</span> knexDb = knex(&#123; <span class="hljs-attr">client</span>: <span class="hljs-string">&#x27;pg&#x27;</span>, <span class="hljs-attr">connection</span>: <span class="hljs-string">&#x27;postgres://...&#x27;</span> &#125;);<br><br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> knexDb(<span class="hljs-string">&#x27;book&#x27;</span>).select();<br><span class="hljs-comment">//    ^? const books: Book[]</span><br></code></pre></td></tr></table></figure>
+
+<p>A type! How does this work? Assuming you&#39;ve run <code>pg-to-ts</code> to generate a schema, you can tell Knex about it using a type declaration:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; knex &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;knex&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; Book &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./dbschema&#x27;</span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-built_in">module</span> <span class="hljs-string">&#x27;knex/types/tables&#x27;</span> &#123;<br>  <span class="hljs-keyword">interface</span> Tables &#123;<br>    book: Book;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This is the bridge between the Schema Generator and the Query Builder and it powers the type generation.</p>
+<p>It&#39;s great that we get accurate types without having to write them out ourselves. You can generate much more complex queries using Knex.js and generally it will do a good job of inferring accurate types.</p>
+<p>So what&#39;s the downside? Just as with ORMs, Query Builders are a classic example of a leaky abstraction. As your queries get more and more complicated, it becomes less clear that writing them with a query builder is any simpler than it would be to write them as raw SQL.</p>
+<p><strong>Pros and Cons of Query Builders</strong></p>
+<ul>
+<li>Pros<ul>
+<li>With schema generation, they get you accurate types for your queries.</li>
+<li>Less context-switching between languages.</li>
+<li>No added build step (beyond schema generation)</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>Another &quot;leaky abstraction&quot;: You need to know TS, SQL, <em>and</em> your Query Builder</li>
+</ul>
+</li>
+</ul>
+<h2 id="SQL-→-TS-e-g-PgTyped"><a href="#SQL-→-TS-e-g-PgTyped" class="headerlink" title="SQL → TS (e.g. PgTyped)"></a>SQL → TS (e.g. PgTyped)</h2><p>If you&#39;re not going to use a Query Builder, then you have another option: a tool reads your raw SQL queries, tests them against your live database and outputs types. This like a Schema Generator, but for your individual queries, not your database as a whole. The best example of this is <a target="_blank" rel="noopener" href="https://github.com/adelsz/pgtyped" onclick="return trackOutboundLink('sql  ts eg pgtyped', 'https://github.com/adelsz/pgtyped', event);">PgTyped</a>.</p>
+<p>Here&#39;s what a query looks like with PgTyped:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; sql &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@pgtyped/query&#x27;</span>;<br><br><span class="hljs-keyword">const</span> getBooks = sql<span class="hljs-string">`SELECT * FROM book;`</span>;<br><br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> getBooks.run(<span class="hljs-comment">/* query parameters */</span> <span class="hljs-literal">undefined</span>, dbPool);<br><span class="hljs-comment">//    ^? const books: any</span><br></code></pre></td></tr></table></figure>
+
+<p>What? <code>any</code>!? What&#39;s the point of that?</p>
+<p>With PgTyped you have another step: you need to run the <code>pgtyped</code> command to get types for your query:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ yarn run pgtyped -c config.json<br>Processing src/index.ts<br>Saved 1 query to src/index.types.ts<br></code></pre></td></tr></table></figure>
+
+<p>PgTyped read our tagged SQL query, inspected it against our live database (configured in <code>config.json</code>) and produced a types file:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">/** Types generated for queries found in &quot;src/index.ts&quot; */</span><br><br><span class="hljs-comment">/** &#x27;GetBooks&#x27; parameters type */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> IGetBooksParams = <span class="hljs-built_in">void</span>;<br><br><span class="hljs-comment">/** &#x27;GetBooks&#x27; return type */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> IGetBooksResult &#123;<br>  id: <span class="hljs-built_in">string</span>;<br>  publication_year: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-comment">/** &#x27;GetBooks&#x27; query type */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> IGetBooksQuery &#123;<br>  params: IGetBooksParams;<br>  result: IGetBooksResult;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>PgTyped has produced two <code>interface</code>s: one for query parameters (we have none, so this is <code>void</code>) and one for the results of our query. The third <code>interface</code> bundles these up for us. We can plug these back into our original code to get types:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; sql &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@pgtyped/query&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; IGetBooksQuery &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./index.types&#x27;</span>;<br><br><span class="hljs-keyword">const</span> getBooks = sql&lt;IGetBooksQuery&gt;<span class="hljs-string">`SELECT * FROM book;`</span>;<br><br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> getBooks.run(<span class="hljs-comment">/* query parameters */</span> <span class="hljs-literal">undefined</span>, dbPool);<br><span class="hljs-comment">//    ^? const books: IGetBooksResult[]</span><br></code></pre></td></tr></table></figure>
+
+<p>Since it runs against your live database, PgTyped doesn&#39;t require a DB Schema. But with TypeScript&#39;s structural typing system, the <code>IGetBooksResult</code> interface is compatible with <code>Book</code>, so you can freely interchange them. You may wish to wrap your query to consistently use the DB Schema type.</p>
+<p>PgTyped shines with more complex queries. You can use any features of PostgreSQL and PgTyped will follow along. There&#39;s no abstraction here, you&#39;re just writing SQL.</p>
+<p>What are the downsides? As with other non-ORM tools, PgTyped does add a build step that you&#39;ll need to run as part of your development flow and on your CI (to make sure your types and queries stay in sync). Sometimes the types you get back aren&#39;t perfect, there are some <a target="_blank" rel="noopener" href="https://github.com/adelsz/pgtyped/issues/375" onclick="return trackOutboundLink('sql  ts eg pgtyped', 'https://github.com/adelsz/pgtyped/issues/375', event);">issues around nullability</a>. While the types are usually accurate, it can feel a little &quot;duck typey&quot; to have so many distinct but compatible types floating around. And finally, it&#39;s a lot of ceremony for simple queries like <code>SELECT * FROM book</code>.</p>
+<p><strong>Pros and Cons of PgTyped</strong></p>
+<ul>
+<li>Pros<ul>
+<li>You get types for your queries, however complex they are</li>
+<li>Zero abstraction: you&#39;re just writing SQL</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>Not all types can be accurately derived this way (nullability issues)</li>
+<li>Adds a build step</li>
+<li>A little &quot;ducky&quot; w/o dbschema</li>
+<li>Lots of fuss for simple queries</li>
+</ul>
+</li>
+</ul>
+<h2 id="SQL→TS-a-smidge-of-query-building-zapatos-databases-PgTyped-crudely-typed"><a href="#SQL→TS-a-smidge-of-query-building-zapatos-databases-PgTyped-crudely-typed" class="headerlink" title="SQL→TS + a smidge of query building (zapatos, @databases, PgTyped + crudely-typed)"></a>SQL→TS + a smidge of query building (zapatos, @databases, PgTyped + crudely-typed)</h2><p>Finally, we get to my preferred approach! A Schema Generator produces the best-looking types and a Query Builder works with that schema. PgTyped excels at complex queries where you&#39;d rather write raw SQL. So the idea here is to use a minimal, TypeScript-first query builder that won&#39;t tempt you into writing complex queries with it because it doesn&#39;t support them. You should be using PgTyped for those, anyway.</p>
+<p>Enter: <a target="_blank" rel="noopener" href="https://github.com/danvk/crudely-typed" onclick="return trackOutboundLink('sqlts  a smidge of query building zapatos databases pgtyped  crudelytyped', 'https://github.com/danvk/crudely-typed', event);">crudely-typed</a>!</p>
+<p>crudely-typed (which I built at my <a target="_blank" rel="noopener" href="https://www.sidewalklabs.com/" onclick="return trackOutboundLink('sqlts  a smidge of query building zapatos databases pgtyped  crudelytyped', 'https://www.sidewalklabs.com/', event);">last job</a>) is a query builder that generates only relatively simple queries with a focus on working with your dbschema to get perfect types. Here&#39;s what it looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123;TypedSQL&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;crudely-typed&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123;tables&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./dbschema&#x27;</span>;  <span class="hljs-comment">// &lt;-- output of pg-to-ts</span><br><br><span class="hljs-keyword">const</span> typedSql = <span class="hljs-keyword">new</span> TypedSQL(tables);<br><span class="hljs-keyword">const</span> booksTable = typedSql.table(<span class="hljs-string">&#x27;book&#x27;</span>);<br><span class="hljs-keyword">const</span> getBooks = booksTable.select();<br><span class="hljs-comment">//    ^? const getBooks: (db: Queryable) =&gt; Promise&lt;Book[]&gt;</span><br><span class="hljs-keyword">const</span> books = <span class="hljs-keyword">await</span> getBooks(dbPool);<br><span class="hljs-comment">//    ^? const books: Book[]</span><br></code></pre></td></tr></table></figure>
+
+<p>You still have to regenerate <code>dbschema.ts</code> when your DB Schema changes, but there&#39;s no build step or overhead for the simple queries that crudely-typed supports. These include the basic CRUD (Create, Read, Update, Delete) queries as well as some very minimal support for 1-1 joins. Because it knows about your DB Schema, you&#39;ll get nice-looking type signatures on your functions:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> updateBook = bookTable.updateByPrimaryKey();<br><span class="hljs-comment">//    ^? const updateBook:</span><br><span class="hljs-comment">//          (db: Queryable, where: &#123; id: string; &#125;, update: Partial&lt;Book&gt;)</span><br><span class="hljs-comment">//          =&gt; Promise&lt;Book | null&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>In practice this covers 90+% of the SQL queries that you run in most applications. For the remaining 10% you can fall back to using PgTyped. The net effect is that you have a single source of truth (your database) and you get accurate TypeScript types with relatively minimal fuss.</p>
+<p>While I&#39;ve never personally used them, I believe <a target="_blank" rel="noopener" href="https://jawj.github.io/zapatos/" onclick="return trackOutboundLink('sqlts  a smidge of query building zapatos databases pgtyped  crudelytyped', 'https://jawj.github.io/zapatos/', event);">zapatos</a> and <a target="_blank" rel="noopener" href="https://www.atdatabases.org/" onclick="return trackOutboundLink('sqlts  a smidge of query building zapatos databases pgtyped  crudelytyped', 'https://www.atdatabases.org/', event);">@databases</a> follow a similar approach.</p>
+<p><strong>Pros and Cons of hybrid Schema Generator + Query Builder / PgTyped</strong></p>
+<ul>
+<li>Pros<ul>
+<li>Zero abstraction/overhead for complex SQL queries (PgTyped)</li>
+<li>Minimum fuss, dbschema types for simple queries (crudely-typed)</li>
+</ul>
+</li>
+<li>Cons<ul>
+<li>Adds a build step</li>
+<li>You might be tempted to put logic in JS instead of SQL, i.e. run 10 crudely-typed queries instead of one SQL query.</li>
+</ul>
+</li>
+</ul>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Here&#39;s the final decision tree from my <a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1OsLdyLMtJ79fvuylYgmjlCrPNS_NK9xIAXKqoAyW3SI/edit#slide=id.p" onclick="return trackOutboundLink('conclusion', 'https://docs.google.com/presentation/d/1OsLdyLMtJ79fvuylYgmjlCrPNS_NK9xIAXKqoAyW3SI/edit#slide=id.p', event);">slides</a>:</p>
+<img src="https://effectivetypescript.com/images/ts-sql-decision-tree.png" alt="Decision Tree for using TypeScript and SQL" style="max-height: 300px; max-width: 100%">
+
+<p>There are no perfect choices here. Depending on how you feel about ORMs and Query Builders, you&#39;ll wind up in a different place. Regardless, the key thing is to make a conscious, informed decision about how you want to combine TypeScript and SQL. However you do it, try to have a single source of truth.</p>
+<p>The final, hybrid option is where I&#39;ve wound up after years of dealing with this problem. How do you like to work with databases in TypeScript? Let me know in the comments!</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2023 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusion', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>

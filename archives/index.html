@@ -136,6 +136,31 @@
 
   <div class="container">
   
+    <div class="row hentry" id="sql">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2023/08/29/sql/">TypeScript and SQL: Six Ways to Bridge the Divide</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2023-08-29T21:30:00.000Z" itemprop="datePublished">
+        Tue 29 August 2023
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        If you develop server code with TypeScript, you'll inevitably come up against the question of how to interact with your database. There's lots of type information in your database (the structure of the tables) and it's not immediately clear how to share that type information between the DB and TypeScript.
+
+This post and its accompanying video present six ways to solve this problem and offer some advice gleaned from years of experience combining Postgres and TypeScript.
+
+        <a class="read-more" href="/2023/08/29/sql/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="knip">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -339,35 +364,6 @@
 <p>We talked through a <a target="_blank" rel="noopener" href="https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type/pull/47" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/JoshuaKGoldberg/eslint-plugin-expect-type/pull/47', event);">recent PR</a> I created to add TwoSlash support for Josh&#39;s expect-type eslint plugin. That syntax looks like this:</p>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> four = <span class="hljs-number">4</span>;<br><span class="hljs-comment">//  ^? let four: number</span><br></code></pre></td></tr></table></figure>
         <a class="read-more" href="/2022/04/18/twitch-expect-type/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="gentips-4-display">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2022/02/25/gentips-4-display/">The display of types</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2022-02-25T16:00:00.000Z" itemprop="datePublished">
-        Fri 25 February 2022
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        <p>We talk all the time about how to define and use types in TypeScript, but we
-rarely talk about how TypeScript chooses to <i>display</i> our types. There
-are often several possible ways to display the same type, and the choice can
-have a big impact on the usability of your library. TypeScript tries to make
-good decisions on its own about type display, but it also gives us a few very
-obscure levers by which we can control it ourselves.</p>
-<p>Let's dive in to the strange world of type display!</p>
-
-        <a class="read-more" href="/2022/02/25/gentips-4-display/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
   </div>

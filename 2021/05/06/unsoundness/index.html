@@ -107,15 +107,15 @@
 <p>Many programming languages include proofs of soundness, or at least purport to be sound. Fun fact: in 2016, two researchers <a target="_blank" rel="noopener" href="https://dl.acm.org/doi/10.1145/2983990.2984004" onclick="return trackOutboundLink('the seven sources of unsoundness in typescript', 'https://dl.acm.org/doi/10.1145/2983990.2984004', event);">discovered that Java had become unsound</a>! As we saw above, TypeScript is emphatically <em>not</em> sound. In fact, <a target="_blank" rel="noopener" href="https://github.com/Microsoft/TypeScript/wiki/TypeScript-Design-Goals#non-goals" onclick="return trackOutboundLink('the seven sources of unsoundness in typescript', 'https://github.com/Microsoft/TypeScript/wiki/TypeScript-Design-Goals#non-goals', event);">soundness is not a design goal</a> of TypeScript at all. Instead, TypeScript favors convenience and the ability to work with existing JavaScript libraries.</p>
 <p>That being said, unsoundness can lead to crashes and other problems at runtime, so it&#39;s a good idea to understand the ways that it can arise.</p>
 <p>Here are the seven sources of unsoundness:</p>
-<ol>
+<ul>
 <li><a href="#any"><code>any</code></a></li>
-<li><a href="#Type-Assertions">Type Assertions</a></li>
-<li><a href="#Object-and-array-lookups">Object and array lookups</a></li>
-<li><a href="#Inaccurate-type-definitions">Inaccurate type definitions</a></li>
-<li><a href="#The-thing-with-variance-and-arrays">The thing with variance and arrays</a></li>
-<li><a href="#Function-calls-don-39-t-invalidate-refinements">Function calls don&#39;t invalidate refinements</a></li>
-<li><a href="#There-Are-Five-Turtles">There Are Five Turtles</a></li>
-</ol>
+<li><a href="#type-assertions">Type Assertions</a></li>
+<li><a href="#object-and-array-lookups">Object and array lookups</a></li>
+<li><a href="#inaccurate-type-definitions">Inaccurate type definitions</a></li>
+<li><a href="#the-thing-with-variance-and-arrays">The thing with variance and arrays</a></li>
+<li><a href="#function-calls-dont-invalidate-refinements">Function calls don&#39;t invalidate refinements</a></li>
+<li><a href="#there-are-five-turtles">There Are Five Turtles</a></li>
+</ul>
 <p>For each of these, I&#39;ll assess how common it is in practice, show what it looks like, and explain how you can avoid it.</p>
 <p>Note that this post assumes you&#39;re using <code>--strict</code>. If you&#39;re not, then there are more ways that TypeScript is unsound.</p>
 <h2 id="any"><a href="#any" class="headerlink" title="any"></a><code>any</code></h2><p><strong>How often does this occur?</strong> It depends how disciplined you are about not using <code>any</code>! But built-ins like <code>JSON.parse</code> that return <code>any</code> make it hard to avoid entirely.</p>
