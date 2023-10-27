@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Overload on the type of this to specialize generics (The Lost Item)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Overload on the type of this to specialize generics (The Lost Item)">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Overload on the type of this to specialize generics (The Lost Item)">
+    <meta name="twitter:description" content="I cut one item from Effective TypeScript during the final stages of editing. Four years later, it&#39;s time for it to see the light of day! It&#39;s a trick for specializing generic types for certain subtypes of their type parameters. This post shows how it works, why it&#39;s indispensible for wrapper types, and also explains why I cut it from the book.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Overload on the type of this to specialize generics (The Lost Item)">
+    <meta property="og:description" content="I cut one item from Effective TypeScript during the final stages of editing. Four years later, it&#39;s time for it to see the light of day! It&#39;s a trick for specializing generic types for certain subtypes of their type parameters. This post shows how it works, why it&#39;s indispensible for wrapper types, and also explains why I cut it from the book.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Overload on the type of this to specialize generics (The Lost Item)</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2023-10-27T14:50:00.000Z" itemprop="datePublished">
+              Fri 27 October 2023
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>I cut one item from <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('overload on the type of this to specialize generics the lost item', 'https://amzn.to/3HIrQN6', event);">Effective TypeScript</a> during the final stages of editing. Four years later, it&#39;s time for it to see the light of day! It&#39;s a trick for specializing generic types for certain subtypes of their type parameters. This post shows how it works, why it&#39;s indispensible for wrapper types, and also explains why I cut it from the book.</em></p>
+<p>As you write type declarations for generic classes, you may find that you want to make some methods available only for particular values of the generic parameter. This often comes up with wrapper objects. In the lodash utility library, for example, you can rewrite a series of function calls:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_.sum(<br>  _.map(<br>    _.filter(<br>      _.split(<span class="hljs-string">&#x27;&#x27;</span> + <span class="hljs-built_in">Math</span>.PI, <span class="hljs-string">&#x27;&#x27;</span>),<br>      digit =&gt; digit !== <span class="hljs-string">&#x27;.&#x27;</span>),<br>    <span class="hljs-built_in">Number</span>));  <span class="hljs-comment">// result is 80</span><br></code></pre></td></tr></table></figure>
+
+<p>into a <a target="_blank" rel="noopener" href="https://lodash.com/docs/4.17.15#chain" onclick="return trackOutboundLink('overload on the type of this to specialize generics the lost item', 'https://lodash.com/docs/4.17.15#chain', event);">chain</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_.chain(<span class="hljs-string">&#x27;&#x27;</span> + <span class="hljs-built_in">Math</span>.PI)<br>  .split(<span class="hljs-string">&#x27;&#x27;</span>)<br>  .filter(<span class="hljs-function"><span class="hljs-params">digit</span> =&gt;</span> digit !== <span class="hljs-string">&#x27;.&#x27;</span>)<br>  .map(<span class="hljs-built_in">Number</span>)<br>  .sum()<br>  .value();  <span class="hljs-comment">// result is 80</span><br></code></pre></td></tr></table></figure>
+
+<p>The call to <code>_.chain(val)</code> creates a wrapper object which is eventually unwrapped by a call to <code>.value()</code>. This reads more naturally since the execution order matches the code order: top to bottom, left to right.</p>
+<p>Modeling this in TypeScript presents some challenges:</p>
+<ul>
+<li>The <code>split</code> method should only be available on wrapped strings.</li>
+<li>The <code>filter</code> and <code>map</code> methods should only be available on arrays. (In the real lodash library they work on objects, too, but have different type signatures.)</li>
+<li>The <code>sum</code> method should only be available on wrapped arrays of strings or numbers.</li>
+</ul>
+<p>For example, calling <code>map</code> on a wrapped number should be an error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_(<span class="hljs-built_in">Math</span>.PI)<br>  .map(<span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> val);<br><span class="hljs-comment">// ~~~ map method not available</span><br></code></pre></td></tr></table></figure>
+
+<p>You can start by defining the wrapper interface:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Wrapper&lt;T&gt; &#123;<br>  value(): T;<br>&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T</span>): <span class="hljs-title">Wrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>(Since we&#39;re writing declarations here, we assume there&#39;s already an implementation defined elsewhere which may use different classes at runtime.)</p>
+<p>You can verify that this wraps and unwraps values by writing a simple chain and inspecting the intermediate types in your editor:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_(<span class="hljs-built_in">Math</span>.PI).value();<br>       <span class="hljs-comment">//  ----- (method) Wrapper&lt;number&gt;.value(): number</span><br></code></pre></td></tr></table></figure>
+
+<p>As expected, this forms a <code>Wrapper&lt;number&gt;</code> and then unwraps it.</p>
+<p>So what if you want to add a <code>map</code> method that&#39;s only available on arrays? If you add it directly to the <code>Wrapped</code> interface, it will be available on all wrapped objects, not just arrays. Perhaps a better approach is to create a specialized <code>ArrayWrapper</code> interface:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Wrapper&lt;T&gt; &#123;<br>  value(): T;<br>&#125;<br><span class="hljs-keyword">interface</span> ArrayWrapper&lt;T&gt; <span class="hljs-keyword">extends</span> Wrapper&lt;T[]&gt; &#123;<br>  map&lt;V&gt;(mapFn: <span class="hljs-function">(<span class="hljs-params">v: T</span>) =&gt;</span> V): ArrayWrapper&lt;V&gt;;<br>&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T[]</span>): <span class="hljs-title">ArrayWrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T</span>): <span class="hljs-title">Wrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>You can verify that this gives the desired completions and errors in your editor:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_(<span class="hljs-built_in">Math</span>.PI)  <span class="hljs-comment">// typing &quot;.&quot; offers &quot;value&quot; as the only completion</span><br>_(<span class="hljs-built_in">Math</span>.PI)<br>  .map(<span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> val);<br><span class="hljs-comment">// ~~~ Property &#x27;map&#x27; does not exist on type &#x27;Wrapper&lt;number&gt;&#x27;.</span><br><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>])  <span class="hljs-comment">// typing &quot;.&quot; offers &quot;map&quot; and &quot;value&quot; completions</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> <span class="hljs-string">&#x27;&#x27;</span> + v).value();  <span class="hljs-comment">// ok, type is string[]</span><br></code></pre></td></tr></table></figure>
+
+<p>So far so good. Now let&#39;s add support for the <code>sum</code> method. You can add this to the <code>ArrayWrapper</code> interface:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ArrayWrapper&lt;T&gt; <span class="hljs-keyword">extends</span> Wrapper&lt;T[]&gt; &#123;<br>  sum(): T;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>and this will work, but it will also let you sum an array of <code>Date</code> objects to get a single <code>Date</code>, or an array of regular expressions to get a single regular expression. These should be errors.</p>
+<p>You could try to model this out explicitly by creating more specialized interfaces:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Wrapper&lt;T&gt; &#123;<br>  value(): T;<br>&#125;<br><span class="hljs-keyword">interface</span> ArrayWrapper&lt;T&gt; <span class="hljs-keyword">extends</span> Wrapper&lt;T[]&gt; &#123;<br>  map&lt;V&gt;(mapFn: <span class="hljs-function">(<span class="hljs-params">v: T</span>) =&gt;</span> V): ArrayWrapper&lt;V&gt;;<br>&#125;<br><span class="hljs-keyword">interface</span> ArrayOfNumbersWrapper <span class="hljs-keyword">extends</span> ArrayWrapper&lt;number&gt; &#123;<br>  sum(): Wrapper&lt;<span class="hljs-built_in">number</span>&gt;;<br>&#125;<br><span class="hljs-keyword">interface</span> ArrayOfStringsWrapper <span class="hljs-keyword">extends</span> ArrayWrapper&lt;string&gt; &#123;<br>  sum(): Wrapper&lt;<span class="hljs-built_in">string</span>&gt;;<br>&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>(<span class="hljs-params">value: <span class="hljs-built_in">string</span>[]</span>): <span class="hljs-title">ArrayOfStringsWrapper</span></span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>(<span class="hljs-params">value: <span class="hljs-built_in">number</span>[]</span>): <span class="hljs-title">ArrayOfNumbersWrapper</span></span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T[]</span>): <span class="hljs-title">ArrayWrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T</span>): <span class="hljs-title">Wrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]).sum().value();  <span class="hljs-comment">// ok, type is number</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> v * v).sum();<br><span class="hljs-comment">//                           ~~~</span><br><span class="hljs-comment">//     Property &#x27;sum&#x27; does not exist on type &#x27;ArrayWrapper&lt;number&gt;&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<p>What went wrong? When you use <code>map</code> on an <code>ArrayOfNumbersWrapper</code>, the result reverts back to <code>ArrayWrapper&lt;number&gt;</code>, which doesn&#39;t have a <code>sum</code> method. You can patch this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> ArrayOfNumbersWrapper <span class="hljs-keyword">extends</span> ArrayWrapper&lt;number&gt; &#123;<br>  sum(): Wrapper&lt;<span class="hljs-built_in">number</span>&gt;;<br>  map(mapFn: <span class="hljs-function">(<span class="hljs-params">v: <span class="hljs-built_in">number</span></span>) =&gt;</span> <span class="hljs-built_in">number</span>): ArrayOfNumbersWrapper;<br>  map&lt;V&gt;(mapFn: <span class="hljs-function">(<span class="hljs-params">v: <span class="hljs-built_in">number</span></span>) =&gt;</span> V): ArrayWrapper&lt;V&gt;;<br>&#125;<br><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> v * v).sum().value();  <span class="hljs-comment">// ok, type is number</span><br></code></pre></td></tr></table></figure>
+
+<p>But this is a losing battle. There&#39;s always going to be some combination of method calls that your series of interfaces misses. This will be a frustrating experience for your users, since a TypeScript error will be only loosely correlated with a runtime error.</p>
+<p>Taking a step back, this tracking of types through function calls is exactly what the TypeScript compiler does and is good at. It would be better to let it figure out that the wrapped type is <code>number[]</code> and provide the <code>sum</code> method in that case, rather than having to think of every possible way you could get a wrapped number array.</p>
+<p>The trick to doing this is to specialize methods on the type of <code>this</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Wrapper&lt;T&gt; &#123;<br>  <span class="hljs-comment">// Methods available for all types:</span><br>  value(): T;<br><br>  <span class="hljs-comment">// Methods available on arrays:</span><br>  map&lt;U, V&gt;(<span class="hljs-built_in">this</span>: Wrapper&lt;U[]&gt;, mapFn: <span class="hljs-function">(<span class="hljs-params">v: U</span>) =&gt;</span> V): Wrapper&lt;V[]&gt;;<br><br>  <span class="hljs-comment">// Methods available on specific types of arrays:</span><br>  sum(<span class="hljs-built_in">this</span>: Wrapper&lt;<span class="hljs-built_in">number</span>[]&gt;): Wrapper&lt;<span class="hljs-built_in">number</span>&gt;;<br>  sum(<span class="hljs-built_in">this</span>: Wrapper&lt;<span class="hljs-built_in">string</span>[]&gt;): Wrapper&lt;<span class="hljs-built_in">string</span>&gt;;<br>&#125;<br><br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">value: T</span>): <span class="hljs-title">Wrapper</span>&lt;<span class="hljs-title">T</span>&gt;</span>;<br><br>_(<span class="hljs-built_in">Math</span>.PI).value();  <span class="hljs-comment">// type is number</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> <span class="hljs-string">&#x27;&#x27;</span> + v * v).value();  <span class="hljs-comment">// type is string[]</span><br><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).sum().value();  <span class="hljs-comment">// type is number</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> v * v).sum().value();  <span class="hljs-comment">// type is number</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> <span class="hljs-string">&#x27;&#x27;</span> + v + v).sum().value();  <span class="hljs-comment">// type is string</span><br>_([<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>]).map(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> <span class="hljs-string">&#x27;&#x27;</span> + v + v).map(<span class="hljs-built_in">Number</span>).sum().value();  <span class="hljs-comment">// type is number</span><br></code></pre></td></tr></table></figure>
+
+<p>Everything works! The type checker is indeed quite good at tracking types: even trickier cases we didn&#39;t cover before, like mapping from strings to numbers and back, work as expected. What&#39;s more, this code is significantly clearer than our previous attempts. There&#39;s only a single <code>Wrapper</code> interface. As you add more and more specialized methods, the returns on this simplicity compound.</p>
+<p>The only downside is that the error you get from calling an unavailable method is a bit cryptic:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">_(<span class="hljs-built_in">Math</span>.PI).map(<span class="hljs-function"><span class="hljs-params">val</span> =&gt;</span> val);<br><span class="hljs-comment">// ~~~~~~~ The &#x27;this&#x27; context of type &#x27;Wrapper&lt;number&gt;&#x27; is not assignable</span><br><span class="hljs-comment">//         to method&#x27;s &#x27;this&#x27; of type &#x27;Wrapper&lt;&#123;&#125;[]&gt;&#x27;.</span><br><span class="hljs-comment">//         Type &#x27;number&#x27; is not assignable to type &#x27;&#123;&#125;[]&#x27;.</span><br></code></pre></td></tr></table></figure>
+
+<p>But at least there&#39;s an error. Hopefully there are enough details in it to make the user realize that the <code>map</code> method only applies to arrays.</p>
+<p>If you ever find yourself building a complex series of interfaces to model behaviors in a type declarations file, ask whether you could model the same thing by specializing on a generic type parameter. Overloading on the type of <code>this</code> will let TypeScript do the hard work for you. It&#39;ll be more accurate and a whole lot simpler!</p>
+<h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
+<li>Specify a narrower type for <code>this</code> to specialize generic methods in interfaces.</li>
+<li>Avoid building elaborate series of wrapper types. TypeScript is better at this!</li>
+</ul>
+<h3 id="Why-was-this-cut-from-the-book"><a href="#Why-was-this-cut-from-the-book" class="headerlink" title="Why was this cut from the book?"></a>Why was this cut from the book?</h3><p>This item was inspired by Daniel Rossenwasser&#39;s <a target="_blank" rel="noopener" href="https://www.reddit.com/r/javascript/comments/62f531/a_typed_chain_exploring_the_limits_of_typescript/dfn411v/" onclick="return trackOutboundLink('overload on the type of this to specialize generics the lost item', 'https://www.reddit.com/r/javascript/comments/62f531/a_typed_chain_exploring_the_limits_of_typescript/dfn411v/', event);">comment</a> on my 2017 blog post <a target="_blank" rel="noopener" href="https://medium.com/@danvdk/a-typed-chain-exploring-the-limits-of-typescript-b50153be53d8" onclick="return trackOutboundLink('overload on the type of this to specialize generics the lost item', 'https://medium.com/@danvdk/a-typed-chain-exploring-the-limits-of-typescript-b50153be53d8', event);">A typed chain: exploring the limits of TypeScript</a>. The technique is perfect for typing <code>_.chain</code> and other generic wrappers. So why did I cut it? It&#39;s a complex technique to motivate, and I struggled to think of any <em>other</em> situation where it would be useful. Complex and not that useful? Sounded like a good one to drop!</p>
+<p>I don&#39;t think the technique of specializing on <code>this</code> is widely-known, so perhaps this blog post can inspire some creative new use cases! Have you every run across this trick? Do you have a use case? Let me know in the comments!</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2023 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('overload on the type of this to specialize generics the lost item', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
