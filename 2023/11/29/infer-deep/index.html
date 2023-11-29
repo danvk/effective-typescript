@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Using infer to unpack nested types</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Using infer to unpack nested types">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Using infer to unpack nested types">
+    <meta name="twitter:description" content="TypeScript&#39;s infer keyword can infer quite a bit more than you might expect. It&#39;s extremely effective at extracting types from the sort of nested structures that you might get from codegen or an API specification.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Using infer to unpack nested types">
+    <meta property="og:description" content="TypeScript&#39;s infer keyword can infer quite a bit more than you might expect. It&#39;s extremely effective at extracting types from the sort of nested structures that you might get from codegen or an API specification.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Using infer to unpack nested types</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2023-11-29T21:07:00.000Z" itemprop="datePublished">
+              Wed 29 November 2023
+            </time>
+          </div>
+          <div class="entry-content">
+            <img src="https://effectivetypescript.com/images/magnifying-glass.png" width="128" height="128" alt="Inspecting a type with a magnifying glass" style="max-height: 100%; float: right">
+
+<p>In a <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">previous post</a> I suggested using intersections as a sort of type-level &quot;as any&quot;. I&#39;d personally found this technique useful on a few projects as a way of silencing type errors without losing type safety. Because you often needed to apply this trick two or three times for deeply nested types, it also led me to explore ways of <a href="https://effectivetypescript.com/2021/01/20/gentips-3-aliases/">reducing repetition in type-level code</a>.</p>
+<p>But when I started reworking that advice into an Item for the upcoming second edition of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a>, I learned something interesting: there&#39;s usually a better way! TypeScript&#39;s <code>infer</code> keyword can infer quite a lot, and it offers a more direct way to achieve the same goals I talked about in those two posts without the repetition.</p>
+<p>Those previous posts were motivated by my <a target="_blank" rel="noopener" href="https://github.com/danvk/crosswalk" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://github.com/danvk/crosswalk', event);">crosswalk</a> library, which helps you build and use type-safe REST APIs. Using <code>infer</code> works in that context, too, but the difference is even more dramatic when we look at an <a target="_blank" rel="noopener" href="https://spec.openapis.org/oas/v3.1.0" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://spec.openapis.org/oas/v3.1.0', event);">OpenAPI Schema</a>.</p>
+<p>Say your API lets you create a user. (It also lets you GET a user, but I&#39;ll only show the POST here since this is already verbose.) The OpenAPI Schema might look like this:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js">&#123;<br>  <span class="hljs-string">&quot;openapi&quot;</span>: <span class="hljs-string">&quot;3.0.3&quot;</span>,<br>  <span class="hljs-string">&quot;info&quot;</span>: &#123; <span class="hljs-string">&quot;title&quot;</span>: <span class="hljs-string">&quot;Users API&quot;</span>, <span class="hljs-string">&quot;version&quot;</span>: <span class="hljs-string">&quot;0.1&quot;</span> &#125;,<br>  <span class="hljs-string">&quot;paths&quot;</span>: &#123;<br>    <span class="hljs-string">&quot;/users&quot;</span>: &#123;<br>      <span class="hljs-string">&quot;post&quot;</span>: &#123;<br>        <span class="hljs-string">&quot;requestBody&quot;</span>: &#123;<br>          <span class="hljs-string">&quot;content&quot;</span>: &#123;<br>            <span class="hljs-string">&quot;application/json&quot;</span>: &#123;<br>              <span class="hljs-string">&quot;schema&quot;</span>: &#123;<br>                <span class="hljs-string">&quot;$ref&quot;</span>: <span class="hljs-string">&quot;#/components/schemas/CreateUserRequest&quot;</span><br>              &#125;<br>            &#125;<br>          &#125;,<br>          <span class="hljs-string">&quot;required&quot;</span>: <span class="hljs-literal">true</span><br>        &#125;,<br>        <span class="hljs-string">&quot;responses&quot;</span>: &#123;<br>          <span class="hljs-string">&quot;200&quot;</span>: &#123;<br>            <span class="hljs-string">&quot;description&quot;</span>: <span class="hljs-string">&quot;Newly-created User&quot;</span>,<br>            <span class="hljs-string">&quot;content&quot;</span>: &#123;<br>              <span class="hljs-string">&quot;application/json&quot;</span>: &#123;<br>                <span class="hljs-string">&quot;schema&quot;</span>: &#123;<br>                  <span class="hljs-string">&quot;$ref&quot;</span>: <span class="hljs-string">&quot;#/components/schemas/User&quot;</span><br>                &#125;<br>              &#125;<br>            &#125;<br>          &#125;<br>        &#125;<br>      &#125;<br>    &#125;<br>  &#125;,<br>  <span class="hljs-string">&quot;components&quot;</span>: &#123;<br>    <span class="hljs-string">&quot;schemas&quot;</span>: &#123;<br>      <span class="hljs-string">&quot;CreateUserRequest&quot;</span>: &#123;<br>        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,<br>        <span class="hljs-string">&quot;properties&quot;</span>: &#123;<br>          <span class="hljs-string">&quot;name&quot;</span>: &#123; <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;,<br>          <span class="hljs-string">&quot;age&quot;</span>: &#123; <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;number&quot;</span> &#125;<br>        &#125;,<br>        <span class="hljs-string">&quot;required&quot;</span>: [ <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;age&quot;</span> ]<br>      &#125;,<br>      <span class="hljs-string">&quot;User&quot;</span>: &#123;<br>        <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,<br>        <span class="hljs-string">&quot;properties&quot;</span>: &#123;<br>          <span class="hljs-string">&quot;id&quot;</span>: &#123; <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;,<br>          <span class="hljs-string">&quot;name&quot;</span>: &#123; <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;,<br>          <span class="hljs-string">&quot;age&quot;</span>: &#123; <span class="hljs-string">&quot;type&quot;</span>: <span class="hljs-string">&quot;number&quot;</span> &#125;<br>        &#125;,<br>        <span class="hljs-string">&quot;required&quot;</span>: [ <span class="hljs-string">&quot;id&quot;</span>, <span class="hljs-string">&quot;name&quot;</span>, <span class="hljs-string">&quot;age&quot;</span> ]<br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>You can run this through <a target="_blank" rel="noopener" href="https://github.com/drwpow/openapi-typescript" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://github.com/drwpow/openapi-typescript', event);">openapi-typescript</a> to generate TypeScript types:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">/** This file was auto-generated by openapi-typescript. */</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> paths &#123;<br>  <span class="hljs-string">&quot;/users&quot;</span>: &#123;<br>    post: &#123;<br>      requestBody: &#123;<br>        content: &#123;<br>          <span class="hljs-string">&quot;application/json&quot;</span>: components[<span class="hljs-string">&quot;schemas&quot;</span>][<span class="hljs-string">&quot;CreateUserRequest&quot;</span>];<br>        &#125;;<br>      &#125;;<br>      responses: &#123;<br>        <span class="hljs-comment">/** <span class="hljs-doctag">@description <span class="hljs-variable">Newly</span></span>-created User */</span><br>        <span class="hljs-number">200</span>: &#123;<br>          content: &#123;<br>            <span class="hljs-string">&quot;application/json&quot;</span>: components[<span class="hljs-string">&quot;schemas&quot;</span>][<span class="hljs-string">&quot;User&quot;</span>];<br>          &#125;;<br>        &#125;;<br>      &#125;;<br>    &#125;;<br>    <span class="hljs-comment">// also get, etc.</span><br>  &#125;;<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> components &#123;<br>  schemas: &#123;<br>    CreateUserRequest: &#123;<br>      name: <span class="hljs-built_in">string</span>;<br>      age: <span class="hljs-built_in">number</span>;<br>    &#125;;<br>    User: &#123;<br>      id: <span class="hljs-built_in">string</span>;<br>      name: <span class="hljs-built_in">string</span>;<br>      age: <span class="hljs-built_in">number</span>;<br>    &#125;;<br>  &#125;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Accessing these types via the <code>path</code> structure involves a <a target="_blank" rel="noopener" href="https://github.com/drwpow/openapi-typescript/tree/main/packages/openapi-typescript#basic-usage" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://github.com/drwpow/openapi-typescript/tree/main/packages/openapi-typescript#basic-usage', event);">whole bunch of indexing</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> UserResponse = paths[<span class="hljs-string">&quot;/users&quot;</span>][<span class="hljs-string">&quot;post&quot;</span>][<span class="hljs-string">&quot;responses&quot;</span>][<span class="hljs-number">200</span>][<span class="hljs-string">&quot;content&quot;</span>][<span class="hljs-string">&quot;application/json&quot;</span>];<br></code></pre></td></tr></table></figure>
+
+<p>If you want to make a generic POST method, you&#39;ll quickly run into some errors:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">post</span>&lt;<span class="hljs-title">Path</span> <span class="hljs-title">extends</span> <span class="hljs-title">keyof</span> <span class="hljs-title">paths</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  endpoint: Path</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">paths</span>[<span class="hljs-title">Path</span>][&quot;<span class="hljs-title">post</span>&quot;][&quot;<span class="hljs-title">responses</span>&quot;][200][&quot;<span class="hljs-title">content</span>&quot;][&quot;<span class="hljs-title">application</span>/<span class="hljs-title">json</span>&quot;]&gt;</span>;<br><span class="hljs-comment">//         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span><br><span class="hljs-comment">// Type &#x27;&quot;application/json&quot;&#x27; cannot be used to index type &#x27;paths[Path][&quot;post&quot;][&quot;responses&quot;][200][&quot;content&quot;]&#x27;. (2536)</span><br></code></pre></td></tr></table></figure>
+
+<p>This error makes sense: TypeScript has no reason to believe that this deep sequence of index operations will work on an arbitrary type.</p>
+<p>You can use <code>infer</code> to extract just what you want out of this structure:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> HttpVerb = <span class="hljs-string">&#x27;get&#x27;</span> | <span class="hljs-string">&#x27;post&#x27;</span> | <span class="hljs-string">&#x27;patch&#x27;</span> | <span class="hljs-string">&#x27;delete&#x27;</span> | <span class="hljs-string">&#x27;update&#x27;</span>;<br><span class="hljs-keyword">type</span> ResponseForMethod&lt;Path <span class="hljs-keyword">extends</span> keyof paths, Verb <span class="hljs-keyword">extends</span> HttpVerb&gt; =<br>  paths[Path] <span class="hljs-keyword">extends</span> Record&lt;Verb, &#123;<br>    responses: &#123;<br>      <span class="hljs-number">200</span>: &#123;<br>        content: &#123;<br>          <span class="hljs-string">&#x27;application/json&#x27;</span>: infer ResponseType,  <span class="hljs-comment">// &lt;-- the &quot;infer&quot;</span><br>        &#125;<br>      &#125;<br>    &#125;<br>  &#125;&gt; ? ResponseType : <span class="hljs-built_in">never</span>;<br><br><span class="hljs-keyword">declare</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">post</span>&lt;<span class="hljs-title">Path</span> <span class="hljs-title">extends</span> <span class="hljs-title">keyof</span> <span class="hljs-title">paths</span>&gt;(<span class="hljs-params"></span></span><br><span class="hljs-function"><span class="hljs-params">  endpoint: Path</span></span><br><span class="hljs-function"><span class="hljs-params"></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">ResponseForMethod</span>&lt;<span class="hljs-title">Path</span>, &#x27;<span class="hljs-title">post</span>&#x27;&gt;&gt;</span>;<br><br><span class="hljs-keyword">const</span> response = post(<span class="hljs-string">&#x27;/users&#x27;</span>);<br><span class="hljs-comment">//    ^? const response: Promise&lt;&#123; id: string; name: string; age: number; &#125;&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>What surprised (and impressed me) was that <code>infer</code> can see right through the <code>Record</code> helper, which is a <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type', event);">wrapper around a mapped type</a>.</p>
+<p>If the endpoint doesn&#39;t support <code>POST</code> requests, you&#39;ll get a <code>never</code> type back. A type error would be better, but hopefully the <code>never</code> will be enough to alert the caller that something is amiss.</p>
+<p>My <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">previous posts</a> would have suggested this <a href="https://effectivetypescript.com/2021/01/20/gentips-3-aliases/">chain of helpers</a> instead:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> LooseKey&lt;T, K&gt; = T[K &amp; keyof T];<br><span class="hljs-keyword">type</span> LooseKey2&lt;T, K1, K2&gt; = LooseKey&lt;LooseKey&lt;T, K1&gt;, K2&gt;;<br><span class="hljs-keyword">type</span> LooseKey3&lt;T, K1, K2, K3&gt; = LooseKey&lt;LooseKey2&lt;T, K1, K2&gt;, K3&gt;;<br><span class="hljs-keyword">type</span> LooseKey4&lt;T, K1, K2, K3, K4&gt; = LooseKey&lt;LooseKey3&lt;T, K1, K2, K3&gt;, K4&gt;;<br><span class="hljs-keyword">type</span> LooseKey5&lt;T, K1, K2, K3, K4, K5&gt; = LooseKey&lt;LooseKey4&lt;T, K1, K2, K3, K4&gt;, K5&gt;;<br><br><span class="hljs-keyword">type</span> ResponseForMethod&lt;Path <span class="hljs-keyword">extends</span> keyof paths, Verb <span class="hljs-keyword">extends</span> HttpVerb&gt; =<br>  LooseKey5&lt;paths[Path], Verb, <span class="hljs-string">&#x27;responses&#x27;</span>, <span class="hljs-number">200</span>, <span class="hljs-string">&#x27;content&#x27;</span>, <span class="hljs-string">&#x27;application/json&#x27;</span>&gt;;<br></code></pre></td></tr></table></figure>
+
+<p>Yikes! Compared to this intersection form, the <code>infer</code> approach is more direct, easier to read and more closely matches the layout of the data. And if you need to extract multiple pieces of information from a type, it&#39;s clear how to do it. This is a nice win.</p>
+<p>So is <a href="https://effectivetypescript.com/2020/12/09/gentips-2-intersect/">&quot;intersect what you have with whatever TypeScript wants&quot;</a> still a useful technique? You sometimes need to write <code>&amp; string</code> when passing a type parameter to another generic type that expects a <code>string</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// see previous post</span><br><span class="hljs-keyword">type</span> ExtractRouteParams&lt;Path <span class="hljs-keyword">extends</span> <span class="hljs-built_in">string</span>&gt; = ...;<br><span class="hljs-comment">// e.g. ExtractRouteParams&lt;&#x27;/users/:userId&#x27;&gt; = &#123;userId: string&#125;</span><br><br><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ApiWrapper</span>&lt;<span class="hljs-title">API</span>&gt; </span>&#123;<br>  apiGet&lt;Path <span class="hljs-keyword">extends</span> keyof API&gt;(<br>    path: Path,<br>    queryParams: ExtractRouteParams&lt;Path&gt;,<br>    <span class="hljs-comment">//                              ~~~~</span><br>    <span class="hljs-comment">// Type &#x27;Path&#x27; does not satisfy the constraint &#x27;string&#x27;.</span><br>    <span class="hljs-comment">//   Type &#x27;keyof API&#x27; is not assignable to type &#x27;string&#x27;.</span><br>    <span class="hljs-comment">//     Type &#x27;string | number | symbol&#x27; is not assignable to type &#x27;string&#x27;.</span><br>    <span class="hljs-comment">//       Type &#x27;number&#x27; is not assignable to type &#x27;string&#x27;. (2344)</span><br>  ): <span class="hljs-built_in">Promise</span>&lt;GetResponseForMethod&lt;API, Path&gt;&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Check out <a href="https://effectivetypescript.com/2020/11/05/template-literal-types/">TypeScript Splits the Atom</a> for a definition of <code>ExtractRouteParams</code>. The problem is that we expect <code>keyof API</code> to be a subtype of <code>string</code>, but strictly speaking all TypeScript knows is that it&#39;s a subtype of <code>PropertyKey</code>, aka <code>string | number | symbol</code>. There&#39;s nothing preventing <code>API</code> from being <code>string[]</code>, for example, in which case <code>keyof API = number</code>. Since <code>ExtractRouteParams</code> expects a <code>string</code>, this won&#39;t fly.</p>
+<p>The best solution would be to tell TypeScript that <code>API</code> should only have <code>string</code> keys. But I&#39;m not aware of any way to do that: writing <code>ApiWrapper&lt;API extends Record&lt;string, any&gt;&gt;</code> results in the same error.</p>
+<p>In this case, using an intersection to silence the error still makes sense:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ApiWrapper</span>&lt;<span class="hljs-title">API</span>&gt; </span>&#123;<br>  apiGet&lt;Path <span class="hljs-keyword">extends</span> keyof API&gt;(<br>    path: Path,<br>    queryParams: ExtractRouteParams&lt;Path &amp; <span class="hljs-built_in">string</span>&gt;,  <span class="hljs-comment">// ok</span><br>  ): <span class="hljs-built_in">Promise</span>&lt;GetResponseForMethod&lt;API, Path&gt;&gt;;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>When you&#39;re working with nested object types, remember that you can use <code>infer</code> to extract a particular type from deep inside them.</p>
+<p><em>Image credit: <a target="_blank" rel="noopener" href="https://commons.wikimedia.org/wiki/File:Magnifying_glass_icon_by_Manjiro5.svg" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://commons.wikimedia.org/wiki/File:Magnifying_glass_icon_by_Manjiro5.svg', event);">Wikimedia Commons</a></em></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2023 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('using infer to unpack nested types', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
