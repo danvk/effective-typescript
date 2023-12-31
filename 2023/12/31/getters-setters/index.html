@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Don&#39;t Write Traditional Getter and Setter Methods in JavaScript and TypeScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Don&#39;t Write Traditional Getter and Setter Methods in JavaScript and TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Don&#39;t Write Traditional Getter and Setter Methods in JavaScript and TypeScript">
+    <meta name="twitter:description" content="Getter and setter methods (getFoo, setFoo) are common in Java and considered a best practice. But they&#39;re a code smell that&#39;s best avoided in JavaScript and TypeScript because the problem they solve in Java does not exist in JS/TS. This post looks at what that problem is and how you can solve it in TypeScript without imposing the boilerplate of getters and setters.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Don&#39;t Write Traditional Getter and Setter Methods in JavaScript and TypeScript">
+    <meta property="og:description" content="Getter and setter methods (getFoo, setFoo) are common in Java and considered a best practice. But they&#39;re a code smell that&#39;s best avoided in JavaScript and TypeScript because the problem they solve in Java does not exist in JS/TS. This post looks at what that problem is and how you can solve it in TypeScript without imposing the boilerplate of getters and setters.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Don&#39;t Write Traditional Getter and Setter Methods in JavaScript and TypeScript</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2023-12-31T05:00:00.000Z" itemprop="datePublished">
+              Sun 31 December 2023
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Say you want to create a class to represent a point in two-dimensional space. If you come from a <a target="_blank" rel="noopener" href="https://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://steve-yegge.blogspot.com/2006/03/execution-in-kingdom-of-nouns.html', event);">certain background</a>, your immediate instinct may be to create some private properties and <a target="_blank" rel="noopener" href="https://dzone.com/articles/java-getter-and-setter-basics-common-mistakes-and" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://dzone.com/articles/java-getter-and-setter-basics-common-mistakes-and', event);">getter/setter methods</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point2D</span> </span>&#123;<br>  <span class="hljs-keyword">private</span> x: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-keyword">private</span> y: <span class="hljs-built_in">number</span>;<br><br>  <span class="hljs-function"><span class="hljs-title">getX</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.x;<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">setX</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span></span>)</span> &#123;<br>    <span class="hljs-built_in">this</span>.x = x;<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">getY</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.y;<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">setY</span>(<span class="hljs-params">y: <span class="hljs-built_in">number</span></span>)</span> &#123;<br>    <span class="hljs-built_in">this</span>.y = y;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This feels productive. You&#39;re writing code, after all! If you&#39;re feeling especially diligent, you might even write JSDoc comments for each of these methods. Your editor might even include shortcuts to write all these getters and setters for you.</p>
+<p>Here&#39;s some code that uses that class:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> pt = <span class="hljs-keyword">new</span> Point2D();<br>pt.setX(<span class="hljs-number">3</span>);<br>pt.setY(<span class="hljs-number">4</span>);<br><span class="hljs-built_in">console</span>.log(pt.getX(), pt.getY());  <span class="hljs-comment">// logs 3, 4</span><br></code></pre></td></tr></table></figure>
+
+<p>The downside is that this is a lot of boilerplate code that doesn&#39;t do very much. Why write the getters and setters rather than this?</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DirectPoint2D</span> </span>&#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> pt = <span class="hljs-keyword">new</span> DirectPoint2D();<br>pt.x = <span class="hljs-number">3</span>;<br>pt.y = <span class="hljs-number">4</span>;<br><span class="hljs-built_in">console</span>.log(pt.x, pt.y);  <span class="hljs-comment">// logs 3, 4</span><br></code></pre></td></tr></table></figure>
+
+<p>At least in Java, the answer is that getters and setters encapsulate the implementation of the class and give it much greater flexibility to evolve in the future.</p>
+<p>For example, what if you realize that for some reason it&#39;s much better to use <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Polar_coordinate_system" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://en.wikipedia.org/wiki/Polar_coordinate_system', event);">polar coordinates</a> internally? With the getters and setters, it&#39;s no trouble to reimplement the old API using the new internal representation:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Point2D</span> </span>&#123;<br>  <span class="hljs-keyword">private</span> r: <span class="hljs-built_in">number</span>;<br>  <span class="hljs-keyword">private</span> theta: <span class="hljs-built_in">number</span>;<br><br>  <span class="hljs-function"><span class="hljs-title">getX</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.r * <span class="hljs-built_in">Math</span>.cos(<span class="hljs-built_in">this</span>.theta);<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">getY</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.r * <span class="hljs-built_in">Math</span>.sin(<span class="hljs-built_in">this</span>.theta);<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">setX</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span></span>)</span> &#123;<br>    <span class="hljs-keyword">const</span> y = <span class="hljs-built_in">this</span>.getY();<br>    <span class="hljs-built_in">this</span>.r = <span class="hljs-built_in">Math</span>.sqrt(x**<span class="hljs-number">2</span> + y**<span class="hljs-number">2</span>);<br>    <span class="hljs-built_in">this</span>.theta = <span class="hljs-built_in">Math</span>.atan2(y, x);<br>  &#125;<br>  <span class="hljs-function"><span class="hljs-title">setY</span>(<span class="hljs-params">y: <span class="hljs-built_in">number</span></span>)</span> &#123;<br>    <span class="hljs-comment">// ... similar</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Users of the <code>Point2D</code> class will be completely oblivious to this internal change. The code above works without change. Contrast this with <code>DirectPoint2D</code>. You can&#39;t make an analogous change to this version because the internals are exposed. You can&#39;t get rid of the <code>x</code> and <code>y</code> properties without making a breaking change to the API. You&#39;re stuck.</p>
+<p>That&#39;s the story in Java, anyway, and it was also the story for JavaScript in the 1990s and early 2000s. If you use <a target="_blank" rel="noopener" href="https://github.com/google/closure-library/blob/7818ff7dc0b53555a7fb3c3427e6761e88bde3a2/closure/goog/ui/gauge.js#L473" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://github.com/google/closure-library/blob/7818ff7dc0b53555a7fb3c3427e6761e88bde3a2/closure/goog/ui/gauge.js#L473', event);">very old JS libraries</a> (or libraries written by recent transplants from Javaland), you may still run across these sorts of getter and setter methods. After publishing my <a href="https://effectivetypescript.com/2023/09/27/closure-compiler/">post about Google&#39;s Closure Compiler</a> I <a target="_blank" rel="noopener" href="https://news.ycombinator.com/item?id=37699258" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://news.ycombinator.com/item?id=37699258', event);">learned</a> that one of its goals was to inline simple methods like these.</p>
+<p>But getter and setter methods like these are <em>not</em> a good idea in modern JavaScript or TypeScript. The reason is that back in 2009, ES5 introduced a new syntax for <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get', event);">get</a> and <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set', event);">set methods</a> that entirely eliminates this problem with direct property access.</p>
+<p>Here&#39;s how you&#39;d migrate <code>DirectPoint2D</code> to a polar coordinates representation using getter and setter methods:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">DirectPoint2D</span> </span>&#123;<br>  r = <span class="hljs-number">0</span>;<br>  theta = <span class="hljs-number">0</span>;<br><br>  <span class="hljs-keyword">get</span> <span class="hljs-title">x</span>() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.r * <span class="hljs-built_in">Math</span>.cos(<span class="hljs-built_in">this</span>.theta);<br>  &#125;<br>  <span class="hljs-keyword">set</span> <span class="hljs-title">x</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span></span>) &#123;<br>    <span class="hljs-keyword">const</span> y = <span class="hljs-built_in">this</span>.y;<br>    <span class="hljs-built_in">this</span>.r = <span class="hljs-built_in">Math</span>.sqrt(x**<span class="hljs-number">2</span> + y**<span class="hljs-number">2</span>);<br>    <span class="hljs-built_in">this</span>.theta = <span class="hljs-built_in">Math</span>.atan2(y, x);<br>  &#125;<br><br>  <span class="hljs-keyword">get</span> <span class="hljs-title">y</span>() &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">this</span>.r * <span class="hljs-built_in">Math</span>.sin(<span class="hljs-built_in">this</span>.theta);<br>  &#125;<br><br>  <span class="hljs-keyword">set</span> <span class="hljs-title">y</span>(<span class="hljs-params">y: <span class="hljs-built_in">number</span></span>) &#123;<br>    <span class="hljs-comment">// ... similar to set x</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Usage looks exactly as it did before:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> pt = <span class="hljs-keyword">new</span> DirectPoint2D();<br>pt.x = <span class="hljs-number">3</span>;<br>pt.y = <span class="hljs-number">4</span>;<br><span class="hljs-built_in">console</span>.log(pt.x, pt.y);  <span class="hljs-comment">// logs 3, 4</span><br></code></pre></td></tr></table></figure>
+
+<p>What were direct property accesses before have become method calls. But the syntax is character-for-character identical, so the caller need not be aware that anything has changed. The public properties are no longer a constraint on your class design.</p>
+<p>The takeaway here is that it&#39;s OK to use a public property on a class in JavaScript and TypeScript. You may read warnings in books and online about how this is a bad practice, but this advice has more to do with specific limitations of Java and old-school JS than it does with modern JavaScript and TypeScript. When you write getter and setter methods in JavaScript, you&#39;re working around a problem that no longer exists.</p>
+<p>Simple getter and setter methods are a code smell in JavaScript and TypeScript. Don&#39;t write them! If you see them in a code review, suggest replacing them with a public property and send your coworker here for an explanation of why.</p>
+<p>One cautionary note: don&#39;t go too crazy with <code>get</code> and <code>set</code>. When you read code like <code>pt.x = 3</code>, you expect that this will do something like setting the <code>x</code> property of <code>pt</code> to <code>3</code>. Of course, with a <code>set</code> method, it <em>could</em> do anything. It could set <code>y</code> instead, or it could even issue a network request. But to avoid confusion and surprise, it&#39;s best if paired <code>get</code> and <code>set</code> methods get and set the same thing, at least conceptually.</p>
+<p><em>Here&#39;s a complete <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/MYGwhgzhAEAiCWAnApsALgBQPbwHZoCZZoBvAKGmkWgF5oAGAbgujQAtk0xaHmXgsuCGkQBXdFkQAKAB4AuaLlEBbAEbJEAGmgBPBUrUaAlKRaV28CADoZPGc0rm2lqzp46H0AL5kWAc05oGSkTckcqTlFEXFZna2oAKmgAWTB2KwEIKQtrdk4wI08fSghA4PlFFXVEULNoASE0XR4c108nF2o6VPSIAEdENFkEhIJoAGpdEYJCuta8rh4etis0sFwCKR1tGVnKH39AnRDTcJQ0KJjWxJS0lYg8bLirBYKi3xKjrf0q41PHBrCIItZ72ObPLq3XoDIYyaYTKajPaOeYcRbdO6rLgbLY7ZE+A6ApoAByadFwyAA7nAkKhMDh8EQpABmbQAFlmgKwIGQVhAWD8UlJNm0wp0syAA" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://www.typescriptlang.org/play?#code/MYGwhgzhAEAiCWAnApsALgBQPbwHZoCZZoBvAKGmkWgF5oAGAbgujQAtk0xaHmXgsuCGkQBXdFkQAKAB4AuaLlEBbAEbJEAGmgBPBUrUaAlKRaV28CADoZPGc0rm2lqzp46H0AL5kWAc05oGSkTckcqTlFEXFZna2oAKmgAWTB2KwEIKQtrdk4wI08fSghA4PlFFXVEULNoASE0XR4c108nF2o6VPSIAEdENFkEhIJoAGpdEYJCuta8rh4etis0sFwCKR1tGVnKH39AnRDTcJQ0KJjWxJS0lYg8bLirBYKi3xKjrf0q41PHBrCIItZ72ObPLq3XoDIYyaYTKajPaOeYcRbdO6rLgbLY7ZE+A6ApoAByadFwyAA7nAkKhMDh8EQpABmbQAFlmgKwIGQVhAWD8UlJNm0wp0syAA', event);">playground link</a> for the last example if you want to give it a try.</em></p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2023 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('dont write traditional getter and setter methods in javascript and typescript', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
