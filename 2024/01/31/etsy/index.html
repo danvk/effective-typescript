@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Effective TypeScript Talk at Etsy (Dec 2020)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Effective TypeScript Talk at Etsy (Dec 2020)">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Effective TypeScript Talk at Etsy (Dec 2020)">
+    <meta name="twitter:description" content="Back in 2020 I gave a whole series of Effective TypeScript talks at companies that were interested in the language and the book. The talk that I gave at Etsy in December of 2020 was one of the most fun. It was recorded and is now available to watch. It&amp;#39;s about an hour.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Effective TypeScript Talk at Etsy (Dec 2020)">
+    <meta property="og:description" content="Back in 2020 I gave a whole series of Effective TypeScript talks at companies that were interested in the language and the book. The talk that I gave at Etsy in December of 2020 was one of the most fun. It was recorded and is now available to watch. It&amp;#39;s about an hour.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Effective TypeScript Talk at Etsy (Dec 2020)</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-01-31T22:40:00.000Z" itemprop="datePublished">
+              Wed 31 January 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>Back in 2020 I gave a whole series of <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://amzn.to/3HIrQN6', event);"><em>Effective TypeScript</em></a> talks at companies that were interested in the language and the book. The talk that I gave at Etsy in December of 2020 was one of the most fun. It was recorded and is now available to watch. It&#39;s about an hour.</p>
+<span id="more"></span>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/l40Vz9p5o7Q?si=t9RurUFI4ZJf2dNF" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+<p>Here are the <a target="_blank" rel="noopener" href="https://docs.google.com/presentation/d/1rx7In5TUiMm0q9z1wnWQf5tZeRS8z25NG3LqExsjj3U/edit?usp=sharing" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://docs.google.com/presentation/d/1rx7In5TUiMm0q9z1wnWQf5tZeRS8z25NG3LqExsjj3U/edit?usp=sharing', event);">slides</a>. Topics covered in this talk include:</p>
+<ul>
+<li>What is an &quot;Effective&quot; book?</li>
+<li>What&#39;s the relationship between TypeScript and JavaScript (<a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play/#code/DYUwLgBAxglmCeEC8EDkA7EB3C8D2ATgNbRzyoDcAUFHugM56gB0weA5gBSwLNh4BVAA5CQBKAEN6ITgEpZ1KktoNI9MBLAh6yCAG0qECAG90EgLYgAXGgCCwCQCMLE1ABpoEoXAnAbqAFk6MHY8SwJyAF83QxMzS397KSJXD09vDT80ACkAV0wJXNRo2NMLazsCGAAvOlT0nyzUAAUACzwQdBgAD2KYowB6AYhmUaoAXWoAM0IIbjp1CHVNEAg8KaWNLXpZE1iVRhY2LmWtZkkMpgUqSKogA" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://www.typescriptlang.org/play/#code/DYUwLgBAxglmCeEC8EDkA7EB3C8D2ATgNbRzyoDcAUFHugM56gB0weA5gBSwLNh4BVAA5CQBKAEN6ITgEpZ1KktoNI9MBLAh6yCAG0qECAG90EgLYgAXGgCCwCQCMLE1ABpoEoXAnAbqAFk6MHY8SwJyAF83QxMzS397KSJXD09vDT80ACkAV0wJXNRo2NMLazsCGAAvOlT0nyzUAAUACzwQdBgAD2KYowB6AYhmUaoAXWoAM0IIbjp1CHVNEAg8KaWNLXpZE1iVRhY2LmWtZkkMpgUqSKogA', event);">playground</a>)</li>
+<li>Why you shouldn&#39;t repeat type information in documentation (<a href="https://effectivetypescript.com/2023/05/31/jsdoc-repeat/">Item 30</a>; <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/PQKhCgAIUglBTALgVwE4DsDOkCGlOKoCW6A5pAO5GIAWkt8kAZgParymovLoAmkAYxYAbNgDooMACo4A1vGwAveF0hs16RjlSlkAW3jpEmMZADq1Ouha4d+w8YA0kdigzYGk-Ihx9t-VnZObj5BEXFzSw0tOwMjZ1c0LHoaRkCOLh5+IVFUL0DcSAAHbUQiAWRhbWKcUngJaGBwJh4BMpZ0SDrEADE2DJDeAGFw1AAKErqAfgAub2IyAEpIAG8oFyQkmrrIAF59yAByUVISQ8gp1dQ5gEYAJgB2Z1Jbx+cAI1eHgF9IOZXrpAAAzPOYgyCfYHfADc4G+4HA3T6QUyfBGuTGiwRJEQKiYOAEjD6NjWkEgwGAkAAopYVIUqMJhBDGJgkGpUBDKERGcz8EgPshEJBrEL3ixaOscLN5iRSLCye9pQQFnK4QjQDAAMpsIUMGVkbDvACewvsxAEkAAbjhhMhGGMiGJ6pAAER3F2QAA8rpuQJdi1MABEWApheLIHoWLwiEwTeh9CZGs1Wu1OpgdQA5M3lG3CI1jeN6TBzZWygDaAF1FiXCOWK6t1okMKai2J06hEGMxjgPstdgA+SBZvTvFTd5YAWiH+lH43ei0WsPhQA" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://www.typescriptlang.org/play?#code/PQKhCgAIUglBTALgVwE4DsDOkCGlOKoCW6A5pAO5GIAWkt8kAZgParymovLoAmkAYxYAbNgDooMACo4A1vGwAveF0hs16RjlSlkAW3jpEmMZADq1Ouha4d+w8YA0kdigzYGk-Ihx9t-VnZObj5BEXFzSw0tOwMjZ1c0LHoaRkCOLh5+IVFUL0DcSAAHbUQiAWRhbWKcUngJaGBwJh4BMpZ0SDrEADE2DJDeAGFw1AAKErqAfgAub2IyAEpIAG8oFyQkmrrIAF59yAByUVISQ8gp1dQ5gEYAJgB2Z1Jbx+cAI1eHgF9IOZXrpAAAzPOYgyCfYHfADc4G+4HA3T6QUyfBGuTGiwRJEQKiYOAEjD6NjWkEgwGAkAAopYVIUqMJhBDGJgkGpUBDKERGcz8EgPshEJBrEL3ixaOscLN5iRSLCye9pQQFnK4QjQDAAMpsIUMGVkbDvACewvsxAEkAAbjhhMhGGMiGJ6pAAER3F2QAA8rpuQJdi1MABEWApheLIHoWLwiEwTeh9CZGs1Wu1OpgdQA5M3lG3CI1jeN6TBzZWygDaAF1FiXCOWK6t1okMKai2J06hEGMxjgPstdgA+SBZvTvFTd5YAWiH+lH43ei0WsPhQA', event);">playground</a>)</li>
+<li>Why you should think about types as sets of values (Item 7, <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/PTAEBUE8AcFMGdQEMBOtT1gF0QewGajS7zwCWARgDboBuSVArggFAs1agAeoAvKAEYADAG4WPfgHJhksSxCgA6gAsknMoQDu6TUgB2nLLmRUquTaCzKy8APxsFAVT1lDMViyzvQAQQBCAMJ8oJI+kqAAPiF+4VGSAbLs2MgAXL6BwaGJSJkxYjlSACKJ8mAqapKIAERIpGQA5npI1LBV9iwAJrAAxlSo6BwYAPIoAHJp8FgoZHr1kaB6jAC2FLAocgCyasoAdPAAjihYABTwI6MAlHIKAJKIiytrlsrouHpUkJbeVmqgS0gAawQzxsoE0uBQAPaCgAypAVrgqIhVLR0DkvHBQAB9X45MzdNRkN5YljdN6TUCwKjBDq4brLWAGHb1bAAURoS0ZWD8kBuHWOkiWkAAtFTJFcWAw1icqTssLAuFgAm95QYJaVQAAlWBIDqgKoK1UdeBVZDVeCMCiYTgEKosGbylD4JDddCjRimSAwrCMLoGUAAbxYoBDoDIHQmUxm9TEoYWSE5kems3mi1MYgAvg4wHcQYghgBpaFgB1rZ2u0De31cymKxnG0Duz1Vv2cIMKONNRMYKOzMQKLNAA" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://www.typescriptlang.org/play?#code/PTAEBUE8AcFMGdQEMBOtT1gF0QewGajS7zwCWARgDboBuSVArggFAs1agAeoAvKAEYADAG4WPfgHJhksSxCgA6gAsknMoQDu6TUgB2nLLmRUquTaCzKy8APxsFAVT1lDMViyzvQAQQBCAMJ8oJI+kqAAPiF+4VGSAbLs2MgAXL6BwaGJSJkxYjlSACKJ8mAqapKIAERIpGQA5npI1LBV9iwAJrAAxlSo6BwYAPIoAHJp8FgoZHr1kaB6jAC2FLAocgCyasoAdPAAjihYABTwI6MAlHIKAJKIiytrlsrouHpUkJbeVmqgS0gAawQzxsoE0uBQAPaCgAypAVrgqIhVLR0DkvHBQAB9X45MzdNRkN5YljdN6TUCwKjBDq4brLWAGHb1bAAURoS0ZWD8kBuHWOkiWkAAtFTJFcWAw1icqTssLAuFgAm95QYJaVQAAlWBIDqgKoK1UdeBVZDVeCMCiYTgEKosGbylD4JDddCjRimSAwrCMLoGUAAbxYoBDoDIHQmUxm9TEoYWSE5kems3mi1MYgAvg4wHcQYghgBpaFgB1rZ2u0De31cymKxnG0Duz1Vv2cIMKONNRMYKOzMQKLNAA', event);">playground</a>)</li>
+<li>Designing types that only represent valid states (Item 28, <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/PTDECcFMHMEsHsB2AoWiAulwDMCGBjSAAgGV1dMiBvZIo-AV3CgwAVdpIAuIgZ3XBpoAblpEADh0gAVSAA90PfoMQixsXgBl4uACZCeAI3jwANpFyJRdLOHjgA-EoFDRAX2QhQkRLqhwkZGR5cXt0ImwGRHx0BEQiFl0sdk4ACn4KblJyTABKajEQIgA6UrEodCZ4gAMAHgALAEYAPgASKgzMYsZmH3QUyDda4CbmgB1Eds7IYslOWQU3avcgr3841AwsPEIiACVIAEcGSH5WH31VArppngBycQuhO5W0TBwCYgPj0-QAUWY9mufByWTutnsLzEEPAzhUag8b22n32RxO-BIDHwhF4vGBtyId3gAGsoXQ5jJ5IoQfCVugAJ6PVE-DGgogAXmZ6P6TyuAB8ub8AXZwEQBd9uZjsadeKJNu8dsQyJkAEzAnosfpSOGucpo368HhUADaFJ1qgAujwJb9lZg3CsvBd1kggA" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://www.typescriptlang.org/play?#code/PTDECcFMHMEsHsB2AoWiAulwDMCGBjSAAgGV1dMiBvZIo-AV3CgwAVdpIAuIgZ3XBpoAblpEADh0gAVSAA90PfoMQixsXgBl4uACZCeAI3jwANpFyJRdLOHjgA-EoFDRAX2QhQkRLqhwkZGR5cXt0ImwGRHx0BEQiFl0sdk4ACn4KblJyTABKajEQIgA6UrEodCZ4gAMAHgALAEYAPgASKgzMYsZmH3QUyDda4CbmgB1Eds7IYslOWQU3avcgr3841AwsPEIiACVIAEcGSH5WH31VArppngBycQuhO5W0TBwCYgPj0-QAUWY9mufByWTutnsLzEEPAzhUag8b22n32RxO-BIDHwhF4vGBtyId3gAGsoXQ5jJ5IoQfCVugAJ6PVE-DGgogAXmZ6P6TyuAB8ub8AXZwEQBd9uZjsadeKJNu8dsQyJkAEzAnosfpSOGucpo368HhUADaFJ1qgAujwJb9lZg3CsvBd1kggA', event);">playground</a>)</li>
+<li>How to avoid fighting with the type checker (<a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play?#code/GYVwdgxgLglg9mABAcwE4FN1QBRgIYC26AXIgM5SoxjIA0iARjKlABYAieUJin3iAH0RgQAG1EBKRAG8AUIkSisiPMnQBZMogC8jZmz7pEAfl5d0AOjBwA7tikBaPSw7mLaqABUYRe4lIi4gDcsvKKymiYsDQ6iAAGABLo4nCIACTS+EQAvhZxIQowwIjYTC6GUnIK1ZFY1MiIANS6cYgAmnAgKhglqJ3IrKIAnlIZqhpaAPSIAIwADAvZ5OgQCAAmWnCia3kFiNlhGFAgqEi10cghB0A" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://www.typescriptlang.org/play?#code/GYVwdgxgLglg9mABAcwE4FN1QBRgIYC26AXIgM5SoxjIA0iARjKlABYAieUJin3iAH0RgQAG1EBKRAG8AUIkSisiPMnQBZMogC8jZmz7pEAfl5d0AOjBwA7tikBaPSw7mLaqABUYRe4lIi4gDcsvKKymiYsDQ6iAAGABLo4nCIACTS+EQAvhZxIQowwIjYTC6GUnIK1ZFY1MiIANS6cYgAmnAgKhglqJ3IrKIAnlIZqhpaAPSIAIwADAvZ5OgQCAAmWnCia3kFiNlhGFAgqEi10cghB0A', event);">playground</a>)</li>
+</ul>
+<p>The content of the talk represents my views, it wasn&#39;t by or on behalf of Etsy. If you&#39;re interested in hosting an <em>Effective TypeScript</em> talk at your company or meetup, please <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://twitter.com/danvdk', event);">get in touch</a>!</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('post learn more hover', 'https://amzn.to/3HIrQN6', event);">Buy the Book</a>
+        <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" class="btn btn-info btn-lg hidden-xs" onclick="return trackOutboundLink('post learn more hover', 'https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1', event);">Buy eBook</a>
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. The book&#39;s 62 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('effective typescript talk at etsy dec', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
