@@ -209,11 +209,11 @@ This post and its accompanying video present six ways to solve this problem and 
         <div class="col-md-12">
           <h2>Table of Contents</h2>
 
-          <p>In an <a target="_blank" rel="noopener" href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" onclick="return trackOutboundLink('table of contents', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html', event);"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('table of contents', 'https://amzn.to/3HIrQN6', event);">order a copy</a>.</p>
+          <p>In an <a target="_blank" rel="noopener" href="http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html" onclick="return trackOutboundLink('table of contents', 'http://scottmeyers.blogspot.com/2013/01/effective-effective-books.html', event);"><em>Effective</em>-style book</a>, the title of each item is a specific piece of advice. This means that the Table of Contents forms a summary of all the advice in the book. If any item piques your curiosity and you want to learn more, <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('table of contents', 'https://amzn.to/3UjPrsK', event);">order a copy</a>.</p>
 <h3 id="Chapter-1-Getting-to-Know-TypeScript"><a href="#Chapter-1-Getting-to-Know-TypeScript" class="headerlink" title="Chapter 1: Getting to Know TypeScript"></a>Chapter 1: Getting to Know TypeScript</h3><p>Before we dive into the details, this chapter helps you understand the big picture of TypeScript. What is it and how should you think about it? How does it relate to JavaScript? Are its types nullable or are they not? What&#39;s this about <code>any</code>? And ducks?</p>
 <ol>
 <li>Understand the Relationship Between TypeScript and JavaScript</li>
-<li>Know Which TypeScript Options You’re Using</li>
+<li>Know Which TypeScript Options You&#39;re Using</li>
 <li>Understand That Code Generation Is Independent of Types</li>
 <li>Get Comfortable with Structural Typing</li>
 <li>Limit Use of the <code>any</code> Type</li>
@@ -223,78 +223,105 @@ This post and its accompanying video present six ways to solve this problem and 
 <li>Use Your Editor to Interrogate and Explore the Type System</li>
 <li>Think of Types as Sets of Values</li>
 <li>Know How to Tell Whether a Symbol Is in the Type Space or Value Space</li>
-<li>Prefer Type Declarations to Type Assertions</li>
+<li>Prefer Type Annotations to Type Assertions</li>
 <li>Avoid Object Wrapper Types (String, Number, Boolean, Symbol, BigInt)</li>
-<li>Recognize the Limits of Excess Property Checking</li>
+<li>Distinguish Excess Property Checking from Type Checking</li>
 <li>Apply Types to Entire Function Expressions When Possible</li>
 <li>Know the Differences Between <code>type</code> and <code>interface</code></li>
-<li>Use Type Operations and Generics to Avoid Repeating Yourself</li>
-<li>Use Index Signatures for Dynamic Data</li>
-<li>Prefer Arrays, Tuples, and ArrayLike to number Index Signatures</li>
-<li>Use readonly to Avoid Errors Associated with Mutation</li>
-<li>Use Mapped Types to Keep Values in Sync</li>
+<li>Use <code>readonly</code> to Avoid Errors Associated with Mutation</li>
+<li>Use Type Operations and Generic Types to Avoid Repeating Yourself</li>
+<li>Prefer More Precise Alternatives to Index Signatures</li>
+<li>Avoid Numeric Index Signatures</li>
 </ol>
 <h3 id="Chapter-3-Type-Inference"><a href="#Chapter-3-Type-Inference" class="headerlink" title="Chapter 3: Type Inference"></a>Chapter 3: Type Inference</h3><p>This chapter shows you some of the problems that can arise with type inference and how to fix them. After reading it, you should have a good understanding of how TypeScript infers types, when you still need to write type declarations, and when it&#39;s a good idea to write type declarations even when a type can be inferred.</p>
-<ol start="19">
+<ol start="18">
 <li><a href="/2020/04/28/avoid-inferable/">Avoid Cluttering Your Code with Inferable Types</a></li>
 <li>Use Different Variables for Different Types</li>
-<li>Understand Type Widening</li>
-<li>Understand Type Narrowing</li>
+<li>Understand How a Variable Gets Its Type</li>
 <li>Create Objects All at Once</li>
+<li>Understand Type Narrowing</li>
 <li>Be Consistent in Your Use of Aliases</li>
-<li>Use <code>async</code> Functions Instead of Callbacks for Asynchronous Code</li>
 <li>Understand How Context Is Used in Type Inference</li>
+<li><a href="/2020/03/09/evolving-any/">Understand Evolving Types</a></li>
 <li>Use Functional Constructs and Libraries to Help Types Flow</li>
+<li>Use <code>async</code> Functions Instead of Callbacks to Improve Type Flow</li>
+<li>Use Classes and Currying to Create New Inference Sites</li>
 </ol>
 <h3 id="Chapter-4-Type-Design"><a href="#Chapter-4-Type-Design" class="headerlink" title="Chapter 4: Type Design"></a>Chapter 4: Type Design</h3><p>Code is difficult to understand if you can&#39;t see the data or data types on which it operates. This is one of the great advantages of a type system: by writing out types, you make them visible to readers of your code. And this makes your code understandable. Other chapters cover the nuts and bolts of TypeScript types: using them, inferring them, and writing declarations with them. This chapter discusses the design of the types themselves. The examples in this chapter are all written with TypeScript in mind, but most of the ideas are more broadly applicable.</p>
-<ol start="28">
+<ol start="29">
 <li>Prefer Types That Always Represent Valid States</li>
 <li>Be Liberal in What You Accept and Strict in What You Produce</li>
 <li><a href="/2023/05/31/jsdoc-repeat/">Don’t Repeat Type Information in Documentation</a></li>
+<li>Avoid Including <code>null</code> or <code>undefined</code> in Type Aliases</li>
 <li><a href="/2020/03/24/null-values-to-perimeter/">Push Null Values to the Perimeter of Your Types</a></li>
-<li>Prefer Unions of Interfaces to Interfaces of Unions</li>
+<li>Prefer Unions of Interfaces to Interfaces with Unions</li>
 <li>Prefer More Precise Alternatives to String Types</li>
-<li>Prefer Incomplete Types to Inaccurate Types</li>
-<li>Generate Types from APIs and Specs, Not Data</li>
+<li>Use a Distinct Type for Special Values</li>
+<li>Limit the Use of Optional Properties</li>
+<li>Avoid Repeated Parameters of the Same Type</li>
+<li>Prefer Unifying Types to Modeling Differences</li>
+<li>Prefer Imprecise Types to Inaccurate Types</li>
 <li>Name Types Using the Language of Your Problem Domain</li>
-<li>Consider “Brands” for Nominal Typing</li>
+<li>Avoid Types Based on Anecdotal Data</li>
 </ol>
-<h3 id="Chapter-5-Working-with-any"><a href="#Chapter-5-Working-with-any" class="headerlink" title="Chapter 5: Working with any"></a>Chapter 5: Working with <code>any</code></h3><p>Type systems were traditionally binary affairs: either a language had a fully static type system or a fully dynamic one. TypeScript blurs the line, because its type system is <em>optional</em> and <em>gradual</em>. You can add types to parts of your program but not others. This is essential for migrating existing JavaScript codebases to TypeScript bit by bit. Key to this is the <code>any</code> type,  which effectively disables type checking for parts of your code. It is both powerful and prone to abuse. Learning to use <code>any</code> wisely is essential for writing effective TypeScript. This chapter walks you through how to limit the downsides of <code>any</code> while still retaining its benefits.</p>
-<ol start="38">
+<h3 id="Chapter-5-Unsoundness-and-the-any-Type"><a href="#Chapter-5-Unsoundness-and-the-any-Type" class="headerlink" title="Chapter 5: Unsoundness and the any Type"></a>Chapter 5: Unsoundness and the any Type</h3><p>Type systems were traditionally binary affairs: either a language had a fully static type system or a fully dynamic one. TypeScript blurs the line, because its type system is <em>optional</em> and <em>gradual</em>. You can add types to parts of your program but not others. This is essential for migrating existing JavaScript codebases to TypeScript bit by bit. Key to this is the <code>any</code> type,  which effectively disables type checking for parts of your code. It is both powerful and prone to abuse. Learning to use <code>any</code> wisely is essential for writing effective TypeScript. This chapter walks you through how to limit the downsides of <code>any</code> while still retaining its benefits.</p>
+<ol start="43">
 <li>Use the Narrowest Possible Scope for <code>any</code> Types</li>
 <li>Prefer More Precise Variants of <code>any</code> to Plain <code>any</code></li>
 <li>Hide Unsafe Type Assertions in Well-Typed Functions</li>
-<li><a href="/2020/03/09/evolving-any/">Understand Evolving <code>any</code></a></li>
 <li>Use <code>unknown</code> Instead of <code>any</code> for Values with an Unknown Type</li>
 <li>Prefer Type-Safe Approaches to Monkey Patching</li>
+<li>Avoid Soundness Traps</li>
 <li>Track Your Type Coverage to Prevent Regressions in Type Safety</li>
 </ol>
-<h3 id="Chapter-6-Types-Declarations-and-types"><a href="#Chapter-6-Types-Declarations-and-types" class="headerlink" title="Chapter 6: Types Declarations and @types"></a>Chapter 6: Types Declarations and <code>@types</code></h3><p>Dependency management can be confusing in any language, and TypeScript is no exception. This chapter will help you build a mental model for how dependencies work in TypeScript and show you how to work through some of the issues that can come up with them. It will also help you craft your own type declaration files to publish and share with others. By writing great type declarations, you can help not just your own project but the entire TypeScript community.</p>
-<ol start="45">
+<h3 id="Chapter-6-Generics-and-Type-Level-Programming"><a href="#Chapter-6-Generics-and-Type-Level-Programming" class="headerlink" title="Chapter 6: Generics and Type-Level Programming"></a>Chapter 6: Generics and Type-Level Programming</h3><p>TypeScript&#39;s type system is designed to model the runtime behavior of JavaScript code. Because JavaScript is so dynamic and permissive, this has pushed TypeScript&#39;s type system to develop increasingly powerful capabilities. This includes logic for mapping between types. When you add generic type aliases to the mix, TypeScript&#39;s type system becomes powerful enough that you can think of it as its own independent programming language. This chapter will help you decide whether it&#39;s necessary to use generic types and presents some alternatives. Used well, type-level code can improve other developers&#39; experiences without their ever needing to know that there&#39;s fancy type-level code involved.</p>
+<ol start="50">
+<li>Think of Generics as Functions Between Types</li>
+<li>Avoid Unnecessary Type Parameters</li>
+<li>Prefer Conditional Types to Overload Signatures</li>
+<li>Know How to Control the Distribution of Unions over Conditional Types</li>
+<li>Use Template Literal Types to Model DSLs and Relationships Between Strings</li>
+<li>Write Tests for Your Types</li>
+<li>Pay Attention to How Types Display</li>
+<li>Prefer Tail-Recursive Generic Types</li>
+<li>Consider Codegen as an Alternative to Complex Types</li>
+</ol>
+<h3 id="Chapter-7-TypeScript-Recipes"><a href="#Chapter-7-TypeScript-Recipes" class="headerlink" title="Chapter 7: TypeScript Recipes"></a>Chapter 7: TypeScript Recipes</h3><p>As the TypeScript community has grown, developers have come up with more and more tricks for solving specific problems. Some of these &quot;recipes&quot; leverage TypeScript&#39;s type checker to catch new categories of mistakes, such as values getting out of sync or nonexhaustive conditionals. Others are tricks for modeling patterns that TypeScript struggles with on its own: iterating over objects, filtering <code>null</code> values from Arrays, or modeling variadic functions. By applying the recipes in this chapter, you&#39;ll help TypeScript catch more real problems with fewer false positives.</p>
+<ol start="59">
+<li>Use <code>never</code> Types to Perform Exhaustiveness Checking</li>
+<li><a href="/2020/05/26/iterate-objects/">Know How to Iterate Over Objects</a></li>
+<li>Use <code>Record</code> Types to Keep Values in Sync</li>
+<li>Use Rest Parameters and Tuple Types to Model Variadic Functions</li>
+<li>Use Optional <code>never</code> Properties to Model Exclusive Or</li>
+<li>Consider Brands for Nominal Typing</li>
+</ol>
+<h3 id="Chapter-8-Type-Declarations-and-types"><a href="#Chapter-8-Type-Declarations-and-types" class="headerlink" title="Chapter 8: Type Declarations and @types"></a>Chapter 8: Type Declarations and @types</h3><p>Dependency management can be confusing in any language, and TypeScript is no exception. This chapter will help you build a mental model for how dependencies work in TypeScript and show you how to work through some of the issues that can come up with them. It will also help you craft your own type declaration files to publish and share with others. By writing great type declarations, you can help not just your own project but the entire TypeScript community.</p>
+<ol start="65">
 <li>Put TypeScript and <code>@types</code> in <code>devDependencies</code></li>
 <li>Understand the Three Versions Involved in Type Declarations</li>
 <li>Export All Types That Appear in Public APIs</li>
 <li>Use TSDoc for API Comments</li>
-<li>Provide a Type for <code>this</code> in Callbacks</li>
-<li>Prefer Conditional Types to Overloaded Declarations</li>
+<li>Provide a Type for <code>this</code> in Callbacks if It&#39;s Part of Their API</li>
 <li>Mirror Types to Sever Dependencies</li>
-<li>Be Aware of the Pitfalls of Testing Types</li>
+<li>Use Module Augmentation to Improve Types</li>
 </ol>
-<h3 id="Chapter-7-Writing-and-Running-Your-Code"><a href="#Chapter-7-Writing-and-Running-Your-Code" class="headerlink" title="Chapter 7: Writing and Running Your Code"></a>Chapter 7: Writing and Running Your Code</h3><p>This chapter is a bit of a grab bag: it covers some issues that come up in writing code (not types) as well as issues you may run into when you run your code.</p>
-<ol start="53">
+<h3 id="Chapter-9-Writing-and-Running-Your-Code"><a href="#Chapter-9-Writing-and-Running-Your-Code" class="headerlink" title="Chapter 9: Writing and Running Your Code"></a>Chapter 9: Writing and Running Your Code</h3><p>This chapter is a bit of a grab bag: it covers some issues that come up in writing code (not types) as well as issues you may run into when you run your code.</p>
+<ol start="72">
 <li>Prefer ECMAScript Features to TypeScript Features</li>
-<li><a href="/2020/05/26/iterate-objects/">Know How to Iterate Over Objects</a></li>
-<li>Understand the DOM hierarchy</li>
-<li>Don’t Rely on Private to Hide Information</li>
 <li>Use Source Maps to Debug TypeScript</li>
+<li>Know How to Reconstruct Types at Runtime</li>
+<li>Understand the DOM Hierarchy</li>
+<li>Create an Accurate Model of Your Environment</li>
+<li>Understand the Relationship Between Type Checking and Unit Testing</li>
+<li>Pay Attention to Compiler Performance</li>
 </ol>
-<h3 id="Chapter-8-Migrating-to-TypeScript"><a href="#Chapter-8-Migrating-to-TypeScript" class="headerlink" title="Chapter 8. Migrating to TypeScript"></a>Chapter 8. Migrating to TypeScript</h3><p>You&#39;ve heard that TypeScript is great. You also know from painful experience that maintaining your 15-year-old, 100,000-line JavaScript library isn&#39;t. If only it could become a TypeScript library! This chapter offers some advice about migrating your JavaScript project to TypeScript without losing your sanity and abandoning the effort.</p>
-<ol start="58">
+<h3 id="Chapter-10-Modernization-and-Migration"><a href="#Chapter-10-Modernization-and-Migration" class="headerlink" title="Chapter 10: Modernization and Migration"></a>Chapter 10: Modernization and Migration</h3><p>You&#39;ve heard that TypeScript is great. You also know from painful experience that maintaining your 15-year-old, 100,000-line JavaScript library isn&#39;t. If only it could become a TypeScript library! This chapter offers some advice about migrating your JavaScript project to TypeScript without losing your sanity and abandoning the effort.</p>
+<ol start="79">
 <li>Write Modern JavaScript</li>
 <li>Use <code>@ts-check</code> and JSDoc to Experiment with TypeScript</li>
 <li>Use <code>allowJs</code> to Mix TypeScript and JavaScript</li>
 <li>Convert Module by Module Up Your Dependency Graph</li>
-<li>Don’t Consider Migration Complete Until You Enable <code>noImplicitAny</code></li>
+<li>Don&#39;t Consider Migration Complete Until You Enable <code>noImplicitAny</code></li>
 </ol>
 
 
@@ -312,25 +339,15 @@ This post and its accompanying video present six ways to solve this problem and 
           <h2>About the Author</h2>
           <img class="about-photo" src="https://effectivetypescript.com/images/danvk_square.jpg" alt="Dan Vanderkam">
 
-          <p>Dan Vanderkam is a principal software engineer at <a target="_blank" rel="noopener" href="https://sidewalklabs.com" onclick="return trackOutboundLink('about the author', 'https://sidewalklabs.com', event);">Sidewalk Labs</a>,
-where he&#39;s built engineering teams and processes for all of its products and spinouts,
-all of which use TypeScript.
-He previously worked on <a target="_blank" rel="noopener" href="https://github.com/hammerlab/pileup.js" onclick="return trackOutboundLink('about the author', 'https://github.com/hammerlab/pileup.js', event);">open source genome visualizations</a>
-at Mt. Sinai&#39;s Icahn School of Medicine and on Google search features used by billions of people
-(search for <a target="_blank" rel="noopener" href="https://google.com/search?q=sunset+nyc" onclick="return trackOutboundLink('about the author', 'https://google.com/search?q=sunset+nyc', event);">sunset nyc</a> or <a target="_blank" rel="noopener" href="https://google.com/search?q=population+of+france" onclick="return trackOutboundLink('about the author', 'https://google.com/search?q=population+of+france', event);">population of france</a>).
-He has a long history of working on <a target="_blank" rel="noopener" href="https://github.com/danvk" onclick="return trackOutboundLink('about the author', 'https://github.com/danvk', event);">open source projects</a>,
+          <p>Dan Vanderkam is an independent software developer based in upstate New York. He was previously a principal software engineer at <a target="_blank" rel="noopener" href="https://sidewalklabs.com" onclick="return trackOutboundLink('about the author', 'https://sidewalklabs.com', event);">Sidewalk Labs</a> and a senior staff software engineer at Google. He also worked on <a target="_blank" rel="noopener" href="https://github.com/hammerlab/pileup.js" onclick="return trackOutboundLink('about the author', 'https://github.com/hammerlab/pileup.js', event);">open source genome visualizations</a> at Mount Sinai&#39;s Icahn School of Medicine, as well as on Google search features used by billions of people (search for <a target="_blank" rel="noopener" href="https://google.com/search?q=sunset+nyc" onclick="return trackOutboundLink('about the author', 'https://google.com/search?q=sunset+nyc', event);">sunset nyc</a> or <a target="_blank" rel="noopener" href="https://google.com/search?q=population+of+france" onclick="return trackOutboundLink('about the author', 'https://google.com/search?q=population+of+france', event);">population of france</a>). He has a long history of working on <a target="_blank" rel="noopener" href="https://github.com/danvk" onclick="return trackOutboundLink('about the author', 'https://github.com/danvk', event);">open source projects</a>,
 including the popular <a target="_blank" rel="noopener" href="https://github.com/danvk/dygraphs" onclick="return trackOutboundLink('about the author', 'https://github.com/danvk/dygraphs', event);">dygraphs</a> library and <a target="_blank" rel="noopener" href="https://github.com/danvk/source-map-explorer" onclick="return trackOutboundLink('about the author', 'https://github.com/danvk/source-map-explorer', event);">source-map-explorer</a>,
-a tool for visualizing JavaScript code size.
-He is also a co-founder of the <a target="_blank" rel="noopener" href="https://www.meetup.com/TypeScriptNYC/" onclick="return trackOutboundLink('about the author', 'https://www.meetup.com/TypeScriptNYC/', event);">NYC TypeScript Meetup</a>.</p>
-<p>When he&#39;s not programming, Dan enjoys climbing rocks and playing bridge.
-He writes on <a target="_blank" rel="noopener" href="https://medium.com/@danvdk" onclick="return trackOutboundLink('about the author', 'https://medium.com/@danvdk', event);">Medium</a> and at <a target="_blank" rel="noopener" href="https://www.danvk.org" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org', event);">danvk.org</a>.
-He earned his bachelor&#39;s in computer science from Rice University in Houston, Texas,
-and lives in Brooklyn, New York.</p>
+a tool for visualizing JavaScript code size.</p>
+<p>When he&#39;s not programming, Dan enjoys rock climbing at the nearby Shawangunk Ridge, <a target="_blank" rel="noopener" href="https://www.danvk.org/catskills/" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org/catskills/', event);">hiking in the Catskills</a>, and birdwatching all around the world. He also writes on <a target="_blank" rel="noopener" href="https://medium.com/@danvdk" onclick="return trackOutboundLink('about the author', 'https://medium.com/@danvdk', event);">Medium</a> and at <a target="_blank" rel="noopener" href="https://www.danvk.org" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org', event);">danvk.org</a>. He earned his bachelor&#39;s in Computer Science from Rice University in Houston, Texas, and lives in Wallkill, New York.</p>
 
 
           <p>
             <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://twitter.com/danvdk', event);">Follow @danvdk</a>
-            <a target="_blank" rel="noopener" href="https://www.danvk.org" class="btn btn-info btn-lg" onclick="return trackOutboundLink('about the author', 'https://www.danvk.org', event);">Visit danvk.org</a>
+            <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
           </p>
         </div>
       </div>
