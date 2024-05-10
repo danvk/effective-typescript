@@ -1,3 +1,0 @@
-namespace foo {
-  function bar() {}
-}
