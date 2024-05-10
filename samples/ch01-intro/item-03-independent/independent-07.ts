@@ -1,2 +1,0 @@
-function turnLightOn() {}
-function turnLightOff() {}

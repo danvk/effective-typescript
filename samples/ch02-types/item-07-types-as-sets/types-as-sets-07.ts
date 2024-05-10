@@ -1,3 +1,0 @@
-interface Identified {
-  id: string;
-}
