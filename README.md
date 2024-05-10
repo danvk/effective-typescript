@@ -1,8 +1,6 @@
-<img src="/cover.png" width="280" title="Cover Image" align="right">
-
 # Effective TypeScript
 
-This is the code sample repo for the _Effective TypeScript: 83 Specific Ways to Improve Your TypeScript_ (O'Reilly, May 2024). The book is available through:
+<img src="/cover.jpg" width="286" title="Second Edition Cover Image" align="right">This is the code sample repo for the _Effective TypeScript: 83 Specific Ways to Improve Your TypeScript_ (O'Reilly, May 2024). The book is available through:
 
 - [Amazon][a]
 - [O'Reilly][o]
