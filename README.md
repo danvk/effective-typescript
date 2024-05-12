@@ -8,9 +8,9 @@ This is the code sample repo for the _Effective TypeScript: 83 Specific Ways to 
 - [O'Reilly][o]
 - [DRM-Free eBook][ebook]
 
-and others.
+and others. You can get the latest updates on the book at [effectivetypescript.com](https://effectivetypescript.com).
 
-You can get the latest updates on the book at <https://effectivetypescript.com>.
+Still on the first edition? Check out the [`1st-edition` branch][1e].
 
 ## Code Samples
 
@@ -126,3 +126,4 @@ Unless otherwise noted in a comment at the top of the code sample, the samples a
 [ebook]: https://www.ebooks.com/search/?term=9781098155063&affid=OMI5374258
 [literate-ts]: https://github.com/danvk/literate-ts
 [play]: https://www.typescriptlang.org/play/
+[1e]: https://github.com/danvk/effective-typescript/tree/1st-edition
