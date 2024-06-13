@@ -146,6 +146,29 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
   <div class="container">
   
+    <div class="row hentry" id="special-values">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2024/06/13/special-values/">Item 36: Use a Distinct Type for Special Values</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2024-06-13T17:30:00.000Z" itemprop="datePublished">
+        Thu 13 June 2024
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        It's tempting to use <code>""</code>, <code>0</code> or <code>-1</code> as special values: an empty string might represent text that hasn't loaded yet, or <code>-1</code> could stand in for a missing number. In TypeScript, this is almost always a bad idea. Special values need to be handled specially, and giving them a distinct type, such as <code>null</code>, allows TypeScript to enforce that you do so.
+
+        <a class="read-more" href="/2024/06/13/special-values/">Continue&nbsp;reading&nbsp;&raquo;</a>
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="second-edition">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -352,31 +375,6 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 </div>
 
   
-    <div class="row hentry" id="sql">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2023/08/29/sql/">TypeScript and SQL: Six Ways to Bridge the Divide</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2023-08-29T21:30:00.000Z" itemprop="datePublished">
-        Tue 29 August 2023
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        If you develop server code with TypeScript, you'll inevitably come up against the question of how to interact with your database. There's lots of type information in your database (the structure of the tables) and it's not immediately clear how to share that type information between the DB and TypeScript.
-
-This post and its accompanying video present six ways to solve this problem and offer some advice gleaned from years of experience combining Postgres and TypeScript.
-
-        <a class="read-more" href="/2023/08/29/sql/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
 
   <div class="row">
     <div class="col-md-12">
@@ -384,6 +382,15 @@ This post and its accompanying video present six ways to solve this problem and 
     </div>
   </div>
 
+  
+    <div class="row">
+      <div class="col-sm-2">
+        2023-08-29
+      </div>
+      <div class="col-sm-10">
+        <a href="/2023/08/29/sql/">TypeScript and SQL: Six Ways to Bridge the Divide</a>
+      </div>
+    </div>
   
     <div class="row">
       <div class="col-sm-2">

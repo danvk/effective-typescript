@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Item 36: Use a Distinct Type for Special Values</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Item 36: Use a Distinct Type for Special Values">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Item 36: Use a Distinct Type for Special Values">
+    <meta name="twitter:description" content="It&#39;s tempting to use &#34;&#34;, 0 or -1 as special values: an empty string might represent text that hasn&#39;t loaded yet, or -1 could stand in for a missing number. In TypeScript, this is almost always a bad idea. Special values need to be handled specially, and giving them a distinct type, such as null, allows TypeScript to enforce that you do so.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Item 36: Use a Distinct Type for Special Values">
+    <meta property="og:description" content="It&#39;s tempting to use &#34;&#34;, 0 or -1 as special values: an empty string might represent text that hasn&#39;t loaded yet, or -1 could stand in for a missing number. In TypeScript, this is almost always a bad idea. Special values need to be handled specially, and giving them a distinct type, such as null, allows TypeScript to enforce that you do so.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Item 36: Use a Distinct Type for Special Values</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-06-13T17:30:00.000Z" itemprop="datePublished">
+              Thu 13 June 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>This is a sample item from Chapter 4 of the second edition of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('item  use a distinct type for special values', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a>, which was <a href="https://effectivetypescript.com/2024/05/21/second-edition/">released</a> in May of 2024. It discusses a common mistake in TypeScript code: using <code>&quot;&quot;</code>, <code>0</code>, or <code>-1</code> to represent special cases like missing data. By modeling these cases with a distinct type, you help TypeScript guide you towards writing more correct code. If you like what you read, consider <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('item  use a distinct type for special values', 'https://amzn.to/3UjPrsK', event);">buying a copy</a> of the book!</em></p>
+<p>JavaScript&#39;s <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split" onclick="return trackOutboundLink('item  use a distinct type for special values', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split', event);">string <code>split</code> method</a> is a handy way to break a string around a delimiter:</p>
+<pre data-type="programlisting">&gt; <strong>'abcde'.split('c')</strong>
+[ 'ab', 'de' ] </pre>
+
+<p>Let&#39;s write something like <code>split</code>, but for arrays. Here&#39;s an attempt:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">splitAround</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">vals: <span class="hljs-keyword">readonly</span> T[], val: T</span>): [<span class="hljs-title">T</span>[], <span class="hljs-title">T</span>[]] </span>&#123;<br>  <span class="hljs-keyword">const</span> index = vals.indexOf(val);<br>  <span class="hljs-keyword">return</span> [vals.slice(<span class="hljs-number">0</span>, index), vals.slice(index+<span class="hljs-number">1</span>)];<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This works as you&#39;d expect:</p>
+<pre data-type="programlisting">&gt; <strong>splitAround([1, 2, 3, 4, 5], 3)</strong>
+[ [ 1, 2 ], [ 4, 5 ] ]</pre>
+
+<p>If you try to <code>splitAround</code> an element that&#39;s not in the list, however, it does something quite unexpected:</p>
+<pre data-type="programlisting">&gt; <strong>splitAround([1, 2, 3, 4, 5], 6)</strong>
+[ [ 1, 2, 3, 4 ], [ 1, 2, 3, 4, 5 ] ]</pre>
+
+<p>While it&#39;s not entirely clear what the function <em>should</em> do in this case, it&#39;s definitely not that! How did such simple code result in such strange behavior?</p>
+<p>The root issue is that <code>indexOf</code> returns <code>-1</code> if it can&#39;t find the element in the array. This is a special value: it indicates a failure rather than success. But <code>-1</code> is just an ordinary <code>number</code>. You can pass it to the Array <code>slice</code> method and you can do arithmetic on it. When you pass a negative number to <code>slice</code>, it interprets it as counting back from the end of the array. And when you add <code>1</code> to <code>-1</code>, you get <code>0</code>. So this evaluates as:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">[vals.slice(<span class="hljs-number">0</span>, -<span class="hljs-number">1</span>), vals.slice(<span class="hljs-number">0</span>)]<br></code></pre></td></tr></table></figure>
+
+<p>The first <code>slice</code> returns all but the last element of the array, and the second <code>slice</code> returns a complete copy of the array.</p>
+<p>This behavior is a bug. Moreover, it&#39;s unfortunate that TypeScript wasn&#39;t able to help us find this problem. The root issue was that <code>indexOf</code> returned <code>-1</code> when it couldn&#39;t find the element, rather than, say <code>null</code>. Why is that?</p>
+<p>Without hopping in a time machine and visiting the Netscape offices in 1995, it&#39;s hard to know the answer for sure. But we can speculate! JavaScript was heavily influenced by Java, and <a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#indexOf-int-" onclick="return trackOutboundLink('item  use a distinct type for special values', 'https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#indexOf-int-', event);">its <code>indexOf</code> has this same behavior</a>. In Java (and C), a function can&#39;t return a primitive <em>or</em> null. Only objects (or pointers) are nullable. So this behavior may derive from a technical limitation in Java that JavaScript does not share.</p>
+<p>In JavaScript (and TypeScript), there&#39;s no problem having a function return a <code>number</code> or <code>null</code>. So we can wrap <code>indexOf</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">safeIndexOf</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">vals: <span class="hljs-keyword">readonly</span> T[], val: T</span>): <span class="hljs-title">number</span> | <span class="hljs-title">null</span> </span>&#123;<br>  <span class="hljs-keyword">const</span> index = vals.indexOf(val);<br>  <span class="hljs-keyword">return</span> index === -<span class="hljs-number">1</span> ? <span class="hljs-literal">null</span> : index;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>If we plug that into our original definition of <code>splitAround</code>, we immediately get two type errors:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">splitAround</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">vals: <span class="hljs-keyword">readonly</span> T[], val: T</span>): [<span class="hljs-title">T</span>[], <span class="hljs-title">T</span>[]] </span>&#123;<br>  <span class="hljs-keyword">const</span> index = safeIndexOf(vals, val);<br>  <span class="hljs-keyword">return</span> [vals.slice(<span class="hljs-number">0</span>, index), vals.slice(index+<span class="hljs-number">1</span>)];<br>  <span class="hljs-comment">//                    ~~~~~              ~~~~~ &#x27;index&#x27; is possibly &#x27;null&#x27;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This is exactly what we want! There are always two cases to consider with <code>indexOf</code>. With the built-in version, TypeScript can&#39;t distinguish them, but with the wrapped version, it can. And it sees here that we&#39;ve only considered the case where the array contained the value.</p>
+<p>The solution is to handle the other case explicitly:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">splitAround</span>&lt;<span class="hljs-title">T</span>&gt;(<span class="hljs-params">vals: <span class="hljs-keyword">readonly</span> T[], val: T</span>): [<span class="hljs-title">T</span>[], <span class="hljs-title">T</span>[]] </span>&#123;<br>  <span class="hljs-keyword">const</span> index = safeIndexOf(vals, val);<br>  <span class="hljs-keyword">if</span> (index === <span class="hljs-literal">null</span>) &#123;<br>    <span class="hljs-keyword">return</span> [[...vals], []];<br>  &#125;<br>  <span class="hljs-keyword">return</span> [vals.slice(<span class="hljs-number">0</span>, index), vals.slice(index+<span class="hljs-number">1</span>)];  <span class="hljs-comment">// ok</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Whether this is the right behavior is debatable, but at least TypeScript has forced us to have that debate!</p>
+<p>The root problem with the first implementation was that <code>indexOf</code> had two distinct cases, but the return value in the special case (<code>-1</code>) had the same type as the return value in the regular case (<code>number</code>). This meant that from TypeScript&#39;s perspective there was just a single case, and it wasn&#39;t able to detect that we didn&#39;t check for <code>-1</code>.</p>
+<p>This situation comes up frequently when you&#39;re designing types. Perhaps you have a type for describing merchandise:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Product &#123;<br>  title: <span class="hljs-built_in">string</span>;<br>  priceDollars: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Then you realize that some products have an unknown price. Making this field optional or changing it to <code>number|null</code> might require a migration and lots of code changes, so instead you introduce a special value:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> Product &#123;<br>  title: <span class="hljs-built_in">string</span>;<br>  <span class="hljs-comment">/** Price of the product in dollars, or -1 if price is unknown */</span><br>  priceDollars: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>You ship it to production. A week later your boss is irate and wants to know why you&#39;ve been crediting money to customer cards. Your team works to roll back the change and you&#39;re tasked with writing the postmortem. In retrospect, it would have been much easier to deal with those type errors!</p>
+<p>Choosing in-domain special values like <code>-1</code>, <code>0</code>, or <code>&quot;&quot;</code> is similar in spirit to turning off <code>strictNullChecks</code>. When <code>strictNullChecks</code> is off, you can assign <code>null</code> or <code>undefined</code> to any type:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// @strictNullChecks: false</span><br><span class="hljs-keyword">const</span> truck: Product = &#123;<br>  title: <span class="hljs-string">&#x27;Tesla Cybertruck&#x27;</span>,<br>  priceDollars: <span class="hljs-literal">null</span>,  <span class="hljs-comment">// ok</span><br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>This lets a huge class of bugs slip through the type checker because TypeScript doesn&#39;t distinguish between <code>number</code> and <code>number|null</code>. <code>null</code> is a valid value in all types. When you enable <code>strictNullChecks</code>, TypeScript <em>does</em> distinguish between these types and it&#39;s able to detect a whole host of new problems. When you choose an in-domain special value like <code>-1</code>, you&#39;re effectively carving out a non-strict niche in your types. Expedient, yes, but ultimately not the best choice.</p>
+<p><code>null</code> and <code>undefined</code> may not always be the right way to represent special cases since their exact meaning may be context dependent. If you&#39;re modeling the state of a network request, for example, it would be a bad idea to use <code>null</code> to mean an error state and <code>undefined</code> to mean a pending state. Better to use a tagged union to represent these special states more explicitly.</p>
+<h3 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h3><ul>
+<li>Avoid special values that are assignable to regular values in a type. They will reduce TypeScript&#39;s ability to find bugs in your code.</li>
+<li>Prefer <code>null</code> or <code>undefined</code> as a special value instead of <code>0</code>, <code>-1</code>, or <code>&quot;&quot;</code>.</li>
+<li>Consider using a tagged union rather than <code>null</code> or <code>undefined</code> if the meaning of those values isn&#39;t clear.</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('item  use a distinct type for special values', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
