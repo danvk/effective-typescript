@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>TypeScript 5.5: A Blockbuster Release</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: TypeScript 5.5: A Blockbuster Release">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; TypeScript 5.5: A Blockbuster Release">
+    <meta name="twitter:description" content="We TypeScript developers are a lucky bunch. While some languages (Python, JavaScript) are released annually, every three years (C++) or even less, we get four new versions of TypeScript every year. TypeScript 5.5 was released on June 20th, 2024, and it was a real blockbuster. Let&amp;#39;s take a look.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; TypeScript 5.5: A Blockbuster Release">
+    <meta property="og:description" content="We TypeScript developers are a lucky bunch. While some languages (Python, JavaScript) are released annually, every three years (C++) or even less, we get four new versions of TypeScript every year. TypeScript 5.5 was released on June 20th, 2024, and it was a real blockbuster. Let&amp;#39;s take a look.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>TypeScript 5.5: A Blockbuster Release</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-07-02T17:00:00.000Z" itemprop="datePublished">
+              Tue 02 July 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.5 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/', event);">released</a> on June 20th, 2024, and it was a real blockbuster. Let&#39;s take a look.</p>
+<span id="more"></span>
+
+<p>TypeScript&#39;s <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://www.typescriptlang.org/', event);">motto</a> is &quot;JavaScript with syntax for types.&quot; New versions of TypeScript don&#39;t add new runtime features (that&#39;s JavaScript&#39;s responsibility). Rather, they make changes within the type system. These tend to take a few forms:</p>
+<ol>
+<li>New ways of expressing and relating types (e.g., <a href="https://effectivetypescript.com/2020/11/05/template-literal-types/">template literal types</a> in TypeScript 4.1)</li>
+<li>Increased precision in type checking and inference</li>
+<li>Improvements to language services (e.g., a new quick fix)</li>
+<li>Support for new ECMAScript standards</li>
+<li>Performance improvements.</li>
+</ol>
+<p>TypeScript 5.5 doesn&#39;t introduce any new type syntax, but it does include all the other kinds of changes. The <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/" onclick="return trackOutboundLink('typescript  a blockbuster release', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/', event);">official release notes</a> have complete explanations and examples. What follows is my quick take on each of the major changes. After that we&#39;ll look at new errors and test some of the performance wins.</p>
+<h2 id="New-Features"><a href="#New-Features" class="headerlink" title="New Features"></a>New Features</h2><h3 id="Inferred-Type-Predicates"><a href="#Inferred-Type-Predicates" class="headerlink" title="Inferred Type Predicates"></a>Inferred Type Predicates</h3><p>This was my contribution to TypeScript, and I&#39;m very happy that it&#39;s made it into an official release! I&#39;ve written about it extensively on this blog before, so I won&#39;t go into too much more detail here:</p>
+<ul>
+<li><a href="https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/">The Making of a TypeScript Feature: Inferring Type Predicates</a></li>
+<li><a href="https://effectivetypescript.com/2024/03/24/flownodes/">Flow Nodes: How Type Inference Is Implemented</a></li>
+<li><a href="https://effectivetypescript.com/2024/02/27/type-guards/">The Hidden Side of Type Predicates</a></li>
+</ul>
+<p>Dimitri from <a target="_blank" rel="noopener" href="https://mobile.x.com/MiTypeScript/status/1806674859201540568" onclick="return trackOutboundLink('new features', 'https://mobile.x.com/MiTypeScript/status/1806674859201540568', event);">Michigan TypeScript</a> even recorded a <a target="_blank" rel="noopener" href="https://youtu.be/LTuzl2r2HjA" onclick="return trackOutboundLink('new features', 'https://youtu.be/LTuzl2r2HjA', event);">video</a> of me explaining the story of the feature to him and <a target="_blank" rel="noopener" href="https://www.joshuakgoldberg.com/" onclick="return trackOutboundLink('new features', 'https://www.joshuakgoldberg.com/', event);">Josh Goldberg</a>.</p>
+<p>TypeScript will infer type predicates for any function where it&#39;s appropriate, but I think this will be most useful for arrow functions, the <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/16069" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/issues/16069', event);">original motivator</a> for this change:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nums = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-literal">null</span>];<br><span class="hljs-comment">//    ^? const nums: (number | null)[]</span><br><span class="hljs-keyword">const</span> onlyNums = nums.filter(<span class="hljs-function"><span class="hljs-params">n</span> =&gt;</span> n !== <span class="hljs-literal">null</span>);<br><span class="hljs-comment">//    ^? const onlyNums: number[]</span><br><span class="hljs-comment">//    Was (number | null)[] before TS 5.5!</span><br></code></pre></td></tr></table></figure>
+
+<p>I have two follow-on PRs to expand this feature to functions with <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58154" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/58154', event);">multiple return statements</a> and to <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58495" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/58495', event);">infer assertion predicates</a> (e.g., <code>(x: string): asserts x is string</code>). I think these would both be nice wins, but it&#39;s unclear whether they have a future since the pain points they address are much less common.</p>
+<h3 id="Control-Flow-Narrowing-for-Constant-Indexed-Accesses"><a href="#Control-Flow-Narrowing-for-Constant-Indexed-Accesses" class="headerlink" title="Control Flow Narrowing for Constant Indexed Accesses"></a>Control Flow Narrowing for Constant Indexed Accesses</h3><p>This is a nice example of improved precision in type checking. Here&#39;s the <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/16069" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/issues/16069', event);">motivating example</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f1</span>(<span class="hljs-params">obj: Record&lt;<span class="hljs-built_in">string</span>, unknown&gt;, key: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> obj[key] === <span class="hljs-string">&quot;string&quot;</span>) &#123;<br>    <span class="hljs-comment">// Now okay, previously was error</span><br>    obj[key].toUpperCase();<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Previously this would only work for constant property accesses like <code>obj.prop</code>. It&#39;s undeniable that this is a win in terms of precision in type checking, but I think I&#39;ll keep using the standard workaround: factoring out a variable.</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">f1</span>(<span class="hljs-params">obj: Record&lt;<span class="hljs-built_in">string</span>, unknown&gt;, key: <span class="hljs-built_in">string</span></span>) </span>&#123;<br>  <span class="hljs-keyword">const</span> val = obj[key];<br>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> val === <span class="hljs-string">&quot;string&quot;</span>) &#123;<br>    val.toUpperCase();  <span class="hljs-comment">// this has always worked!</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This reduces duplication in the code and avoids a double lookup at runtime. It also gives you an opportunity to give the variable a meaningful name, which will make your code easier to read.</p>
+<p>Where I <em>can</em> see myself appreciating this is in single expression arrow functions, where you can&#39;t introduce a variable:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">keys.map(<span class="hljs-function"><span class="hljs-params">k</span> =&gt;</span> <span class="hljs-keyword">typeof</span> obj[k] === <span class="hljs-string">&#x27;string&#x27;</span> ? <span class="hljs-built_in">Number</span>(obj[k]) : obj[k])<br></code></pre></td></tr></table></figure>
+
+<h3 id="Regular-Expression-Syntax-Checking"><a href="#Regular-Expression-Syntax-Checking" class="headerlink" title="Regular Expression Syntax Checking"></a>Regular Expression Syntax Checking</h3><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Regular_expression" onclick="return trackOutboundLink('new features', 'https://en.wikipedia.org/wiki/Regular_expression', event);">Regular Expressions</a> may be the most common <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Domain-specific_language" onclick="return trackOutboundLink('new features', 'https://en.wikipedia.org/wiki/Domain-specific_language', event);">domain-specific language</a> in computing. Previous versions of TypeScript ignored everything inside a <code>/regex/</code> literal, but now they&#39;ll be checked for a few types of errors:</p>
+<ul>
+<li>syntax errors</li>
+<li>invalid backreferences to invalid named and numbered captures</li>
+<li>Using features that aren&#39;t available in your target ECMAScript version.</li>
+</ul>
+<p>Regexes are <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454" onclick="return trackOutboundLink('new features', 'https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags/1732454#1732454', event);">notoriously cryptic</a> and hard to debug (this <a target="_blank" rel="noopener" href="https://regex101.com/" onclick="return trackOutboundLink('new features', 'https://regex101.com/', event);">online playground</a> is handy), so anything TypeScript can do to improve the experience of writing them is appreciated.</p>
+<p>Since the regular expressions in existing code bases have presumably been tested, you&#39;re most likely to run into the third error when you upgrade to TS 5.5. ES2018 added a <a target="_blank" rel="noopener" href="https://exploringjs.com/js/book/ch_new-javascript-features.html#new-in-es2018" onclick="return trackOutboundLink('new features', 'https://exploringjs.com/js/book/ch_new-javascript-features.html#new-in-es2018', event);">bunch of new regex features</a> like the <code>/s</code> modifier. If you&#39;re using them, but don&#39;t have your target set to ES2018 or later, you&#39;ll get an error. The fix is most likely to <a target="_blank" rel="noopener" href="https://www.learningtypescript.com/articles/why-increase-your-tsconfig-target" onclick="return trackOutboundLink('new features', 'https://www.learningtypescript.com/articles/why-increase-your-tsconfig-target', event);">increase your target</a>. The <code>/s</code> (<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll', event);">dotAll</a>) flag, in particular, is <a target="_blank" rel="noopener" href="https://caniuse.com/?search=dotall" onclick="return trackOutboundLink('new features', 'https://caniuse.com/?search=dotall', event);">widely supported in browsers</a> and has been <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/dotAll', event);">available since Node.js</a> since version 8 (2018). The general rule here is to create an accurate model of your environment, as described in <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/model-env.md" onclick="return trackOutboundLink('new features', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/model-env.md', event);">Item 76</a> of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('new features', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a>.</p>
+<p>Regex type checking is a welcome new frontier for TypeScript. I&#39;m intrigued by the possibility that is a small step towards accurately typing the callback form of <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_function_as_a_parameter" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_function_as_a_parameter', event);"><code>String.prototype.replace</code></a>, JavaScript&#39;s most <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_function_as_a_parameter" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/replace#specifying_a_function_as_a_parameter', event);">notoriously</a> un-type friendly function:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-string">&quot;str&quot;</span>.replace(<span class="hljs-regexp">/foo(bar)baz/</span>, <span class="hljs-function">(<span class="hljs-params">match, capture</span>) =&gt;</span> capture);<br><span class="hljs-comment">//                                   ^?  (parameter) capture: any</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="Support-for-New-ECMAScript-Set-Methods"><a href="#Support-for-New-ECMAScript-Set-Methods" class="headerlink" title="Support for New ECMAScript Set Methods"></a>Support for New ECMAScript Set Methods</h3><p>When you have two sets, it&#39;s pretty natural to want to find the intersection, union and difference between them. It&#39;s always been surprising to me that JavaScript <code>Set</code>s didn&#39;t have this ability built in. <a target="_blank" rel="noopener" href="https://github.com/tc39/ecma262/pull/3306" onclick="return trackOutboundLink('new features', 'https://github.com/tc39/ecma262/pull/3306', event);">Now they do!</a></p>
+<p>While these new methods are stage 4, they haven&#39;t been included in any official ECMAScript release yet. (They&#39;ll probably be in ES2025.) That means that, to use them in TypeScript, you&#39;ll either need to set your target or lib to ESNext. Support for these methods is at <a target="_blank" rel="noopener" href="https://caniuse.com/mdn-javascript_builtins_set_union" onclick="return trackOutboundLink('new features', 'https://caniuse.com/mdn-javascript_builtins_set_union', event);">around 80%</a> in browsers at the moment, and <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/union" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set/union', event);">requires Node.js 22</a> on the server, so use with caution or include a polyfill.</p>
+<h3 id="Isolated-Declarations"><a href="#Isolated-Declarations" class="headerlink" title="Isolated Declarations"></a>Isolated Declarations</h3><p>The <code>isolatedDeclarations</code> setting opens a new front in the <a href="https://effectivetypescript.com/2020/04/28/avoid-inferable/">should you annotate your return types?</a> debate. The primary motivator here is build speed for very large TypeScript projects. Adopting this feature <em>won&#39;t</em> give you a faster build, at least not yet. But it&#39;s a foundation for more things to come. If you&#39;d like to understand this feature, I&#39;d highly recommend watching Titian&#39;s TS Congress 2023 talk: <a target="_blank" rel="noopener" href="https://portal.gitnation.org/contents/faster-typescript-builds-with-isolateddeclarations" onclick="return trackOutboundLink('new features', 'https://portal.gitnation.org/contents/faster-typescript-builds-with-isolateddeclarations', event);">Faster TypeScript builds with --isolatedDeclarations</a>.</p>
+<p>Should you enable this feature? Probably not, at least not yet. An exception might be if you use the <a target="_blank" rel="noopener" href="https://typescript-eslint.io/rules/explicit-function-return-type/" onclick="return trackOutboundLink('new features', 'https://typescript-eslint.io/rules/explicit-function-return-type/', event);">explicit-function-return-type</a> rule from typescript-eslint. In that case, switching to <code>isolatedDeclarations</code> will require explicit return type annotations only for your public API, where it&#39;s a clearer win.</p>
+<p>I expect there will be lots more development around this feature in subsequent versions of TypeScript. I&#39;ll also just note that isolatedDeclarations had a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58958" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/58958', event);">funny merge conflict</a> with inferred type predicates. All these new feature are developed independently, which makes it hard to anticipate the ways they&#39;ll interact together.</p>
+<h3 id="Performance-and-Size-Optimizations"><a href="#Performance-and-Size-Optimizations" class="headerlink" title="Performance and Size Optimizations"></a>Performance and Size Optimizations</h3><p>I <a href="https://effectivetypescript.com/2023/06/27/ts-51/">sometimes like to ask</a>: would you rather have a new feature or a performance win? In this case we get both!</p>
+<p>Inferring type predicates <em>does</em> incur a performance hit. In some <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465#issuecomment-1974921974" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/57465#issuecomment-1974921974', event);">extreme cases</a> it can be a significant one, but it&#39;s typically a <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465#issuecomment-1965552516" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/57465#issuecomment-1965552516', event);">1-2% slowdown</a>. The TypeScript team decided that this was a price they were willing to pay for the feature.</p>
+<p>TypeScript 5.5 also includes a whole host of other performance improvements, though, so the net effect is a positive one. You get your feature and your performance, too.</p>
+<p><a target="_blank" rel="noopener" href="https://mrale.ph/blog/2015/01/11/whats-up-with-monomorphism.html" onclick="return trackOutboundLink('new features', 'https://mrale.ph/blog/2015/01/11/whats-up-with-monomorphism.html', event);">Monomorphization</a> has been an ongoing saga in TypeScript. This is a &quot;death by a thousand cuts&quot; sort of performance problem, which is hard to diagnose because it doesn&#39;t show up clearly in profiles. Monomorphization makes all property accesses on objects faster. Because there are so many of these, the net effect can be large.</p>
+<p>One of the things we like about objects in JavaScript and TypeScript is that they don&#39;t have to fit into neat hierarchies like in Java or C#. But monomorphization is a push towards exactly these sorts of strict hierarchies. It&#39;s interesting to see this motivated by performance, rather than design considerations. If anyone tries to <a target="_blank" rel="noopener" href="https://twitter.com/danvdk/status/1801252274947158175" onclick="return trackOutboundLink('new features', 'https://twitter.com/danvdk/status/1801252274947158175', event);">translate tsc</a> to the JVM, say, this will help.</p>
+<p>I was particularly happy with <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58013" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/58013', event);">control flow graph simplifications</a>, since the PR included a screenshot of the <a href="https://effectivetypescript.com/2024/03/24/flownodes/">TS AST Viewer graph</a> that I built!</p>
+<p>These optimizations affect build times, the language service, and TypeScript API consumers. The TS team uses a <a target="_blank" rel="noopener" href="https://github.com/microsoft/typescript-benchmarking/" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/typescript-benchmarking/', event);">set of benchmarks</a> based on real projects, including TypeScript itself, to measure performance. I compared TypeScript 5.4 and 5.5 on a few of my own projects in a less scientifically rigorous way:</p>
+<ul>
+<li>Verifying the 934 code samples in the second edition of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('new features', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a> using <a href="https://effectivetypescript.com/2020/06/30/literate-ts/">literate-ts</a>, which uses the TypeScript API, went from 347→352s. So minimal change, or maybe a slight degradation.</li>
+<li>Type checking times (<code>tsc --noEmit</code>) were unaffected across all the projects I checked.</li>
+<li>The time to run <code>webpack</code> on a project that uses ts-loader went from ~43→42s, which is a ~2% speedup.</li>
+</ul>
+<p>So no dramatic changes for my projects, but your mileage may vary. If you&#39;re seeing big improvements (or regressions), let me know! (If you&#39;re seeing regressions, you should probably file a bug against TypeScript.)</p>
+<h3 id="Miscellaneous"><a href="#Miscellaneous" class="headerlink" title="Miscellaneous"></a>Miscellaneous</h3><ul>
+<li>Editor and Watch-Mode Reliability Improvements: These are grungy quality of life improvements, and we should be grateful that the TypeScript team pays attention to them.</li>
+<li>Easier API Consumption from ECMAScript Modules: I&#39;d always wondered why you couldn&#39;t <code>import &quot;typescript&quot;</code> like other modules. Now you can!</li>
+<li>Simplified Reference Directive Declaration Emit: A weird, dusty corner that no longer exists. Yay!</li>
+</ul>
+<h2 id="New-Errors"><a href="#New-Errors" class="headerlink" title="New Errors"></a>New Errors</h2><p>Most of my TypeScript projects had no new errors after I updated to TS 5.5. The only exception was needing to update my target to ES2018 to get the <code>/s</code> regular expression flag, as described above.</p>
+<p>Both <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/58587" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/58587', event);">Bloomberg</a> and <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/58685" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/58685', event);">Google</a> have posted GitHub issues describing the new errors they ran into while upgrading to TS 5.5. Neither of them ran into major issues.</p>
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>Every new release of TypeScript is exciting, but the combination of new forms of type inference, <code>isolatedDeclarations</code>, and potential performance wins make this a particularly good one.</p>
+<p>It&#39;s <a target="_blank" rel="noopener" href="https://matklad.github.io/2024/03/22/basic-things.html#Releases" onclick="return trackOutboundLink('conclusions', 'https://matklad.github.io/2024/03/22/basic-things.html#Releases', event);">sometimes said</a> that software dependencies obey a &quot;reverse <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Triangle_inequality" onclick="return trackOutboundLink('conclusions', 'https://en.wikipedia.org/wiki/Triangle_inequality', event);">triangle inequality</a>:&quot; it&#39;s easier to go from v1→v2→v3 than it is to go from v1→v3 directly. The idea is that you can fix a smaller set of issues at a time. There&#39;s not much reason to hold off on adopting TypeScript 5.5. Doing so now will make upgrading to 5.6 easier in a few months.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusions', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
