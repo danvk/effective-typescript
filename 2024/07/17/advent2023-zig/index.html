@@ -153,7 +153,7 @@
 
 <p>This is the best case scenario. A <code>u8</code> can&#39;t represent 256 and Zig has detected this error statically.</p>
 <p>If you make the error a little more subtle, though, the Zig compiler can&#39;t see it:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs zig">pub fn main() void &#123;<br>    const a: u8 &#x3D; 255;<br>    a +&#x3D; 1;<br>    std.debug.print(&quot;255 + 1 &#x3D; &#123;d&#125;!\n&quot;, .&#123;a&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs zig">pub fn main() void &#123;<br>    var a: u8 &#x3D; 255;<br>    a +&#x3D; 1;<br>    std.debug.print(&quot;255 + 1 &#x3D; &#123;d&#125;!\n&quot;, .&#123;a&#125;);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>What happens now is that you get a crash when you <em>run</em> the program:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><code class="hljs plain">$ zig run src&#x2F;main.zig<br>thread 12826611 panic: integer overflow<br>src&#x2F;main.zig:5:7: 0x10031a413 in main (main)<br>    a +&#x3D; 1;<br>      ^<br></code></pre></td></tr></table></figure>
