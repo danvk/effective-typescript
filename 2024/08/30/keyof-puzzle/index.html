@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>A keyof puzzle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: A keyof puzzle">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; A keyof puzzle">
+    <meta name="twitter:description" content="Effective TypeScript is nearly 400 pages long, but I&amp;#39;ve received the most feedback by far on just one passage. It comes in Item 7: Think of Types as Sets of Values:
+
+keyof (A&amp;amp;B) = (keyof A) | (keyof B)keyof (A|B) = (keyof A) &amp;amp; (keyof B)
+
+If you can build an intuition for why these equations hold, you&amp;#39;ll have come a long way toward understanding TypeScript&amp;#39;s type system!
+
+I&amp;#39;ll explain these equations in a moment. But before I do, head over to the TypeScript Playground and test them out with a few types. See if you can build that intuition for why they hold.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; A keyof puzzle">
+    <meta property="og:description" content="Effective TypeScript is nearly 400 pages long, but I&amp;#39;ve received the most feedback by far on just one passage. It comes in Item 7: Think of Types as Sets of Values:
+
+keyof (A&amp;amp;B) = (keyof A) | (keyof B)keyof (A|B) = (keyof A) &amp;amp; (keyof B)
+
+If you can build an intuition for why these equations hold, you&amp;#39;ll have come a long way toward understanding TypeScript&amp;#39;s type system!
+
+I&amp;#39;ll explain these equations in a moment. But before I do, head over to the TypeScript Playground and test them out with a few types. See if you can build that intuition for why they hold.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>A keyof puzzle</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-08-30T13:00:00.000Z" itemprop="datePublished">
+              Fri 30 August 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>Effective TypeScript</em> is nearly 400 pages long, but I&#39;ve received the most feedback by far on just one passage. It comes in <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md" onclick="return trackOutboundLink('a keyof puzzle', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md', event);">Item 7: Think of Types as Sets of Values</a>:</p>
+<blockquote>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">keyof (A&amp;B) = (keyof A) | (keyof B)<br>keyof (A|B) = (keyof A) &amp; (keyof B)<br></code></pre></td></tr></table></figure>
+
+<p>If you can build an intuition for why these equations hold, you&#39;ll have come a long way toward understanding TypeScript&#39;s type system!</p>
+</blockquote>
+<p>I&#39;ll explain these equations in a moment. But before I do, head over to the <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA" onclick="return trackOutboundLink('a keyof puzzle', 'https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA', event);">TypeScript Playground</a> and test them out with a few types. See if you can build that intuition for why they hold.</p>
+<span id="more"></span>
+
+<p>I first saw these equations in Anders Hejlsberg&#39;s <a target="_blank" rel="noopener" href="https://youtu.be/wpgKd-rwnMw?si=szTbEWSFGCF8xp2x&t=1576" onclick="return trackOutboundLink('a keyof puzzle', 'https://youtu.be/wpgKd-rwnMw?si=szTbEWSFGCF8xp2x&t=1576', event);">keynote at TSConf 2018</a> (&quot;Higher order type equivalences&quot; at 26m15s):</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wpgKd-rwnMw?si=G6bKilX_4QC-Z7Xw&amp;start=1576" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<p>Anders&#39; explanation at the talk was helpful, but I still had to stare at them for a long time before they clicked. But when they did, I felt like I&#39;d had a real insight about how TypeScript types work.</p>
+<p>The feedback on these equations in the book is typically that I need to explain them more. Some readers have even claimed they&#39;re wrong. (They&#39;re not!) By presenting them a bit cryptically, I wanted to give readers a chance to think through them and have an insight of their own.</p>
+<p>With that out of the way, let&#39;s dig into why these equations hold, and why they&#39;re interesting.</p>
+<p>We can start by plugging in concrete types for <code>A</code> and <code>B</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> NamedPoint &#123;<br>  name: <span class="hljs-built_in">string</span>;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>&#125;<br><span class="hljs-keyword">interface</span> Point3D &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>  z: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>What&#39;s <code>NamedPoint &amp; Point3D</code>, the intersection of these two types? It&#39;s easy to think that it&#39;s an <code>interface</code> with just the common fields:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// This is _not_ the same as NamedPoint &amp; Point3D!</span><br><span class="hljs-keyword">interface</span> CommonFields &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>That&#39;s not what it is, though. To understand the intersection of these types, we need to think a little more about what values are assignable to each type. A <code>NamedPoint</code> is an object with three properties, <code>name</code>, <code>x</code>, and <code>y</code>, with the expected types:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nyc: NamedPoint = &#123;<br>  name: <span class="hljs-string">&#x27;New York&#x27;</span>,<br>  x: -<span class="hljs-number">73</span>,<br>  y: <span class="hljs-number">40</span>,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>But a <code>NamedPoint</code> could have other properties, too. In particular it could have a <code>z</code> property:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> namedXYZ = &#123;<br>  name: <span class="hljs-string">&#x27;New York&#x27;</span>,<br>  x: -<span class="hljs-number">73</span>,<br>  y: <span class="hljs-number">40</span>,<br>  z: <span class="hljs-number">0</span>,<br>&#125;;<br><span class="hljs-keyword">const</span> nycN: NamedPoint = namedXYZ; <span class="hljs-comment">// ok!</span><br></code></pre></td></tr></table></figure>
+
+<p>(We have to go through an intermediate object to avoid <a target="_blank" rel="noopener" href="https://observablehq.com/@koop/excess-property-checking-in-typescript" onclick="return trackOutboundLink('a keyof puzzle', 'https://observablehq.com/@koop/excess-property-checking-in-typescript', event);">excess property checking</a> errors here. If you have a copy of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('a keyof puzzle', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a>, check out <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/excess-property-checking.md" onclick="return trackOutboundLink('a keyof puzzle', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/excess-property-checking.md', event);">Item 11: Distinguish Excess Property Checking from Type Checking</a>.)</p>
+<p>There&#39;s nothing special about <code>z</code>. It could have other properties, too, and still be assignable to <code>NamedPoint</code>. For this reason, we sometimes say that TypeScript types are &quot;open.&quot;</p>
+<p>Of course, <code>Point3D</code> is open, too. It could also have other fields, including a <code>name</code> field:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nycZ: Point3D = namedXYZ; <span class="hljs-comment">// ok!</span><br></code></pre></td></tr></table></figure>
+
+<p>So <code>namedXYZ</code> is assignable to both <code>NamedPoint</code> and <code>Point3D</code>. And that is the very definition of an intersection. Sure enough, <code>namedXYZ</code> is assignable to the intersection of these types, too:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nycZ: Point3D &amp; NamedPoint = namedXYZ; <span class="hljs-comment">// ok!</span><br></code></pre></td></tr></table></figure>
+
+<p>This gives us a hint about what the intersection looks like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> NamedPoint3D &#123;<br>  name: <span class="hljs-built_in">string</span>;<br>  x: <span class="hljs-built_in">number</span>;<br>  y: <span class="hljs-built_in">number</span>;<br>  z: <span class="hljs-built_in">number</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>This type is <em>also</em> &quot;open:&quot; a <code>NamedPoint3D</code> might have more than these four fields. But it has to have at least these four.</p>
+<p>To <em>intersect</em> these two types, we <em>unioned</em> their properties. We can see this in code using <code>keyof</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> KN = &#123;&#125; &amp; keyof NamedPoint;<br><span class="hljs-comment">//   ^? type KN = &quot;name&quot; | &quot;x&quot; | &quot;y&quot;</span><br><span class="hljs-keyword">type</span> K3 = &#123;&#125; &amp; keyof Point3D;<br><span class="hljs-comment">//   ^? type K3 = &quot;x&quot; | &quot;y&quot; | &quot;z&quot;</span><br><br><span class="hljs-keyword">type</span> KI = keyof (NamedPoint &amp; Point3D);<br><span class="hljs-comment">//   ^? type KI = &quot;name&quot; | &quot;x&quot; | &quot;y&quot; | &quot;z&quot;</span><br><span class="hljs-keyword">type</span> KU = (keyof NamedPoint) | (keyof Point3D)<br><span class="hljs-comment">//   ^? type KU = &quot;name&quot; | &quot;x&quot; | &quot;y&quot; | &quot;z&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>So <code>keyof (A&amp;B) = (keyof A) | (keyof B)</code>!</p>
+<p>(The weird <code>&#123;&#125; &amp;</code> forces TypeScript to print out the results of <code>keyof</code>. I <a target="_blank" rel="noopener" href="https://www.effectivetypescript.com/2022/02/25/gentips-4-display/#Exclude-lt-keyof-T-never-gt" onclick="return trackOutboundLink('a keyof puzzle', 'https://www.effectivetypescript.com/2022/02/25/gentips-4-display/#Exclude-lt-keyof-T-never-gt', event);">wish</a> this weren&#39;t necessary.)</p>
+<p>What about the other relationship, <code>keyof (A|B)</code>? <code>keyof T</code> will only include a property if TypeScript can be sure that it will be present on values assignable to <code>T</code> (with a caveat, see below).</p>
+<p>Again, let&#39;s make this more concrete with some examples:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> nyc: NamedPoint = &#123;<br>  name: <span class="hljs-string">&#x27;New York&#x27;</span>,<br>  x: -<span class="hljs-number">73</span>,<br>  y: <span class="hljs-number">40</span>,<br>&#125;;<br><span class="hljs-keyword">const</span> pythagoras: Point3D = &#123;<br>  x: <span class="hljs-number">3</span>,<br>  y: <span class="hljs-number">4</span>,<br>  z: <span class="hljs-number">5</span>,<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>To be assignable to <code>A|B</code>, a value must be assignable to either <code>A</code> or <code>B</code> (or both!). So these values are both assignable to <code>NamedPoint | Point3D</code>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> u1: NamedPoint | Point3D = nyc; <span class="hljs-comment">// ok</span><br><span class="hljs-keyword">const</span> u2: NamedPoint | Point3D = pythagoras; <span class="hljs-comment">// ok</span><br></code></pre></td></tr></table></figure>
+
+<p>Thinking about <code>keyof</code>, which properties belong to both those objects? It&#39;s just <code>&quot;x&quot;</code> and <code>&quot;y&quot;</code>. And that&#39;s <code>keyof</code> for the union type:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">type</span> KU = keyof (NamedPoint | Point3D)<br><span class="hljs-comment">//   ^? type KU = &quot;x&quot; | &quot;y&quot;</span><br><span class="hljs-keyword">type</span> IK = (keyof NamedPoint) &amp; (keyof Point3D)<br><span class="hljs-comment">//   ^? type IK = &quot;x&quot; | &quot;y&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>So <code>keyof (A|B) = (keyof A) &amp; (keyof B)</code> and the equation holds.</p>
+<p>Hopefully working through these examples with some concrete types makes the equations clearer. I really like them because they&#39;re concise but still manage to say a lot about how types work in TypeScript.</p>
+<p>I mentioned one caveat, and it has to do with optional fields:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> PartialPoint &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y?: <span class="hljs-built_in">number</span>;<br>&#125;<br><span class="hljs-keyword">type</span> KP = &#123;&#125; &amp; keyof PartialPoint;<br><span class="hljs-comment">//   ^? type KP = &quot;x&quot; | &quot;y&quot;</span><br><span class="hljs-keyword">const</span> justX: PartialPoint = &#123; <span class="hljs-attr">x</span>: <span class="hljs-number">10</span> &#125;;<br></code></pre></td></tr></table></figure>
+
+<p><code>justX</code> is assignable to <code>PartialPoint</code>, but it doesn&#39;t have a <code>y</code> property, which you&#39;d expect given the <code>keyof</code>.</p>
+<p>Optional fields are a little strange when you think about types in a set-theoretic way. On the one hand, it&#39;s surprising that <code>keyof PartialPoint</code> includes <code>&quot;y&quot;</code> because values needn&#39;t have that property. On the other hand, it would be incredibly annoying if it didn&#39;t because <code>keyof</code> is so often used with <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/docs/handbook/2/mapped-types.html" onclick="return trackOutboundLink('a keyof puzzle', 'https://www.typescriptlang.org/docs/handbook/2/mapped-types.html', event);">mapped types</a>, and you&#39;d really like to map over all the fields, not just the required ones.</p>
+<p>At the end of the day, what&#39;s the difference between these two types?</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> JustX &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>&#125;<br><span class="hljs-keyword">interface</span> XMaybeY &#123;<br>  x: <span class="hljs-built_in">number</span>;<br>  y?: unknown;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>I&#39;ll cryptically say &quot;not much!&quot; and leave it at that!</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('a keyof puzzle', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
