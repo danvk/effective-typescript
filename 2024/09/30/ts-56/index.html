@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Notes on TypeScript 5.6</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Notes on TypeScript 5.6">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Notes on TypeScript 5.6">
+    <meta name="twitter:description" content="We TypeScript developers are a lucky bunch. While some languages (Python, JavaScript) are released annually, every three years (C++) or even less, we get four new versions of TypeScript every year. TypeScript 5.6 was released on September 9th, 2024. Let&amp;#39;s take a look.">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Notes on TypeScript 5.6">
+    <meta property="og:description" content="We TypeScript developers are a lucky bunch. While some languages (Python, JavaScript) are released annually, every three years (C++) or even less, we get four new versions of TypeScript every year. TypeScript 5.6 was released on September 9th, 2024. Let&amp;#39;s take a look.">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Notes on TypeScript 5.6</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-09-30T16:15:00.000Z" itemprop="datePublished">
+              Mon 30 September 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('notes on typescript', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('notes on typescript', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('notes on typescript', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.6 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/" onclick="return trackOutboundLink('notes on typescript', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/', event);">released</a> on September 9th, 2024. Let&#39;s take a look.</p>
+<span id="more"></span>
+
+<h2 id="New-Features"><a href="#New-Features" class="headerlink" title="New Features"></a>New Features</h2><h3 id="Disallowed-Nullish-and-Truthy-Checks"><a href="#Disallowed-Nullish-and-Truthy-Checks" class="headerlink" title="Disallowed Nullish and Truthy Checks"></a>Disallowed Nullish and Truthy Checks</h3><p>TypeScript will now alert you to certain conditionals that are always true or false:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> value = &#123;&#125; || <span class="hljs-string">&#x27;unreachable&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>Because <code>&#123;&#125;</code> is truthy, the right-hand side of the <code>||</code> is dead code. It should either be removed or investigated, since it might indicate a logic error.</p>
+<p>If your project is large and has been around for a while, this check is likely to turn up some strange-looking code. For example, I got a &quot;this expression is always truthy&quot; error on code that looked like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> val = &#123; ...obj, <span class="hljs-attr">prop</span>: value &#125; || &#123;&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>What&#39;s that <code>|| &#123;&#125;</code> doing there? Running <a target="_blank" rel="noopener" href="https://git-scm.com/docs/git-blame" onclick="return trackOutboundLink('new features', 'https://git-scm.com/docs/git-blame', event);">git blame</a> revealed the story. The code originally looked like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> val = obj || &#123;&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>Then a subsequent change added <code>prop: value</code> to the object and didn&#39;t remove the fallback. In this case, it&#39;s fine to remove the <code>|| &#123;&#125;</code> since using <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax', event);">object spread</a> on a <code>null</code>/<code>undefined</code> value is OK.</p>
+<p>This new check is the single best reason to update to TS 5.6. I haven&#39;t seen a single false positive, and I&#39;ve found lots of strange-looking code. This matches the TypeScript team&#39;s <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/59217#issuecomment-2222103311" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/59217#issuecomment-2222103311', event);">findings</a>.</p>
+<h3 id="Iterator-Helper-Methods"><a href="#Iterator-Helper-Methods" class="headerlink" title="Iterator Helper Methods"></a>Iterator Helper Methods</h3><p>In addition to finding new errors in your code, new TypeScript releases continue the ongoing process of implementing all stage 3 ECMAScript features.</p>
+<p>TypeScript 5.6 now supports <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helpers" onclick="return trackOutboundLink('new features', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator#iterator_helpers', event);">Iterator Helper methods</a> like <code>map</code> and <code>take</code>. If you&#39;ve ever used Python&#39;s <a target="_blank" rel="noopener" href="https://docs.python.org/3/library/itertools.html" onclick="return trackOutboundLink('new features', 'https://docs.python.org/3/library/itertools.html', event);"><code>itertools</code> package</a>, this will be familiar. The appeal of iterators is that you can apply a series of operations to an array, for example, without constructing all the intermediate arrays. This reduces memory usage and should improve cache efficiency and performance.</p>
+<p>Because these are JavaScript runtime methods, you&#39;ll need to use a runtime that supports them. At the moment that&#39;s Node.js 22 (which should enter long-term support in October) and around <a target="_blank" rel="noopener" href="https://caniuse.com/mdn-javascript_builtins_iterator_take" onclick="return trackOutboundLink('new features', 'https://caniuse.com/mdn-javascript_builtins_iterator_take', event);">67% of browsers</a>. Unless you can guarantee support in your environment, you may want to wait on these for a bit.</p>
+<h3 id="Strict-Builtin-Iterator-Checks-and-strictBuiltinIteratorReturn"><a href="#Strict-Builtin-Iterator-Checks-and-strictBuiltinIteratorReturn" class="headerlink" title="Strict Builtin Iterator Checks (and --strictBuiltinIteratorReturn)"></a>Strict Builtin Iterator Checks (and --strictBuiltinIteratorReturn)</h3><p>TypeScript&#39;s <code>any</code> type is dangerous: not only does it disable type checking, it can also silently spread through your program. <a href="https://effectivetypescript.com/#Chapter-5-Unsoundness-and-the-any-Type">Chapter 5</a> of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('new features', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a> is all about taming the <code>any</code> type.</p>
+<p>Perhaps the scariest source of <code>any</code> types is type declaration files (<code>.d.ts</code>). If you call a function and it&#39;s declared to return <code>any</code>, then <code>any</code> is what you get, even if the word &quot;any&quot; never appears in your source code. <code>JSON.parse</code> is a famous example of this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> obj = <span class="hljs-built_in">JSON</span>.parse(<span class="hljs-string">&#x27;&#123;&quot;a&quot;: 2&#125;&#x27;</span>);  <span class="hljs-comment">// whoops, any type!</span><br><span class="hljs-keyword">const</span> b = obj.b;  <span class="hljs-comment">// no error!</span><br></code></pre></td></tr></table></figure>
+
+<p>(Matt Pocock&#39;s <a target="_blank" rel="noopener" href="https://github.com/mattpocock/ts-reset" onclick="return trackOutboundLink('new features', 'https://github.com/mattpocock/ts-reset', event);">ts-reset</a> fixes this and a few other well known issues.)</p>
+<p>One subtle source of <code>any</code> came from direct use of an iterator&#39;s <code>.next()</code> method:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> letters = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>([<span class="hljs-string">&#x27;a&#x27;</span>, <span class="hljs-string">&#x27;b&#x27;</span>, <span class="hljs-string">&#x27;c&#x27;</span>]);<br><span class="hljs-keyword">const</span> oneLetter = letters.values().next().value;<br><span class="hljs-comment">//    ^? const oneLetter: any (TS 5.5)</span><br><span class="hljs-comment">//                        string | undefined (TS 5.6)</span><br></code></pre></td></tr></table></figure>
+
+<p>The type in TS 5.6 makes a lot of sense! If the Set were empty, <code>oneLetter</code> would be <code>undefined</code>. Otherwise it would be a <code>string</code>. (You can also check the <code>done</code> property to narrow the type.) While directly working with an iterator is rare (you should typically use <code>for-of</code> loops or the new iterator helpers), this is a welcome improvement because it eliminates a surprising source of <code>any</code> types.</p>
+<p>So the real question is… why was this an <code>any</code> type in older versions of TypeScript? To understand why, the TypeScript blog gives <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#strict-builtin-iterator-checks-(and---strictbuiltiniteratorreturn)" onclick="return trackOutboundLink('new features', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#strict-builtin-iterator-checks-(and---strictbuiltiniteratorreturn)', event);">this example</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span>* <span class="hljs-title">abc123</span>(<span class="hljs-params"></span>) </span>&#123;<br>    <span class="hljs-keyword">yield</span> <span class="hljs-string">&quot;a&quot;</span>;<br>    <span class="hljs-keyword">yield</span> <span class="hljs-string">&quot;b&quot;</span>;<br>    <span class="hljs-keyword">yield</span> <span class="hljs-string">&quot;c&quot;</span>;<br>    <span class="hljs-keyword">return</span> <span class="hljs-number">123</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> iter = abc123();<br><br>iter.next(); <span class="hljs-comment">// &#123; value: &quot;a&quot;, done: false &#125;</span><br>iter.next(); <span class="hljs-comment">// &#123; value: &quot;b&quot;, done: false &#125;</span><br>iter.next(); <span class="hljs-comment">// &#123; value: &quot;c&quot;, done: false &#125;</span><br>iter.next(); <span class="hljs-comment">// &#123; value: 123, done: true &#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>A generator function (which returns an iterator) can both <code>yield</code> and <code>return</code> values. When it returns a value, that goes into the <code>value</code> property of the iterator&#39;s value.</p>
+<p>TypeScript models this with two type parameters: <code>Iterator&lt;T, TReturn&gt;</code>. Most iterators don&#39;t return a special value when they&#39;re done, so <code>TReturn</code> is typically <code>void</code> (the return type of a function without a <code>return</code> statement).</p>
+<p>When TypeScript <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/12346" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/12346', event);">first added support for iterators</a> in 2016, they didn&#39;t distinguish <code>T</code> and <code>TReturn</code>. When they did split these types in 2019, they had to default <code>TReturn</code> to <code>any</code> to <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/30790#:~:text=boolean%2C%20A%20%26%20B%3E%27-,Notes,-For%20these%20definitions" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/30790#:~:text=boolean%2C%20A%20%26%20B%3E%27-,Notes,-For%20these%20definitions', event);">maintain backwards compatibility</a>. The <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/33353#issuecomment-532574516" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/issues/33353#issuecomment-532574516', event);">kicked the can down the road</a> for years until this release, when they <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58243" onclick="return trackOutboundLink('new features', 'https://github.com/microsoft/TypeScript/pull/58243', event);">added a new flag</a>, <code>strictBuiltinIteratorReturn</code>, to fix it. This is enabled with <code>--strict</code>, so you should get it right away.</p>
+<p>A few more quick notes on this:</p>
+<ul>
+<li>The types around iterators, generators and async iterators are all pretty confusing. I hope to write a blog post about them at some point in the future.</li>
+<li>If you don&#39;t have <code>strictNullChecks</code> enabled, you may see some strange errors around <code>value</code> having a type of <code>string | void</code>. The fix is to enable <code>strictNullChecks</code>!</li>
+<li>This was a surprising source of <code>any</code> types that could spread in your code. To limit the damage from these sorts of <code>any</code>s, consider using typescript-eslint&#39;s <a target="_blank" rel="noopener" href="https://typescript-eslint.io/rules/no-unsafe-assignment/" onclick="return trackOutboundLink('new features', 'https://typescript-eslint.io/rules/no-unsafe-assignment/', event);"><code>no-unsafe-assignment</code></a>, York Yao&#39;s <a target="_blank" rel="noopener" href="https://github.com/plantain-00/type-coverage" onclick="return trackOutboundLink('new features', 'https://github.com/plantain-00/type-coverage', event);">type-coverage</a> tool, or my brand-new <a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/items?itemName=danvk.any-xray" onclick="return trackOutboundLink('new features', 'https://marketplace.visualstudio.com/items?itemName=danvk.any-xray', event);">Any X-Ray Vision</a> VS Code extension.</li>
+</ul>
+<h3 id="The-noUncheckedSideEffectImports-Option"><a href="#The-noUncheckedSideEffectImports-Option" class="headerlink" title="The --noUncheckedSideEffectImports Option"></a>The --noUncheckedSideEffectImports Option</h3><p>I first noticed this issue when I was working on the second edition of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('new features', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a>. I claimed that this would be an error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> <span class="hljs-string">&#x27;non-existent-file.css&#x27;</span>;<br></code></pre></td></tr></table></figure>
+
+<p>… but it wasn&#39;t! This is a pretty strange TypeScript behavior. For these &quot;side-effect imports,&quot; where you don&#39;t import any symbols, TypeScript will try to resolve the path to the module. If it can, it will type check the file that you import. But if it can&#39;t, it will just ignore the import entirely.</p>
+<p>Now you can change this behavior with <code>noUncheckedSideEffectImports</code>. If you use CSS imports, you&#39;re likely to get tons of errors when you first enable this, one for every import. The solution that the release notes <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#the---nouncheckedsideeffectimports-option" onclick="return trackOutboundLink('new features', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#the---nouncheckedsideeffectimports-option', event);">suggest</a> is to add this line to a <code>.d.ts</code> file:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">declare</span> <span class="hljs-built_in">module</span> <span class="hljs-string">&#x27;*.css&#x27;</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>But this feels a bit too lenient. It will catch a typo if you get the extension wrong (<code>.cs</code> instead of <code>.css</code>). But it won&#39;t check that you&#39;re importing a file that exists. I experimented with listing all my CSS files in a <code>.d.ts</code> file:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">declare</span> <span class="hljs-built_in">module</span> <span class="hljs-string">&#x27;css/file1.css&#x27;</span> &#123;&#125;<br><span class="hljs-keyword">declare</span> <span class="hljs-built_in">module</span> <span class="hljs-string">&#x27;css/file2.css&#x27;</span> &#123;&#125;<br></code></pre></td></tr></table></figure>
+
+<p>But this didn&#39;t seem to work at all. Relative imports of these files still produced type errors. So I think this feature still needs some work to be useful.</p>
+<h3 id="Region-Prioritized-Diagnostics-in-Editors"><a href="#Region-Prioritized-Diagnostics-in-Editors" class="headerlink" title="Region-Prioritized Diagnostics in Editors"></a>Region-Prioritized Diagnostics in Editors</h3><p>Like most compilers, TypeScript is <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Self-hosting_(compilers)" onclick="return trackOutboundLink('new features', 'https://en.wikipedia.org/wiki/Self-hosting_(compilers)', event);">self-hosting</a>: <code>tsc</code> is written in TypeScript. This is a good idea because it&#39;s a form of <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Eating_your_own_dog_food" onclick="return trackOutboundLink('new features', 'https://en.wikipedia.org/wiki/Eating_your_own_dog_food', event);">dogfooding</a>. The idea is that, since the TS team works in TypeScript every day, they&#39;ll be acutely aware of all the same issues that face other TypeScript developers.</p>
+<p>Sometimes, though, this can have strange consequences. I suspect that most developers who contribute to TypeScript had a chuckle when they saw <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#region-prioritized-diagnostics-in-editors" onclick="return trackOutboundLink('new features', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/#region-prioritized-diagnostics-in-editors', event);">Region-Prioritized Diagnostics in Editors</a> in the TS 5.6 release notes. The idea is that, for very large TypeScript files, the editor can focus on just the part that you&#39;re editing, rather than checking the whole file.</p>
+<p>Sounds like a nice performance win. So why did I find this funny? It&#39;s because it&#39;s so clearly targeted at just one file, TypeScript&#39;s 50,000+ line <code>checker.ts</code>. It&#39;s incredible to me that the TS team implemented this feature rather than breaking up that file, but there you go!</p>
+<h2 id="New-Errors"><a href="#New-Errors" class="headerlink" title="New Errors"></a>New Errors</h2><p>Whenever a new version of TypeScript comes out, I like to run it over all my projects and the code samples in <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('new errors', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a> using <a target="_blank" rel="noopener" href="https://github.com/danvk/literate-ts" onclick="return trackOutboundLink('new errors', 'https://github.com/danvk/literate-ts', event);">literate-ts</a> to look for new errors. There were a few of them, including some surprises.</p>
+<p>Several errors came from the new checks I discussed earlier in this post, &quot;this expression is always truthy&quot; and <code>.next()</code> calls having stricter types. These were all true positives: they flagged code that was suspicious.</p>
+<p>There were also two types of errors that came as surprises.</p>
+<p>One was a change in circularity detection for a code sample in Effective TypeScript, in <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-design/null-values-to-perimeter.md" onclick="return trackOutboundLink('new errors', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-design/null-values-to-perimeter.md', event);">Item 33: Push Null Values to the Perimeter of Your Types</a>:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">extent</span>(<span class="hljs-params">nums: Iterable&lt;<span class="hljs-built_in">number</span>&gt;</span>) </span>&#123;<br>  <span class="hljs-keyword">let</span> minMax: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>] | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>;<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> num <span class="hljs-keyword">of</span> nums) &#123;<br>    <span class="hljs-keyword">if</span> (!minMax) &#123;<br>      minMax = [num, num];<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-keyword">const</span> [oldMin, oldMax] = minMax;<br>      <span class="hljs-comment">//     ~~~~~~  ~~~~~~</span><br>      <span class="hljs-comment">// &#x27;oldMin&#x27; / &#x27;oldMax&#x27; implicitly has type &#x27;any&#x27; because it does not have a</span><br>      <span class="hljs-comment">// type annotation and is referenced directly or indirectly in its own</span><br>      <span class="hljs-comment">// initializer.</span><br>      <span class="hljs-comment">// (Error before TS 5.4, OK in TS 5.4, 5.5, error again in TS 5.6)</span><br>      minMax = [<span class="hljs-built_in">Math</span>.min(num, oldMin), <span class="hljs-built_in">Math</span>.max(num, oldMax)];<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">return</span> minMax;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>In the first edition of <em>Effective TypeScript</em>, the same snippet avoided destructuring assignment in the <code>else</code> clause due to the circularity error:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">result = [<span class="hljs-built_in">Math</span>.min(num, result[<span class="hljs-number">0</span>]), <span class="hljs-built_in">Math</span>.max(num, result[<span class="hljs-number">1</span>])];<br></code></pre></td></tr></table></figure>
+
+<p>I <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/33191" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/33191', event);">filed an issue</a> about this in 2019 and was excited to see that it was <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/56753" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/pull/56753', event);">fixed</a> with TS 5.4, just in time for the book release. Unfortunately, the fix got reverted and we&#39;re <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/33191#issuecomment-2218027441" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/33191#issuecomment-2218027441', event);">back to the circularity error</a>. So I&#39;ll need to update the book.</p>
+<p>I also ran into an <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/60077" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/60077', event);">issue</a> where the inferred type parameters for a generic function call changed. It boiled down to something like this:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">declare</span> <span class="hljs-keyword">const</span> f: &lt;P&gt;(<br>  fn: <span class="hljs-function">(<span class="hljs-params">props: P</span>) =&gt;</span> <span class="hljs-built_in">void</span>,<br>  init?: P,<br>) =&gt; P;<br><br><span class="hljs-keyword">interface</span> Props &#123;<br>  req: <span class="hljs-built_in">string</span>;<br>  opt?: <span class="hljs-built_in">string</span>;<br>&#125;<br><br><span class="hljs-keyword">const</span> props = f(<br>  (p: Props) =&gt; <span class="hljs-string">&#x27;&#x27;</span>,<br>  &#123; <span class="hljs-attr">req</span>: <span class="hljs-string">&quot;&quot;</span> &#125;,<br>);<br><br>props.opt<br><span class="hljs-comment">// Error in TS 5.6, OK in earlier versions</span><br></code></pre></td></tr></table></figure>
+
+<p>I used <a target="_blank" rel="noopener" href="https://github.com/jakebailey/every-ts" onclick="return trackOutboundLink('new errors', 'https://github.com/jakebailey/every-ts', event);">every-ts</a> to bisect this to <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57909" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/pull/57909', event);">#57909</a>. This PR changed how type inference worked between covariant and contravariant parameters. If you see a surprising type change like this after updating to TS 5.6, this change might be the reason.</p>
+<p>After <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/59764#issuecomment-2311067288" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/59764#issuecomment-2311067288', event);">reading</a> some <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/59764#issuecomment-2311543160" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/issues/59764#issuecomment-2311543160', event);">comments</a>, this all seems pretty <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/59772#discussion_r1733190826" onclick="return trackOutboundLink('new errors', 'https://github.com/microsoft/TypeScript/pull/59772#discussion_r1733190826', event);">murky</a>. There&#39;s often no clearly correct inference, just tradeoffs. Given that, I&#39;m a bit surprised that TypeScript changed the existing behavior. Be on the lookout for this one!</p>
+<h2 id="Performance-changes"><a href="#Performance-changes" class="headerlink" title="Performance changes"></a>Performance changes</h2><p>New TypeScript releases have the potential to speed up or slow down compile times, but I was unable to measure any significant changes with this release.</p>
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>While TS 5.6 isn&#39;t quite the <a href="https://effectivetypescript.com/2024/07/02/ts-55/">blockbuster</a> that TS 5.5 was, the new &quot;this expression is always truthy&quot; checks and the more precise iterator types make it a worthwhile upgrade.</p>
+<p>It&#39;s <a target="_blank" rel="noopener" href="https://matklad.github.io/2024/03/22/basic-things.html#Releases" onclick="return trackOutboundLink('conclusions', 'https://matklad.github.io/2024/03/22/basic-things.html#Releases', event);">sometimes said</a> that software dependencies obey a &quot;reverse <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Triangle_inequality" onclick="return trackOutboundLink('conclusions', 'https://en.wikipedia.org/wiki/Triangle_inequality', event);">triangle inequality</a>:&quot; it&#39;s easier to go from v1→v2→v3 than it is to go from v1→v3 directly. The idea is that you can fix a smaller set of issues at a time. There&#39;s not much reason to hold off on adopting TypeScript 5.6. Doing so now will make upgrading to 5.7 easier in a few months.</p>
+<p>Speaking of which, keep an eye on that release! I&#39;m hoping that it will include the proposed <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/58296" onclick="return trackOutboundLink('conclusions', 'https://github.com/microsoft/TypeScript/pull/58296', event);"><code>enforceReadonly</code> flag</a>.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusions', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
