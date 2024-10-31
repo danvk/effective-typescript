@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Item 74: Know How to Reconstruct Types at Runtime</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: Item 74: Know How to Reconstruct Types at Runtime">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; Item 74: Know How to Reconstruct Types at Runtime">
+    <meta name="twitter:description" content="A fundamental part of TypeScript&#39;s design is that TypeScript types are erased at runtime. There&#39;s no way to access them. But inevitably, you&#39;ll want to do just that. This comes up most often when you want to validate that user input matches a TypeScript type. Faced with this problem, TypeScript developers often reach for Zod, a schema validation tool. But Zod has some downsides, and it&#39;s not the only solution to this conundrum. This sample item explores this problem and three possible solutions to it.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; Item 74: Know How to Reconstruct Types at Runtime">
+    <meta property="og:description" content="A fundamental part of TypeScript&#39;s design is that TypeScript types are erased at runtime. There&#39;s no way to access them. But inevitably, you&#39;ll want to do just that. This comes up most often when you want to validate that user input matches a TypeScript type. Faced with this problem, TypeScript developers often reach for Zod, a schema validation tool. But Zod has some downsides, and it&#39;s not the only solution to this conundrum. This sample item explores this problem and three possible solutions to it.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Item 74: Know How to Reconstruct Types at Runtime</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2024-10-31T14:30:00.000Z" itemprop="datePublished">
+              Thu 31 October 2024
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><em>This is a sample item from Chapter 9 of the second edition of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('item  know how to reconstruct types at runtime', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a>, which was <a href="https://effectivetypescript.com/2024/05/21/second-edition/">released</a> in May of 2024. It explains your options when you need to access a type at runtime, for example to perform request validation.  If you like what you read, consider <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('item  know how to reconstruct types at runtime', 'https://amzn.to/3UjPrsK', event);">buying a copy</a> of the book!</em></p>
+<p><em>The item tries to be balanced in presenting the pros and cons of each approach. But in my own projects, I avoid Zod and use the third option instead (Generate Runtime Values from Your Types). I like TypeScript, and I&#39;d like to define my types using its syntax!</em></p>
+<p>At some point in the process of learning TypeScript, most developers have an epiphany when they realize that TypeScript types aren&#39;t &quot;real&quot;: they&#39;re <a target="_blank" rel="noopener" href="https://github.com/microsoft/typescript/wiki/faq#what-is-type-erasure" onclick="return trackOutboundLink('item  know how to reconstruct types at runtime', 'https://github.com/microsoft/typescript/wiki/faq#what-is-type-erasure', event);">erased</a> at runtime. This might be accompanied by a feeling of dread: if the types aren&#39;t real, how can you trust them?</p>
+<p>The independence of types from runtime behavior is a key part of the relationship between TypeScript and JavaScript (<a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-intro/ts-vs-js.md" onclick="return trackOutboundLink('item  know how to reconstruct types at runtime', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-intro/ts-vs-js.md', event);">Item 1</a>). And most of the time this system works very well. But there are undeniably times when it would be extremely convenient to have access to TypeScript types at runtime. This item explores how this situation might arise and what your options are.</p>
+<p>Imagine you&#39;re implementing a web server and you define an API endpoint for creating a comment on a blog post. You define a TypeScript type for the request body:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">interface</span> CreateComment &#123;<br>  postId: <span class="hljs-built_in">string</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>  body: <span class="hljs-built_in">string</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Your request handler should validate the request. Some of this validation will be at the application level (does <code>postId</code> reference a post that exists and that the user can comment on?), but some will be at the type level (does the request have all the properties we expect, are they of the right type, and are there any extra properties?).</p>
+<p>Here&#39;s what that might look like:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">app.post(<span class="hljs-string">&#x27;/comment&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">request, response</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123;body&#125; = request;<br>  <span class="hljs-comment">// 🛑 Don&#x27;t do validation this way!</span><br>  <span class="hljs-keyword">if</span> (<br>    !body ||<br>    <span class="hljs-keyword">typeof</span> body !== <span class="hljs-string">&#x27;object&#x27;</span> ||<br>    <span class="hljs-built_in">Object</span>.keys(body).length !== <span class="hljs-number">3</span> ||<br>    !(<span class="hljs-string">&#x27;postId&#x27;</span> <span class="hljs-keyword">in</span> body) || <span class="hljs-keyword">typeof</span> body.postId !== <span class="hljs-string">&#x27;string&#x27;</span> ||<br>    !(<span class="hljs-string">&#x27;title&#x27;</span> <span class="hljs-keyword">in</span> body) || <span class="hljs-keyword">typeof</span> body.title !== <span class="hljs-string">&#x27;string&#x27;</span> ||<br>    !(<span class="hljs-string">&#x27;body&#x27;</span> <span class="hljs-keyword">in</span> body) || <span class="hljs-keyword">typeof</span> body.body !== <span class="hljs-string">&#x27;string&#x27;</span><br>  ) &#123;<br>    <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">400</span>).send(<span class="hljs-string">&#x27;Invalid request&#x27;</span>);<br>  &#125;<br>  <span class="hljs-keyword">const</span> comment = body <span class="hljs-keyword">as</span> CreateComment;<br>  <span class="hljs-comment">// ... application validation and logic ...</span><br>  <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">200</span>).send(<span class="hljs-string">&#x27;ok&#x27;</span>);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>This is already a lot of validation code, even with just three properties. Worse, there&#39;s nothing to ensure that the checks are accurate and in sync with our type. Nothing checks that we spelled the properties correctly. And if we add a new property, we&#39;ll need to remember to add a check, too.</p>
+<p>This is code duplication at its worst. We have two things (a type and validation logic) that need to stay in sync. It would be better if there was a single source of truth. The <code>interface</code> seems like the natural source of truth, but it&#39;s erased at runtime so it&#39;s unclear how you&#39;d use it in this way.</p>
+<p>Let&#39;s look at a few possible solutions to this conundrum.</p>
+<h2 id="Generate-the-Types-from-Another-Source"><a href="#Generate-the-Types-from-Another-Source" class="headerlink" title="Generate the Types from Another Source"></a>Generate the Types from Another Source</h2><p>If your API is specified in some other form, perhaps using GraphQL or an OpenAPI schema, then you can use that as the source of truth and generate your TypeScript types from it.</p>
+<p>This typically involves running an external tool to generate types and, possibly, validation code. An OpenAPI spec uses JSON Schema, for example, so you can use a tool like <a target="_blank" rel="noopener" href="https://github.com/bcherny/json-schema-to-typescript" onclick="return trackOutboundLink('generate the types from another source', 'https://github.com/bcherny/json-schema-to-typescript', event);">json-schema-to-typescript</a> to generate the TypeScript types, and a JSON Schema validator such as <a target="_blank" rel="noopener" href="https://ajv.js.org/" onclick="return trackOutboundLink('generate the types from another source', 'https://ajv.js.org/', event);">Ajv</a> to validate requests.</p>
+<p>The downside of this approach is that it adds some complexity and a build step that must be run whenever your API schema changes. But if you&#39;re already specifying your API using OpenAPI or some other system, then this has the enormous advantage of not introducing any new sources of truth, and this is the approach that you should prefer.</p>
+<p>If this is a good fit for your situation, then <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-design/consider-codegen.md" onclick="return trackOutboundLink('generate the types from another source', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-design/consider-codegen.md', event);">Item 42</a> of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('generate the types from another source', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a> includes an example of generating TypeScript types from a schema.</p>
+<h2 id="Define-Types-with-a-Runtime-Library"><a href="#Define-Types-with-a-Runtime-Library" class="headerlink" title="Define Types with a Runtime Library"></a>Define Types with a Runtime Library</h2><p>TypeScript&#39;s design makes it impossible to derive runtime values from static types. But going the other direction (from a runtime value to a static type) is straightforward using the type-level <code>typeof</code> operator:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> val = &#123; <span class="hljs-attr">postId</span>: <span class="hljs-string">&#x27;123&#x27;</span>, <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;First&#x27;</span>, <span class="hljs-attr">body</span>: <span class="hljs-string">&#x27;That is all&#x27;</span>&#125;;<br><span class="hljs-keyword">type</span> ValType = <span class="hljs-keyword">typeof</span> val;<br><span class="hljs-comment">//   ^? type ValType = &#123; postId: string; title: string; body: string; &#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>So one option is to define your types using runtime constructs and derive the static types from those. This is typically done using a library. There are many of these, but at the moment the most popular is <a target="_blank" rel="noopener" href="https://zod.dev/" onclick="return trackOutboundLink('define types with a runtime library', 'https://zod.dev/', event);">Zod</a> (React&#39;s <code>PropTypes</code> is another example).</p>
+<p>Here&#39;s how the request validation logic would look with Zod:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123; z &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>;<br><br><span class="hljs-comment">// runtime value for type validation</span><br><span class="hljs-keyword">const</span> createCommentSchema = z.object(&#123;<br>  postId: z.string(),<br>  title: z.string(),<br>  body: z.string(),<br>&#125;);<br><br><span class="hljs-comment">// static type</span><br><span class="hljs-keyword">type</span> CreateComment = z.infer&lt;<span class="hljs-keyword">typeof</span> createCommentSchema&gt;;<br><span class="hljs-comment">//   ^? type CreateComment = &#123; postId: string; title: string; body: string; &#125;</span><br><br>app.post(<span class="hljs-string">&#x27;/comment&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">request, response</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123;body&#125; = request;<br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-keyword">const</span> comment = createCommentSchema.parse(body);<br>    <span class="hljs-comment">//    ^? const comment: &#123; postId: string; title: string; body: string; &#125;</span><br>    <span class="hljs-comment">// ... application validation and logic ...</span><br>    <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">200</span>).send(<span class="hljs-string">&#x27;ok&#x27;</span>);<br>  &#125; <span class="hljs-keyword">catch</span> (e) &#123;<br>    <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">400</span>).send(<span class="hljs-string">&#x27;Invalid request&#x27;</span>);<br>  &#125;<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>Zod has completely eliminated the duplication: the value <code>createCommentSchema</code> is now the source of truth, and both the static type <code>CreateComment</code> and the schema validation (<code>createCommentSchema.parse</code>) are derived from that.</p>
+<p>Zod and the other runtime type libraries are quite effective at solving this problem. So what are the downsides to using them?</p>
+<ul>
+<li>You now have two ways to define types: Zod&#39;s syntax (<code>z.object</code>) and TypeScript&#39;s (<code>interface</code>). While these systems have many similarities, they&#39;re not exactly the same. You&#39;re already using TypeScript, so presumably your team has committed to learning how to define types using it. Now everyone needs to learn to use Zod as well.</li>
+<li>Runtime type systems tend to be contagious: if <code>createCommentSchema</code> needs to reference another type, then that type will also need to be reworked into a runtime type. This may make it hard to interoperate with other sources of types, for example, if you wanted to reference a type from an external library or generate some types from your database using a tool like <a target="_blank" rel="noopener" href="https://github.com/adelsz/pgtyped" onclick="return trackOutboundLink('define types with a runtime library', 'https://github.com/adelsz/pgtyped', event);">PgTyped</a> or <a target="_blank" rel="noopener" href="https://github.com/danvk/pg-to-ts" onclick="return trackOutboundLink('define types with a runtime library', 'https://github.com/danvk/pg-to-ts', event);">pg-to-ts</a>.</li>
+</ul>
+<p>Having a distinct runtime type validation system also comes with a few advantages:</p>
+<ul>
+<li>Libraries like Zod can express many constraints that are hard to capture with TypeScript types, for example, &quot;a valid email address&quot; or &quot;an integer.&quot; If you don&#39;t use a tool like Zod, you&#39;ll have to write this sort of validation yourself.</li>
+<li>There&#39;s no additional build step. Everything is done through TypeScript. If you expect your schema to change frequently, then this will eliminate a failure mode and tighten your iteration cycle.</li>
+</ul>
+<h2 id="Generate-Runtime-Values-from-Your-Types"><a href="#Generate-Runtime-Values-from-Your-Types" class="headerlink" title="Generate Runtime Values from Your Types"></a>Generate Runtime Values from Your Types</h2><p>If you&#39;re willing to introduce a new tool and build step, then there&#39;s another possibility: you can reverse the approach from the previous section and generate a runtime value from your TypeScript type. JSON Schema is a popular target.</p>
+<p>To make this work we&#39;ll put our API types in an <em>api.ts</em> file:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// api.ts</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> CreateComment &#123;<br>  postId: <span class="hljs-built_in">string</span>;<br>  title: <span class="hljs-built_in">string</span>;<br>  body: <span class="hljs-built_in">string</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>then we can run <a target="_blank" rel="noopener" href="https://github.com/YousefED/typescript-json-schema" onclick="return trackOutboundLink('generate runtime values from your types', 'https://github.com/YousefED/typescript-json-schema', event);">typescript-json-schema</a> to generate JSON Schema for this type:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">$ npx typescript-json-schema api.ts <span class="hljs-string">&#x27;*&#x27;</span> &gt; api.schema.json<br></code></pre></td></tr></table></figure>
+
+<p>Here&#39;s what that file looks like:</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><code class="hljs json">&#123;<br>  <span class="hljs-attr">&quot;$schema&quot;</span>: <span class="hljs-string">&quot;http://json-schema.org/draft-07/schema#&quot;</span>,<br>  <span class="hljs-attr">&quot;definitions&quot;</span>: &#123;<br>    <span class="hljs-attr">&quot;CreateComment&quot;</span>: &#123;<br>      <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;object&quot;</span>,<br>      <span class="hljs-attr">&quot;properties&quot;</span>: &#123;<br>        <span class="hljs-attr">&quot;body&quot;</span>: &#123; <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;,<br>        <span class="hljs-attr">&quot;postId&quot;</span>: &#123; <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;,<br>        <span class="hljs-attr">&quot;title&quot;</span>: &#123; <span class="hljs-attr">&quot;type&quot;</span>: <span class="hljs-string">&quot;string&quot;</span> &#125;<br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Now we can load <em>api.schema.json</em> at runtime. If you enable TypeScript&#39;s <code>resolveJsonModule</code> option, this can be done with an ordinary <code>import</code>. You can perform validation using any JSON Schema validation library. Here we use the <a target="_blank" rel="noopener" href="https://ajv.js.org/" onclick="return trackOutboundLink('generate runtime values from your types', 'https://ajv.js.org/', event);">Ajv</a> library:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> Ajv <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ajv&#x27;</span>;<br><br><span class="hljs-keyword">import</span> apiSchema <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./api.schema.json&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123;CreateComment&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./api&#x27;</span>;<br><br><span class="hljs-keyword">const</span> ajv = <span class="hljs-keyword">new</span> Ajv();<br><br>app.post(<span class="hljs-string">&#x27;/comment&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">request, response</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123;body&#125; = request;<br>  <span class="hljs-keyword">if</span> (!ajv.validate(apiSchema.definitions.CreateComment, body)) &#123;<br>    <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">400</span>).send(<span class="hljs-string">&#x27;Invalid request&#x27;</span>);<br>  &#125;<br>  <span class="hljs-keyword">const</span> comment = body <span class="hljs-keyword">as</span> CreateComment;<br>  <span class="hljs-comment">// ... application validation and logic ...</span><br>  <span class="hljs-keyword">return</span> response.status(<span class="hljs-number">200</span>).send(<span class="hljs-string">&#x27;ok&#x27;</span>);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>The great strength of generating values from your TypeScript types is that you can continue to use all the TypeScript tools you know and love to define your types. You don&#39;t need to learn a second way to define types since the JSON Schema is an implementation detail. Your API types can reference types from <code>@types</code> or other sources since they&#39;re just TypeScript types.</p>
+<p>The downside is that you&#39;ve introduced a new tool and a new build step. Whenever you change <em>api.ts</em>, you&#39;ll need to regenerate <em>api.schema.json</em>. In practice, you&#39;d want to enforce that these stay in sync using your continuous integration system.</p>
+<p>While you don&#39;t typically need to access TypeScript types at runtime, there are occasionally situations like input validation where it&#39;s extremely useful. We&#39;ve seen three approaches to this problem. So which one should you choose?</p>
+<p>Unfortunately, there&#39;s no perfect answer. Each option is a trade-off. If your types are already expressed in some other form, like an OpenAPI schema, then use that as the source of truth for both your types and your validation logic. This will incur some tooling and process overhead, but it&#39;s worth it to have a single source of truth.</p>
+<p>If not, then the decision is trickier. Would you rather introduce a build step or a second way to define types? If you need to reference types that are only defined using TypeScript types (perhaps they&#39;re coming from a library or are generated), then generating JSON Schema from your TypeScript types is the best option. Otherwise, you need to pick your poison!</p>
+<h2 id="Things-to-Remember"><a href="#Things-to-Remember" class="headerlink" title="Things to Remember"></a>Things to Remember</h2><ul>
+<li>TypeScript types are erased before your code is run. You can&#39;t access them at runtime without additional tooling.</li>
+<li>Know your options for runtime types: using a distinct runtime type system (such as Zod), generating TypeScript types from values (<code>json-schema-to-typescript</code>), and generating values from your TypeScript types (<code>typescript-json-schema</code>).</li>
+<li>If you have another specification for your types (e.g., a schema), use that as the source of truth.</li>
+<li>If you need to reference external TypeScript types, use <code>typescript-json-schema</code> or an equivalent.</li>
+<li>Otherwise, weigh whether you prefer another build step or another system for specifying types.</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2024 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('things to remember', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
