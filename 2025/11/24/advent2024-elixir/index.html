@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>What TypeScript &amp; Elixir Can Learn from each Other (Advent of Code 2024)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: What TypeScript &amp; Elixir Can Learn from each Other (Advent of Code 2024)">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; What TypeScript &amp; Elixir Can Learn from each Other (Advent of Code 2024)">
+    <meta name="twitter:description" content="Every year I do the Advent of Code programming competition in a different language and (eventually) write about it. Last year I used Elixir, a functional programming languages with immutable data types based on the Erlang runtime. This post describes Elixir, and how it offers JS/TS developers a glimpse of what a future with the pipeline operator might look like. (It&#39;s more of a mixed bag than I would have expected.) We&#39;ll also look at Elixir&#39;s ongoing attempts to add static types and what lessons TypeScript can provide them.
+">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; What TypeScript &amp; Elixir Can Learn from each Other (Advent of Code 2024)">
+    <meta property="og:description" content="Every year I do the Advent of Code programming competition in a different language and (eventually) write about it. Last year I used Elixir, a functional programming languages with immutable data types based on the Erlang runtime. This post describes Elixir, and how it offers JS/TS developers a glimpse of what a future with the pipeline operator might look like. (It&#39;s more of a mixed bag than I would have expected.) We&#39;ll also look at Elixir&#39;s ongoing attempts to add static types and what lessons TypeScript can provide them.
+">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>What TypeScript &amp; Elixir Can Learn from each Other (Advent of Code 2024)</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2025-11-24T18:22:00.000Z" itemprop="datePublished">
+              Mon 24 November 2025
+            </time>
+          </div>
+          <div class="entry-content">
+            <p><img src="https://effectivetypescript.com/images/advent-of-code.png" title="Advent of Code Logo" width="64" height="64" style="float: right; margin-left: 10px;">The <a target="_blank" rel="noopener" href="https://adventofcode.com/" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://adventofcode.com/', event);">Advent of Code</a> is a fun annual programming competition with an Elf theme. It consists of 25 two-part problems of increasing difficulty, released every day in December leading up to Christmas.</p>
+<p>Every December, I complete it in a new programming language. Every January, I intend to blog about the experience, but inevitably it slips, this year all the way back to November! (Sorry, I got <a target="_blank" rel="noopener" href="https://www.danvk.org/2025/08/25/boggle-roundup.html" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://www.danvk.org/2025/08/25/boggle-roundup.html', event);">completely consumed</a> by a non-TypeScript <a target="_blank" rel="noopener" href="https://www.danvk.org/2025/04/23/boggle-solved.html" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://www.danvk.org/2025/04/23/boggle-solved.html', event);">side project</a>.)</p>
+<p>In 2024, I did the Advent of Code in <a target="_blank" rel="noopener" href="https://elixir-lang.org/" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://elixir-lang.org/', event);">Elixir</a>, a functional programming language with immutable data types based on <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Erlang_(programming_language)" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://en.wikipedia.org/wiki/Erlang_(programming_language)', event);">Erlang</a>. This is analogous to how the JVM was built for Java, but also serves as a runtime for other languages like Kotlin and Scala.</p>
+<p>I picked Elixir largely because a friend of mine worked in it. I&#39;d also never written a substantial amount of code in a purely-functional language, and I was curious to see how it worked.</p>
+<p>I suspect there&#39;s relatively little overlap between TypeScript and Elixir developers. They serve different roles and occupy different niches. But they do have a thing or two in common. In particular, Elixir is in the process of adding a gradual, optional typing system. Sound familiar?</p>
+<ol>
+<li><a href="#A-quick-intro-to-Elixir">A quick intro to Elixir</a></li>
+<li><a href="#What-can-TypeScript-learn-from-Elixir">What can TypeScript learn from Elixir?</a></li>
+<li><a href="#What-can-Elixir-learn-from-TypeScript">What can Elixir learn from TypeScript?</a><ol>
+<li><a href="#Prioritize-Language-Services">Prioritize Language Services</a></li>
+<li><a href="#Adopting-Types">Adopting Types</a></li>
+</ol>
+</li>
+<li><a href="#General-Impressions-of-Elixir">General Impressions of Elixir</a></li>
+<li><a href="#Thoughts-on-the-2024-Advent-of-Code">Thoughts on the 2024 Advent of Code</a></li>
+<li><a href="#Conclusions">Conclusions</a></li>
+</ol>
+<!-- more -->
+
+<p>Here are the previous installments in this series:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://medium.com/@danvdk/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://medium.com/@danvdk/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd', event);">2019: Python</a></li>
+<li><a target="_blank" rel="noopener" href="https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc" onclick="return trackOutboundLink('what typescript amp elixir can learn from each other advent of code', 'https://danvdk.medium.com/advent-of-code-2020-this-time-in-rust-7904559e24bc', event);">2020: Rust</a></li>
+<li><a href="https://effectivetypescript.com/2022/02/06/advent-of-code-2021-golang/">2021: Go</a></li>
+<li><a href="https://effectivetypescript.com/2023/04/27/aoc2022/">2022: TypeScript / Deno</a></li>
+<li><a href="https://effectivetypescript.com/2024/07/17/advent2023-zig/">2023: Zig</a></li>
+</ul>
+<h2 id="A-quick-intro-to-Elixir"><a href="#A-quick-intro-to-Elixir" class="headerlink" title="A quick intro to Elixir"></a>A quick intro to Elixir</h2><p>Here&#39;s an Elixir function to read lines from a file (pretty helpful for Advent of Code problems!):</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read_lines</span></span>(file) <span class="hljs-keyword">do</span><br>  File.read!(file) |&gt; String.trim_trailing() |&gt; String.split(<span class="hljs-string">&quot;\n&quot;</span>)<br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>Here you can see Elixir&#39;s pipeline operator (<code>|&gt;</code>). This has been a hot topic in the JavaScript world for nearly a decade, so it was fun for me to get to play around with it. It wasn&#39;t as useful as I expected (more on this below).</p>
+<p>Here&#39;s another pair of functions to &quot;chunk&quot; a list of strings into groups delineated by blanks (also very helpful in Advent of Code):</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-comment"># Split a list of lines on the first blank line, returning a tuple.</span><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">split_on_blank</span></span>(lines) <span class="hljs-keyword">do</span><br>  <span class="hljs-comment"># Enum.split_while: splits enumerable in two at the position of the element</span><br>  <span class="hljs-comment"># for which fun returns a falsy value (false or nil) for the first time.</span><br>  &#123;a, [<span class="hljs-string">&quot;&quot;</span> | b]&#125; = lines |&gt; Enum.split_while(&amp;(&amp;<span class="hljs-number">1</span> != <span class="hljs-string">&quot;&quot;</span>))<br>  &#123;a, b&#125;<br><span class="hljs-keyword">end</span><br><br><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">split_on_blanks</span></span>(lines) <span class="hljs-keyword">do</span><br>  parts = lines |&gt; Enum.split_while(&amp;(&amp;<span class="hljs-number">1</span> != <span class="hljs-string">&quot;&quot;</span>))<br><br>  <span class="hljs-keyword">case</span> parts <span class="hljs-keyword">do</span><br>    &#123;last, []&#125; -&gt; [last]<br>    &#123;a, [<span class="hljs-string">&quot;&quot;</span> | rest]&#125; -&gt; [a | split_on_blanks(rest)]<br>  <span class="hljs-keyword">end</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>Here you can see more uses of the pipeline operator, a helper method from the <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/enum-cheat.html" onclick="return trackOutboundLink('a quick intro to elixir', 'https://hexdocs.pm/elixir/enum-cheat.html', event);">ubiquitous <code>Enum</code> module</a>, pattern matching on tuples, and an anonymous function (<code>&amp;(&amp;1 != &quot;&quot;)</code>). In TypeScript, we might write this function in a more imperative style as:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">splitOnBlanks</span>(<span class="hljs-params">lines: <span class="hljs-keyword">readonly</span> <span class="hljs-built_in">string</span>[]</span>): <span class="hljs-title">string</span>[][] </span>&#123;<br>  <span class="hljs-keyword">const</span> chunks = [];<br>  <span class="hljs-keyword">let</span> thisChunk = [];<br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> line <span class="hljs-keyword">of</span> lines) &#123;<br>    <span class="hljs-keyword">if</span> (!line) &#123;<br>      <span class="hljs-keyword">if</span> (thisChunk.length) &#123;<br>        chunks.push(thisChunk);<br>        thisChunk = [];<br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      thisChunk.push(line);<br>    &#125;<br>  &#125;<br>  <span class="hljs-keyword">if</span> (thisChunk.length) &#123;<br>    chunks.push(thisChunk);<br>  &#125;<br>  <span class="hljs-keyword">return</span> chunks;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>Here&#39;s one final Elixir snippet that reads a grid into an <code>(x, y) -&gt; char</code> map and calculates its width and height. Again, this is very handy for Advent of Code problems!</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read_grid_from_lines</span></span>(lines) <span class="hljs-keyword">do</span><br>  <span class="hljs-comment"># Util.enumerate is my own code; it yields (index, value) like Array.entries()</span><br>  grid =<br>    <span class="hljs-keyword">for</span> &#123;y, line&#125; &lt;- lines |&gt; Util.enumerate(),<br>        &#123;x, char&#125; &lt;- line |&gt; String.to_charlist() |&gt; Util.enumerate(),<br>        <span class="hljs-symbol">into:</span> %&#123;&#125;,<br>        <span class="hljs-symbol">do:</span> &#123;&#123;x, y&#125;, char&#125;<br><br>  w = <span class="hljs-keyword">for</span>(&#123;x, _y&#125; &lt;- Map.keys(grid), <span class="hljs-symbol">do:</span> x) |&gt; Enum.max()<br>  h = <span class="hljs-keyword">for</span>(&#123;_x, y&#125; &lt;- Map.keys(grid), <span class="hljs-symbol">do:</span> y) |&gt; Enum.max()<br><br>  &#123;grid, &#123;w, h&#125;&#125;<br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>Here you can see Elixir&#39;s list comprehensions (<code>for</code>), which are a flexible way to build data structures. The <code>into: %&#123;&#125;</code> clause in the first comprehension says to put the results into a Map (<code>%&#123;&#125;</code> is an empty Map). These comprehensions all do pattern matching on the enumerable (what JavaScript would call an iterable). The last two use the pipeline operator to extract the max.</p>
+<p>That gives you some of the flavor of Elixir. You can read much more about it on the <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/introduction.html" onclick="return trackOutboundLink('a quick intro to elixir', 'https://hexdocs.pm/elixir/introduction.html', event);">official docs</a>.</p>
+<h2 id="What-can-TypeScript-learn-from-Elixir"><a href="#What-can-TypeScript-learn-from-Elixir" class="headerlink" title="What can TypeScript learn from Elixir?"></a>What can TypeScript learn from Elixir?</h2><p>There are many long-stalled proposals to extend JavaScript, perhaps none more famous than the <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-pipeline-operator" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://github.com/tc39/proposal-pipeline-operator', event);">pipeline proposal</a>, which has been around in some form since <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-pipeline-operator/blob/main/HISTORY.md" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://github.com/tc39/proposal-pipeline-operator/blob/main/HISTORY.md', event);">at least 2015</a>.</p>
+<p>At first blush, the pipeline proposal is simple and uncontroversial. Instead of writing nested function application as:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-built_in">console</span>.log(<span class="hljs-built_in">Object</span>.keys(getUserPreferences(getCurrentUser())))<br></code></pre></td></tr></table></figure>
+
+<p>You&#39;d be able to write it as:</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><code class="hljs js">getCurrentUser()<br>|&gt; getUserPreferences<br>|&gt; <span class="hljs-built_in">Object</span>.keys<br>|&gt; <span class="hljs-built_in">console</span>.log<br></code></pre></td></tr></table></figure>
+
+<p>The beauty of this is that the order of the code reflects the order of execution (top-down here, rather than right-to-left) and there&#39;s much less nesting.</p>
+<p>You can simulate a pipe in a few ways in JavaScript today. One approach is to repeatedly assign to a temporary variable:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">let</span> t;<br>t = getCurrentUser()<br>t = getUserPreferences(t)<br>t = <span class="hljs-built_in">Object</span>.keys(t)<br><span class="hljs-built_in">console</span>.log(t)<br></code></pre></td></tr></table></figure>
+
+<p>This eliminates the nesting and inside-out order, but I can already see TypeScript users grimacing. While this works in JavaScript, it typically won&#39;t in TypeScript, where a symbol&#39;s type can only change in a very specific set of ways. Instead, you&#39;d need to introduce a new variable for every assignment (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Static_single-assignment_form" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://en.wikipedia.org/wiki/Static_single-assignment_form', event);">static single assignment</a> form).</p>
+<p>Functional libraries typically offer pipelines via a wrapper object, notably jQuery and lodash:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-built_in">console</span>.log(_(obj).meth1().meth2().value)<br></code></pre></td></tr></table></figure>
+
+<p>These are limited to methods provided by the library, though. <a target="_blank" rel="noopener" href="https://lodash.com/docs/#chain" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://lodash.com/docs/#chain', event);">Lodash&#39;s chains</a> can&#39;t help us with the <code>getUserPreferences</code> example. It would be much better if pipes were built into the language itself.</p>
+<p>Why has the pipeline proposal has been stalled for so long? One reason is that there are different ideas about whether to offer special syntax for calling a function in a chain, and how that should work. This has always seemed like a secondary concern to me. Why not just add a basic pipe operator and worry about syntactic sugar later? Elixir has built-in pipes, so I was excited to see how they worked in practice.</p>
+<p>The TL;DR is that pipes alone aren&#39;t all they&#39;re cracked up to be. I understand now why TC39 is so hung up on syntax extensions. It was incredibly rare that I used a function in a pipe without having to pass other arguments or adapt it in some way.</p>
+<p>Elixir offers a few shorthands to facilitate working with pipes. For example:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir">f(x)      <span class="hljs-comment"># regular function call</span><br>x |&gt; f()  <span class="hljs-comment"># equivalent pipe</span><br></code></pre></td></tr></table></figure>
+
+<p>This is stranger than it looks. When you write <code>x |&gt; f()</code>, Elixir doesn&#39;t call <code>f</code> with zero arguments. Instead, it rewrites this expression to pass <code>x</code> as the first parameter to <code>f</code> (I assume using <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/macros.html" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://hexdocs.pm/elixir/macros.html', event);">macros</a>). This winds up feeling pretty natural when you use constructs like <code>map</code>:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir">[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]<br>|&gt; Enum.map(<span class="hljs-keyword">fn</span> x -&gt; x ** <span class="hljs-number">2</span> <span class="hljs-keyword">end</span>)  <span class="hljs-comment"># [1, 4, 9, 16]</span><br>|&gt; Enum.filter(&amp;(&amp;<span class="hljs-number">1</span> &gt; <span class="hljs-number">8</span>))        <span class="hljs-comment"># [9, 16]</span><br>|&gt; IO.puts()<br></code></pre></td></tr></table></figure>
+
+<p>The <code>Enum</code> module contains many general functions for working with collections. These functions all take the collection as their first argument, which is conducive to piping. (I found this <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/enum-cheat.html" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://hexdocs.pm/elixir/enum-cheat.html', event);">Enum cheatsheet</a> extremely helpful.)</p>
+<p>This example includes two ways of writing anonymous functions. <code>&amp;1</code> is the first argument to the function. This is convenient for writing very short functions. (You write the identity <code>&amp; &amp;1</code>.)</p>
+<p>What would this look like with a plain vanilla JavaScript pipe? You&#39;d have to create lots of wrapper functions:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]<br>|&gt; <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.map(<span class="hljs-function"><span class="hljs-params">el</span> =&gt;</span> el ** <span class="hljs-number">2</span>)<br>|&gt; <span class="hljs-function"><span class="hljs-params">x</span> =&gt;</span> x.filter(<span class="hljs-function"><span class="hljs-params">el</span> =&gt;</span> el &gt; <span class="hljs-number">8</span>)<br>|&gt; <span class="hljs-built_in">console</span>.log<br></code></pre></td></tr></table></figure>
+
+<p>(this example looks silly since <code>map</code> and <code>filter</code> are already methods on <code>Array</code>)</p>
+<p>This adds boilerplate and has been flagged as a <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-pipeline-operator/blob/main/HISTORY.md#20182020:~:text=V8)%20also%20expresses%20%E2%80%9C-,strong%20reservations,-%E2%80%9D%20about%20PFA%20syntax" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://github.com/tc39/proposal-pipeline-operator/blob/main/HISTORY.md#20182020:~:text=V8)%20also%20expresses%20%E2%80%9C-,strong%20reservations,-%E2%80%9D%20about%20PFA%20syntax', event);">performance concern</a> by browser vendors. The proposal suggests introducing a new, concise syntax for creating anonymous functions using a placeholder symbol (perhaps <code>%</code>):</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">[<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]<br>|&gt; %.map(<span class="hljs-function"><span class="hljs-params">el</span> =&gt;</span> el ** <span class="hljs-number">2</span>)<br>|&gt; %.filter(<span class="hljs-function"><span class="hljs-params">el</span> =&gt;</span> el &gt; <span class="hljs-number">8</span>)<br>|&gt; <span class="hljs-built_in">console</span>.log(%)<br></code></pre></td></tr></table></figure>
+
+<p>This at least makes the pipe more concise.</p>
+<p>I enjoyed using Elixir pipes. (I would have enjoyed using them more with better typing!) But as I solved more AoC problems in Elixir, I found myself using them less and less. Instead, I starting using more and more <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/comprehensions.html" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://hexdocs.pm/elixir/comprehensions.html', event);">comprehensions</a>.</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-keyword">for</span>(<br>  x &lt;- [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>],  <span class="hljs-comment"># input</span><br>  x**<span class="hljs-number">2</span> &gt; <span class="hljs-number">8</span>,  <span class="hljs-comment"># guard</span><br>  <span class="hljs-symbol">do:</span> x**<span class="hljs-number">2</span>   <span class="hljs-comment"># map</span><br>) |&gt; IO.puts()<br></code></pre></td></tr></table></figure>
+
+<p>Comprehensions let you combine multiple inputs, reduce your results and put them into any sort of collection you want. You can read more about them in this <a target="_blank" rel="noopener" href="https://www.mitchellhanberg.com/the-comprehensive-guide-to-elixirs-for-comprehension/" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://www.mitchellhanberg.com/the-comprehensive-guide-to-elixirs-for-comprehension/', event);">Comprehensive Guide</a>. Perhaps it&#39;s because I&#39;m comfortable with Python comprehensions or due to the Advent of Code problems themselves, but this was usually what I wanted. (One gotcha: a <code>when</code> clause in a comprehension is <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/1.6.5/guards.html" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://hexdocs.pm/elixir/1.6.5/guards.html', event);">weirdly restricted</a>. I understand this has something to do with Erlang and it&#39;s been explained to me a few times, but it never really clicked what I could and couldn&#39;t do.)</p>
+<p>In conclusion: adding simple pipes to JavaScript probably wouldn&#39;t be that useful because you&#39;d have to define so many small wrapper functions. If you want to fix that, too, you can understand why the proposal has gotten bogged down. At the end of the day, what I really want is comprehensions.</p>
+<p>I&#39;m not aware of any active proposals to add comprehensions to JavaScript. Interestingly, Firefox <a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Deprecated_and_obsolete_features#legacy_generator_and_iterator" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Deprecated_and_obsolete_features#legacy_generator_and_iterator', event);">used to have</a> its own non-standard comprehensions. There was discussion about adding this to what became ES2015, but it was <a target="_blank" rel="noopener" href="https://github.com/tc39/notes/blob/main/meetings/2014-06/jun-5.md#generator-comprehensions-slides-plz" onclick="return trackOutboundLink('what can typescript learn from elixir', 'https://github.com/tc39/notes/blob/main/meetings/2014-06/jun-5.md#generator-comprehensions-slides-plz', event);">deferred</a> to a future standard in 2014 and seems to have died there.</p>
+<h2 id="What-can-Elixir-learn-from-TypeScript"><a href="#What-can-Elixir-learn-from-TypeScript" class="headerlink" title="What can Elixir learn from TypeScript?"></a>What can Elixir learn from TypeScript?</h2><h3 id="Prioritize-Language-Services"><a href="#Prioritize-Language-Services" class="headerlink" title="Prioritize Language Services"></a>Prioritize Language Services</h3><p>When you install TypeScript, you get two binaries:</p>
+<ul>
+<li><code>tsc</code>: the TypeScript compiler</li>
+<li><code>tsserver</code>: the TypeScript language service</li>
+</ul>
+<p><code>tsc</code> is typically the only one you invoke directly, but you interact with <code>tsserver</code> more because it&#39;s what powers your editor. The TypeScript team treats the language service as a first-class citizen. It&#39;s just as important as the compiler or the language itself.</p>
+<p>I didn&#39;t get the sense that <a target="_blank" rel="noopener" href="https://github.com/elixir-lsp/elixir-ls" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://github.com/elixir-lsp/elixir-ls', event);">Elixir Language Server</a> got nearly so much attention. Three quick examples will illustrate the point.</p>
+<p>First, Elixir has two modes, &quot;scripting mode&quot; (<code>.exs</code> file) and regular mode (<code>.ex</code> files). I started off in &quot;scripting mode&quot; for simplicity, but wasn&#39;t getting any editor support. Sure enough, this just <a target="_blank" rel="noopener" href="https://github.com/elixir-lsp/elixir-ls?tab=readme-ov-file#known-issueslimitations" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://github.com/elixir-lsp/elixir-ls?tab=readme-ov-file#known-issueslimitations', event);">isn&#39;t supported</a>.</p>
+<p>Second, syntax errors make the entire document flash red. I found this incredibly irritating. It often happens if you&#39;ve just typed the &quot;en&quot; in <code>end</code>, say:</p>
+<p><video controls width="712" autoplay loop src="/images/elixir-flash-of-red.webm" title="Elixir flash of red"></video></p>
+<p>Third, there are basic features you expect from an IDE that simply don&#39;t work with Elixir. <a target="_blank" rel="noopener" href="https://github.com/elixir-lsp/elixir-ls/issues/765" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://github.com/elixir-lsp/elixir-ls/issues/765', event);">Rename support</a> is high on the list.</p>
+<p>Writing a great language service is no easy task. But the TypeScript experience is that it&#39;s critical to invest in it, because it determines how it feels to use the language.</p>
+<h3 id="Adopting-Types"><a href="#Adopting-Types" class="headerlink" title="Adopting Types"></a>Adopting Types</h3><p>Side effects and mutation are notoriously difficult to model in a static type system. (<a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-inference/one-var-one-type.md" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-inference/one-var-one-type.md', event);">Chapter Three</a> of <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://amzn.to/3UjPrsK', event);"><em>Effective TypeScript</em></a> is all about this.) Elixir is purely functional (no side effects) and has exclusively immutable data structures. This makes writing code harder (at least for me!) but it should make static type analysis easier.</p>
+<p>And yet, despite being fertile ground for static type analysis, Elixir has, historically, been untyped. So I was excited to learn that they&#39;re <a target="_blank" rel="noopener" href="https://elixir-lang.org/blog/2022/10/05/my-future-with-elixir-set-theoretic-types/" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://elixir-lang.org/blog/2022/10/05/my-future-with-elixir-set-theoretic-types/', event);">introducing</a> an optional, gradual type system to the language. This should sound familiar to TypeScript users: TS pulled the same trick with JavaScript.</p>
+<p>My first experiments with the new type system were deeply confusing. The new type system is, indeed, quite new. But if you search online for &quot;elixir type system,&quot; you&#39;ll find lots of material about how to use it. This only cleared up for me when I realized that Elixir has <em>two</em> type systems: the old one (<a target="_blank" rel="noopener" href="https://hexdocs.pm/dialyxir/readme.html" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://hexdocs.pm/dialyxir/readme.html', event);">Dialyzer</a>) and the new one (<a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html', event);">gradual set-theoretical types</a>).</p>
+<p>There&#39;s a <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2306.06391" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://arxiv.org/abs/2306.06391', event);">paper</a> (arXiv) describing the high-level goals and workings of the new type system, as well a <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Jf5Hsa1KOc8" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://www.youtube.com/watch?v=Jf5Hsa1KOc8', event);">video</a> introducing it.</p>
+<p>Set-theoretical type checking in Elixir seems very much a work-in-progress at this point. For example, you do get some errors in your editor:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">bad_add</span></span>() <span class="hljs-keyword">do</span><br>  %&#123;&#125; + <span class="hljs-string">&quot;12&quot;</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p><img src="/images/elixir-type-error.png" alt="Type error for bad_add"></p>
+<p>But you get more errors when you compile from the command line. I never got type errors in function chains, where it&#39;s sometimes hard to remember if you&#39;re working with a list or list of lists. And I was constantly making errors in how I read from maps with tuple keys:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">read_tuple_from_map</span></span>() <span class="hljs-keyword">do</span><br>  grid = %&#123;&#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>&#125; =&gt; <span class="hljs-keyword">true</span>&#125;<br>  Map.get(grid, <span class="hljs-number">1</span>, <span class="hljs-number">2</span>)  <span class="hljs-comment"># bad!</span><br>  Map.get(grid, &#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>&#125;)  <span class="hljs-comment"># ok</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>The bad example does not produce a type error, at least not with Elixir 1.19.</p>
+<p>It looks like the upcoming Elixir 1.20 release will add <a target="_blank" rel="noopener" href="https://hexdocs.pm/elixir/main/changelog.html#full-type-inference" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://hexdocs.pm/elixir/main/changelog.html#full-type-inference', event);">inference for whole functions</a>:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_foo_and_bar</span></span>(data) <span class="hljs-keyword">do</span><br>  data.foo + data.bar<br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>Elixir now infers that the function expects a map as first argument, and the map must have the keys .foo and .bar whose values are either integer() or float(). The return type will be either integer() or float().</p>
+</blockquote>
+<p>This is quite different than the sort of type inference that TypeScript does. TypeScript will infer a function&#39;s return type, but it never infers a parameter&#39;s type from the way that it&#39;s used in the function&#39;s body. (TypeScript will infer a parameter&#39;s type if it knows the function&#39;s type from context, for example if it&#39;s used as a callback.)</p>
+<p>It&#39;s appealing to write fewer types, so why doesn&#39;t TypeScript do this sort of inference? The problem is that an implementation error in the function body can &quot;leak&quot; out into its signature, which will produce errors at call sites. Anders Hejlsberg, the creator of TypeScript, calls this &quot;spooky action at a distance.&quot; For example, if you had a typo in <code>add_foo_and_bar</code>, say you accessed <code>.baz</code>:</p>
+<figure class="highlight elixir"><table><tr><td class="code"><pre><code class="hljs elixir"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">add_foo_and_bar</span></span>(data) <span class="hljs-keyword">do</span><br>  data.foo + data.baz  <span class="hljs-comment"># .baz!</span><br><span class="hljs-keyword">end</span><br></code></pre></td></tr></table></figure>
+
+<p>then this would change the inferred type signature and you&#39;d get errors at all your call sites. But the mistake is in the function body, not the call sites! The idea behind requiring type annotations for parameters is that you should know these types when you write your function. By writing explicit annotations, you make it clear to TypeScript whether the error is in the implementation or the caller.</p>
+<p>We&#39;ll see how much of an issue this winds up being for Elixir. I suspect TypeScript&#39;s policy would be hard for Elixir to adopt in practice because its functional style encourages you to write lots of small, standalone helper functions that might be boilerplatey to type explicitly.</p>
+<p>(See <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/issues/15114#issuecomment-307201572" onclick="return trackOutboundLink('what can elixir learn from typescript', 'https://github.com/microsoft/TypeScript/issues/15114#issuecomment-307201572', event);">this comment</a> from Ryan Cavanaugh for more on why TypeScript doesn&#39;t infer types for function parameters.)</p>
+<h2 id="General-Impressions-of-Elixir"><a href="#General-Impressions-of-Elixir" class="headerlink" title="General Impressions of Elixir"></a>General Impressions of Elixir</h2><p>AoC isn’t a very good showcase for Elixir — it’s most well-known for concurrency, which is completely irrelevant for Advent of Code problems. Overall I didn’t dislike Elixir as much as I thought I might after the first week, but I never really came to like it that much, either.</p>
+<ul>
+<li>Elixir editor integration isn’t great, at least not in VS Code. There are big things (lack of types and quickinfo on variables) and small things (lack of F2 rename, bad autocompletes, screens of red).</li>
+<li>The lack of types makes Elixir dramatically less enjoyable to use.</li>
+<li>FP &amp; immutability didn’t throw me off as much as I’d worried. After a few days, you get used to <code>Enum.reduce</code>. The pipeline operator is nice and comprehensions feel more like <code>for</code> loops that you’d write in other languages.</li>
+<li>There are some weird things: why the obsession with function arity? Why those weirdly-restricted filter clauses in for loops? Why aren’t functions first-class? Printing things is surprisingly fraught. The differences between <code>&amp;&amp;</code> and <code>and</code>. The crazy range operator. No either/or matches. The weird <code>Map.get_and_update</code> method.</li>
+<li>My sense is that performance isn’t great… I assume that being compiled helps, but being functional and immutable hurts. My solutions generally seemed to be slower than the Python ones. Linked lists are a terrible data structure, but FP pushes you to use them for everything. There’s tons of potential for accidental O(N^2). ex: charlists</li>
+</ul>
+<h2 id="Thoughts-on-the-2024-Advent-of-Code"><a href="#Thoughts-on-the-2024-Advent-of-Code" class="headerlink" title="Thoughts on the 2024 Advent of Code"></a>Thoughts on the 2024 Advent of Code</h2><p>This was the first year where AI assistants like GitHub Copilot were relevant to the competition. I think Eric made some of the problem statements more elaborate than in the past to try and throw them off. I doubt it worked. Some of the winning times were suspiciously fast.</p>
+<p>I didn&#39;t find GitHub Copilot particularly helpful for the 2024 Advent of Code problems. I did a few of the <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2016" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://github.com/danvk/aoc2016', event);">2016 problems</a> as a warm-up, and it was <em>wildly</em> helpful there. Sometimes you&#39;d just start writing some boilerplate and Copilot autocomplete would fill in the entire solution! This makes sense if you think about it: the LLM&#39;s training data includes thousands of solutions to old Advent of Code problems in many languages, including Elixir.</p>
+<p>The difficulty level in 2024 didn&#39;t feel too high. For me, 2019 remains the most difficult Advent of Code. As usual, building some tools for working with grids and doing BFS / A* search is helpful.</p>
+<p>Standout puzzles for me included:</p>
+<ul>
+<li>Days 11–13: linear algebra in unfamiliar contexts</li>
+<li><a target="_blank" rel="noopener" href="https://adventofcode.com/2024/day/14" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://adventofcode.com/2024/day/14', event);">Day 14</a>: I loved hearing how everyone found their Christmas tree. I looked for states where an unusual number of robots had neighbors, but I think the best was to look for the lowest entropy state.</li>
+<li><a target="_blank" rel="noopener" href="https://adventofcode.com/2024/day/16" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://adventofcode.com/2024/day/16', event);">Day 16</a>: I liked the variations on BFS.</li>
+<li><a target="_blank" rel="noopener" href="https://adventofcode.com/2024/day/19" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://adventofcode.com/2024/day/19', event);">Day 19</a>: Eric teaches everyone how <code>grep</code> works.</li>
+<li><a target="_blank" rel="noopener" href="https://adventofcode.com/2024/day/21" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://adventofcode.com/2024/day/21', event);">Day 21</a>: Recursive keypads. This was probably my favorite puzzle this year, though it took some fiddling to get the right solution in the end.</li>
+<li><a target="_blank" rel="noopener" href="https://adventofcode.com/2024/day/24" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://adventofcode.com/2024/day/24', event);">Day 24</a>: I enjoyed the variety of solutions, particularly the people who visualized the circuit. I looked at the inputs to each output bit and used that to pare down to a manageable set of gates.</li>
+</ul>
+<p>I didn&#39;t like day 20, the number we were computed felt very contrived and that threw me off. Days 22 and 23 were surprisingly easy. I had trouble with days 9 and 17 and wound up implementing solutions in Python.</p>
+<p>Just like <a target="_blank" rel="noopener" href="https://medium.com/@danvdk/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd" onclick="return trackOutboundLink('thoughts on the  advent of code', 'https://medium.com/@danvdk/python-tips-tricks-for-the-advent-of-code-2019-89ec23a595dd', event);">2019</a>, I was traveling for much of December and internet connectivity was sometimes an issue. Some of the lodges we stayed in had Starlink in the dining area, so I&#39;d load the Advent of Code problem on my phone and Airdrop my input to my laptop back in our room. I queued up five or six problems to work on during my flight back and submitted all my answers on my phone when we landed.</p>
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>Overall I enjoyed the 2024 Advent of Code. I wasn&#39;t a big fan of Elixir, though I understand that Advent of Code doesn&#39;t play to its strengths. Solving problems in a functional language wasn&#39;t as painful as I expected, so I might try it again next year. Speaking of which, the 2025 Advent of Code is going to be <a target="_blank" rel="noopener" href="https://adventofcode.com/2025/about#faq_num_days" onclick="return trackOutboundLink('conclusions', 'https://adventofcode.com/2025/about#faq_num_days', event);">quite different</a>!</p>
+<p>You can find my code at <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2024" onclick="return trackOutboundLink('conclusions', 'https://github.com/danvk/aoc2024', event);">danvk/aoc2024</a> (all days) and <a target="_blank" rel="noopener" href="https://github.com/danvk/aoc2016" onclick="return trackOutboundLink('conclusions', 'https://github.com/danvk/aoc2016', event);">danvk/aoc2016</a> (days 1-11).</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2025 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('conclusions', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>
