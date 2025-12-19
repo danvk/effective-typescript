@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>A Small Year for tsc, a Giant Year for TypeScript</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Khula:wght@600&family=Open+Sans:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet">
+    <link href="/css/customize.css" rel="stylesheet">
+    <link href="/css/highlight.vs.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/icon.png">
+    <meta name="description" content="Effective TypeScript: A Small Year for tsc, a Giant Year for TypeScript">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:creator" content="@danvdk">
+    <meta name="twitter:domain" content="effectivetypescript.com">
+    <meta name="twitter:title" content="Effective TypeScript &rsaquo; A Small Year for tsc, a Giant Year for TypeScript">
+    <meta name="twitter:description" content="Effective TypeScript: 83 Specific Ways to Improve Your TypeScript">
+    <meta name="twitter:img:src" content="https://effectivetypescript.com/images/cover-2e.jpg">
+
+    <meta property="og:title" content="Effective TypeScript &rsaquo; A Small Year for tsc, a Giant Year for TypeScript">
+    <meta property="og:description" content="Effective TypeScript: 83 Specific Ways to Improve Your TypeScript">
+    <meta property="og:image" content="https://effectivetypescript.com/images/cover-2e.jpg">
+    <meta property="og:url" content="https://effectivetypescript.com/">
+
+    <link href="https://effectivetypescript.com/atom.xml" type="application/atom+xml" rel="alternate" title="Effective TypeScript Atom Feed">
+  <meta name="generator" content="Hexo 5.4.0"></head>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1NXE8EL9YT"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-1NXE8EL9YT');
+  var trackOutboundLink = function(category, url, e) {
+    if (!window.google_tag_manager) {
+      console.log('blocked!');
+      return true;  // probably blocked
+    }
+
+    // No need to use event_callback if the link is opening in a new tab.
+    var newTab = e && (e.metaKey || (e.currentTarget && e.currentTarget.target === '_blank'));
+    gtag('event', 'click', {
+        'event_category': category,
+        'event_label': url,
+        'transport_type': 'beacon',
+        'event_callback': !newTab ? function() {
+          document.location = url;
+        } : undefined
+    });
+
+    return newTab;
+  }
+</script>
+
+<body class="post">
+  <div class="header">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <h1 class="site-title">
+                  <a href="/">
+                      Effective TypeScript
+                  </a>
+              </h1>
+          </div>
+      </div>
+  </div>
+</div>
+
+  <section id="content" class="article content">
+
+  <div class="title-bar">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>A Small Year for tsc, a Giant Year for TypeScript</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-muted published-container">
+            <time class="published" datetime="2025-12-19T20:00:00.000Z" itemprop="datePublished">
+              Fri 19 December 2025
+            </time>
+          </div>
+          <div class="entry-content">
+            <p>In terms of new TypeScript features, 2025 was a very quiet year. But it&#39;s been a big year for TypeScript and typed JavaScript in general, and the ecosystem has a new direction that sets the stage for big fireworks in 2026.</p>
+<p>The two big announcements in 2025 were:</p>
+<ol>
+<li>Microsoft is rewriting the TypeScript compiler and language service in Go.</li>
+<li>Node.js began supporting TypeScript natively.</li>
+</ol>
+<h2 id="TypeScript-rewrite-in-Go"><a href="#TypeScript-rewrite-in-Go" class="headerlink" title="TypeScript rewrite in Go"></a>TypeScript rewrite in Go</h2><p>I&#39;ve followed the TypeScript <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/', event);">release notes</a> for years. Recent releases have had relatively few big new language features, and many of these have been contributed by external developers. This March, <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/typescript-native-port/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/typescript-native-port/', event);">we found out why</a>: The TypeScript team at Microsoft has been working on a massive project to port <code>tsc</code> and <code>tsserver</code> from TypeScript to Go.</p>
+<p>My first reaction was: &quot;is it April 1st already?&quot; My next reaction was a whole lot of mixed feelings.</p>
+<p>It&#39;s generally considered a good practice for compilers to be <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bootstrapping_(compilers)" onclick="return trackOutboundLink('typescript rewrite in go', 'https://en.wikipedia.org/wiki/Bootstrapping_(compilers)', event);">bootstrapped</a>, i.e. written in their own language. While this sounds strange at first, it&#39;s quite common and has several positive consequences:</p>
+<ol>
+<li>It&#39;s a demonstration that you can build a large, substantial program in the language.</li>
+<li>It makes the development team aware of issues in the language, since they work in it day-to-day.</li>
+<li>It makes the development team acutely sensitive to compiler and language service performance.</li>
+</ol>
+<p>No one doubts that you can build large programs in TypeScript, but the &quot;dogfooding&quot; aspect of self-hosting has been good for the TypeScript ecosystem. Every TypeScript release comes with performance improvements, and one reason for this is that the TS team appreciates fast builds and responsive editors, too.</p>
+<p>So bootstrapping is, in principle, good. That being said, a 10x speedup should make you question your principles.</p>
+<p>When I was developing my <a href="https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/">inferred type predicates feature</a>, I was struck that the TypeScript in <code>tsc</code> is written in a distinctive, low-level style. It often looks more like C than JavaScript. I started to think about how you could turn that into a faster <code>tsc</code>. A direct port to C wouldn&#39;t work since JavaScript has garbage collection and <code>tsc</code> relies on that. I wrote in a notebook: &quot;what&#39;s the lowest-level language with garbage collection?&quot; I figured it might be Java and left things there.</p>
+<p>It seems the TS team, in particular <a target="_blank" rel="noopener" href="https://jakebailey.dev/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://jakebailey.dev/', event);">Jake Bailey</a>, went through the same thought process and came to a different conclusion: <a target="_blank" rel="noopener" href="https://go.dev/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://go.dev/', event);">Go</a>!</p>
+<p>The new TypeScript is a line-by-line port of the existing one. There&#39;s a notorious 50,000+ line <code>checker.ts</code> file today, and in the future there will be a 50,000+ line <code>checker.go</code>. TypeScript 6.0 will be <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/progress-on-typescript-7-december-2025/#typescript-6.0-is-the-last-javascript-based-release" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/progress-on-typescript-7-december-2025/#typescript-6.0-is-the-last-javascript-based-release', event);">the last TypeScript-based version of TypeScript</a>, and then future versions will be written in Go.</p>
+<p>The upshot is that, sometime next year, you&#39;ll update your packages and everything will get 10x faster. Slow compiler and language service performance has always been one of the biggest complaints about TypeScript. I&#39;ve experienced this myself on large projects and I&#39;m looking forward to the speed boost.</p>
+<p>My other hope is that, once the dust settles, we&#39;ll see a renewed focus on new language features.</p>
+<h2 id="Node-js-Runs-TypeScript-Natively"><a href="#Node-js-Runs-TypeScript-Natively" class="headerlink" title="Node.js Runs TypeScript Natively"></a>Node.js Runs TypeScript Natively</h2><p>This one flew under the radar for me when it happened earlier this year, and perhaps it&#39;s news to you, too: Node.js now natively supports TypeScript!</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// test.ts</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span>, y: <span class="hljs-built_in">number</span></span>): <span class="hljs-title">number</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> x + y;<br>&#125;<br><span class="hljs-built_in">console</span>.log(add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>));<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> node test.ts</span><br>3<br></code></pre></td></tr></table></figure>
+
+<p>Impressive stuff! This should work with any version of Node.js after 22.18.0, which was <a target="_blank" rel="noopener" href="https://nodejs.org/en/blog/release/v22.18.0" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://nodejs.org/en/blog/release/v22.18.0', event);">released</a> on July 31st, 2025. (This behavior has been available since <a target="_blank" rel="noopener" href="https://nodejs.org/en/blog/release/v22.6.0" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://nodejs.org/en/blog/release/v22.6.0', event);">Node 22.6.0</a> last year via <code>--experimental-strip-types</code>.)</p>
+<p>This is a big deal. Ever since Node came out in 2009, people have been running preprocessors in front of it to improve JavaScript in various ways. <a target="_blank" rel="noopener" href="https://coffeescript.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://coffeescript.org/', event);">CoffeeScript</a> was one of the first, then we started using &quot;transpilers&quot; like <a target="_blank" rel="noopener" href="https://babeljs.io/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://babeljs.io/', event);">Babel</a> to get early access to ES2015 features, and now we use TypeScript to get types. In all these cases, we&#39;re adding a tool to the stack. It has to be configured, you have to know it exists, and something might go wrong with it. In short, it adds friction.</p>
+<p>Node.js has supported ES2015 features for years now, so there&#39;s no need for a transpiler to use arrow functions, <code>async</code>, <code>Map</code>, etc. Now you don&#39;t need <code>tsc</code> to use TypeScript with node. It just works out of the box.</p>
+<p>A few things to note here:</p>
+<ol>
+<li>This is only about <em>running</em> your code. Node doesn&#39;t do type checking. It simply strips off the types. If you want type checking (and you do!) then you&#39;ll still need to run <code>tsc</code> separately.</li>
+<li>Since this works by stripping types, you can&#39;t use TypeScript&#39;s niche runtime features: enums, parameter properties, triple-slash imports, experimental decorators, and member visibility modifiers (<code>private</code>). I&#39;ve long advised against doing this (See <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a> <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/avoid-non-ecma.md" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/avoid-non-ecma.md', event);">Item 72: Prefer ECMAScript Features to TypeScript Features</a>) and, as of TypeScript 5.8, there&#39;s an <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-8/#the---erasablesyntaxonly-option" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-8/#the---erasablesyntaxonly-option', event);"><code>--erasableSyntaxOnly</code> flag</a> to keep you away from these.</li>
+<li>Stripping types doesn&#39;t change line numbers, so you don&#39;t need source maps to debug.</li>
+<li>While TypeScript supports any TC39 proposal at stage 3 or later, Node.js only supports features once they&#39;ve landed in the spec. So for the few features in between those states, you&#39;ll need to hold off until they&#39;re official.</li>
+</ol>
+<p>I want to reiterate that this doesn&#39;t do any type checking! Node will happily run programs with clear type errors:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// test-bad.ts</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span>, y: <span class="hljs-built_in">string</span></span>): <span class="hljs-title">Date</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> x + y;<br>&#125;<br><span class="hljs-built_in">console</span>.log(add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>));<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> node test-bad.ts</span><br>3<br></code></pre></td></tr></table></figure>
+
+<p><code>tsc</code> can strip type annotations, of course, but there are several other tools that do the same thing, like Bloomberg&#39;s aptly-named <a target="_blank" rel="noopener" href="https://github.com/bloomberg/ts-blank-space" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/bloomberg/ts-blank-space', event);">ts-blank-space</a>. Node uses <a target="_blank" rel="noopener" href="https://swc.rs/docs/references/wasm-typescript" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://swc.rs/docs/references/wasm-typescript', event);"><code>@swc/wasm-typescript</code></a>, which uses WASM for speed.</p>
+<p>So does this mean that TypeScript has won? On some level, yes. It&#39;s so widely adopted now that Node.js felt the need to add built-in support. But this change also opens the door to more competition in the typed JavaScript landscape. It was designed with TypeScript in mind, but it doesn&#39;t have to be <code>tsc</code> checking your code. It could be some other type checker instead.</p>
+<p>This puts JavaScript in a situation akin to Python. Python has a <a target="_blank" rel="noopener" href="https://peps.python.org/pep-0484/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://peps.python.org/pep-0484/', event);">standardized syntax</a> for type annotations but, for the most part, they have no effect on the runtime behavior of your program. There&#39;s a healthy ecosystem of type checkers for Python that all use the same syntax for type hints, but have different philosophies and provide different sorts of checking. Examples of Python type checkers include <a target="_blank" rel="noopener" href="https://mypy-lang.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://mypy-lang.org/', event);">mypy</a>, <a target="_blank" rel="noopener" href="https://github.com/microsoft/pyright" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/microsoft/pyright', event);">pyright</a> (Microsoft), <a target="_blank" rel="noopener" href="https://pyrefly.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://pyrefly.org/', event);">pyrefly</a> (Facebook) and <a target="_blank" rel="noopener" href="https://github.com/astral-sh/ty" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/astral-sh/ty', event);">ty</a> (Astral).</p>
+<p>By standardizing a syntax for type annotations, Node is making it easier for new entrants to bring their own take on type checking to JavaScript. Competition is a good thing, and I hope this brings some of it to the typed JavaScript ecosystem.</p>
+<p>What about browsers? There&#39;s a Microsoft-backed <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-type-annotations" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/tc39/proposal-type-annotations', event);">TC39 proposal</a> to add type annotations to the language itself, but it&#39;s only at stage 1. I assume it would need to advance significantly before there&#39;s browser adoption. I hope Node&#39;s move gives this proposal some momentum. As it says, the motivation is to &quot;unfork JavaScript,&quot; which would be good for everyone.</p>
+<p>So long 2025! Here&#39;s hoping that 2026 brings faster build times, more responsive editors, exciting new language features, and a simpler JavaScript ecosystem.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="follow-or-subscribe">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          Like this post? Consider subscribing to
+          <a href="/mail/" onclick="return trackOutboundLink('subscribe newsletter', '/mail/', event);">my newsletter</a>,
+          the <a href="/atom.xml" onclick="return trackOutboundLink('follow RSS', '/atom.xml', event);">RSS feed</a>,
+          or <a target="_blank" rel="noopener" href="https://twitter.com/danvdk" onclick="return trackOutboundLink('follow on twitter', 'https://twitter.com/danvdk', event);">following me</a>
+          on Twitter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="comments">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <script src="https://utteranc.es/client.js" repo="danvk/effective-typescript" issue-term="title" label="💬 blog comments" theme="github-light" crossorigin="anonymous" async>
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="promotion">
+    <div class="row">
+      <div class="col-sm-12 text-center">
+        <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" class="btn btn-info btn-lg primary" onclick="return trackOutboundLink('buy2e', 'https://amzn.to/3UjPrsK', event);">Buy 2nd Edition</a>
+        <!--
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" data-tag="post learn more hover" class="btn btn-info btn-lg primary">Buy the Book</a>
+          <a target="_blank" rel="noopener" href="https://www.ebooks.com/en-us/209820951/effective-typescript/dan-vanderkam/?_c=1" data-tag="post learn more hover" class="btn btn-info btn-lg hidden-xs">Buy eBook</a>
+          https://amzn.to/3UjPrsK
+        -->
+        <a href="/mail/" class="btn btn-info btn-lg" onclick="return trackOutboundLink('post learn more hover', '/mail/', event);">Subscribe</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <a target="_blank" rel="noopener" href="https://amzn.to/3HIrQN6" onclick="return trackOutboundLink('post learn more cover image', 'https://amzn.to/3HIrQN6', event);">
+            <img src="/images/cover-2e.jpg" class="learn-more-photo" alt="Effective TypeScript Book Cover">
+          </a>
+          <p><strong><em>Effective TypeScript</em></strong> shows you not just <em>how</em> to use TypeScript but how to use it <em>well</em>. Now in its second edition, the book&#39;s 83 items help you build mental models of how TypeScript and its ecosystem work, make you aware of pitfalls and traps to avoid, and guide you toward using TypeScript’s many capabilities in the most effective ways possible. Regardless of your level of TypeScript experience, you can learn something from this book.</p>
+<p>After reading <em>Effective TypeScript</em>, your relationship with the type system will be the most productive it&#39;s ever been! <a href="/">Learn more »</a></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+  <footer id="contentinfo" class="footer">
+  <div class="container">
+    <address id="about" class="vcard body">
+      &copy; 2019 - 2025 <a class="url fn" target="_blank" rel="noopener" href="https://danvk.org" onclick="trackOutboundLink('footer', 'https://danvk.org'); return false;">Dan Vanderkam</a>
+      <div class="footer-attribution">Powered by <a href="https://hexo.io/" target="_blank" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://hexo.io/', event);">Hexo</a></div>
+    </address>
+  </div>
+</footer>
+</body>
+</html>

@@ -146,6 +146,74 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
   <div class="container">
   
+    <div class="row hentry" id="ts-2025">
+  <div class="col-md-12">
+    <h3 class="entry-title">
+      <a href="/2025/12/19/ts-2025/">A Small Year for tsc, a Giant Year for TypeScript</a>
+    </h3>
+
+    <div class="text-muted published-container">
+      <time class="published" datetime="2025-12-19T20:00:00.000Z" itemprop="datePublished">
+        Fri 19 December 2025
+      </time>
+    </div>
+
+    <div class="entry-content">
+      
+        <p>In terms of new TypeScript features, 2025 was a very quiet year. But it&#39;s been a big year for TypeScript and typed JavaScript in general, and the ecosystem has a new direction that sets the stage for big fireworks in 2026.</p>
+<p>The two big announcements in 2025 were:</p>
+<ol>
+<li>Microsoft is rewriting the TypeScript compiler and language service in Go.</li>
+<li>Node.js began supporting TypeScript natively.</li>
+</ol>
+<h2 id="TypeScript-rewrite-in-Go"><a href="#TypeScript-rewrite-in-Go" class="headerlink" title="TypeScript rewrite in Go"></a>TypeScript rewrite in Go</h2><p>I&#39;ve followed the TypeScript <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/', event);">release notes</a> for years. Recent releases have had relatively few big new language features, and many of these have been contributed by external developers. This March, <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/typescript-native-port/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/typescript-native-port/', event);">we found out why</a>: The TypeScript team at Microsoft has been working on a massive project to port <code>tsc</code> and <code>tsserver</code> from TypeScript to Go.</p>
+<p>My first reaction was: &quot;is it April 1st already?&quot; My next reaction was a whole lot of mixed feelings.</p>
+<p>It&#39;s generally considered a good practice for compilers to be <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bootstrapping_(compilers)" onclick="return trackOutboundLink('typescript rewrite in go', 'https://en.wikipedia.org/wiki/Bootstrapping_(compilers)', event);">bootstrapped</a>, i.e. written in their own language. While this sounds strange at first, it&#39;s quite common and has several positive consequences:</p>
+<ol>
+<li>It&#39;s a demonstration that you can build a large, substantial program in the language.</li>
+<li>It makes the development team aware of issues in the language, since they work in it day-to-day.</li>
+<li>It makes the development team acutely sensitive to compiler and language service performance.</li>
+</ol>
+<p>No one doubts that you can build large programs in TypeScript, but the &quot;dogfooding&quot; aspect of self-hosting has been good for the TypeScript ecosystem. Every TypeScript release comes with performance improvements, and one reason for this is that the TS team appreciates fast builds and responsive editors, too.</p>
+<p>So bootstrapping is, in principle, good. That being said, a 10x speedup should make you question your principles.</p>
+<p>When I was developing my <a href="https://effectivetypescript.com/2024/04/16/inferring-a-type-predicate/">inferred type predicates feature</a>, I was struck that the TypeScript in <code>tsc</code> is written in a distinctive, low-level style. It often looks more like C than JavaScript. I started to think about how you could turn that into a faster <code>tsc</code>. A direct port to C wouldn&#39;t work since JavaScript has garbage collection and <code>tsc</code> relies on that. I wrote in a notebook: &quot;what&#39;s the lowest-level language with garbage collection?&quot; I figured it might be Java and left things there.</p>
+<p>It seems the TS team, in particular <a target="_blank" rel="noopener" href="https://jakebailey.dev/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://jakebailey.dev/', event);">Jake Bailey</a>, went through the same thought process and came to a different conclusion: <a target="_blank" rel="noopener" href="https://go.dev/" onclick="return trackOutboundLink('typescript rewrite in go', 'https://go.dev/', event);">Go</a>!</p>
+<p>The new TypeScript is a line-by-line port of the existing one. There&#39;s a notorious 50,000+ line <code>checker.ts</code> file today, and in the future there will be a 50,000+ line <code>checker.go</code>. TypeScript 6.0 will be <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/progress-on-typescript-7-december-2025/#typescript-6.0-is-the-last-javascript-based-release" onclick="return trackOutboundLink('typescript rewrite in go', 'https://devblogs.microsoft.com/typescript/progress-on-typescript-7-december-2025/#typescript-6.0-is-the-last-javascript-based-release', event);">the last TypeScript-based version of TypeScript</a>, and then future versions will be written in Go.</p>
+<p>The upshot is that, sometime next year, you&#39;ll update your packages and everything will get 10x faster. Slow compiler and language service performance has always been one of the biggest complaints about TypeScript. I&#39;ve experienced this myself on large projects and I&#39;m looking forward to the speed boost.</p>
+<p>My other hope is that, once the dust settles, we&#39;ll see a renewed focus on new language features.</p>
+<h2 id="Node-js-Runs-TypeScript-Natively"><a href="#Node-js-Runs-TypeScript-Natively" class="headerlink" title="Node.js Runs TypeScript Natively"></a>Node.js Runs TypeScript Natively</h2><p>This one flew under the radar for me when it happened earlier this year, and perhaps it&#39;s news to you, too: Node.js now natively supports TypeScript!</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// test.ts</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span>, y: <span class="hljs-built_in">number</span></span>): <span class="hljs-title">number</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> x + y;<br>&#125;<br><span class="hljs-built_in">console</span>.log(add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>));<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> node test.ts</span><br>3<br></code></pre></td></tr></table></figure>
+
+<p>Impressive stuff! This should work with any version of Node.js after 22.18.0, which was <a target="_blank" rel="noopener" href="https://nodejs.org/en/blog/release/v22.18.0" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://nodejs.org/en/blog/release/v22.18.0', event);">released</a> on July 31st, 2025. (This behavior has been available since <a target="_blank" rel="noopener" href="https://nodejs.org/en/blog/release/v22.6.0" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://nodejs.org/en/blog/release/v22.6.0', event);">Node 22.6.0</a> last year via <code>--experimental-strip-types</code>.)</p>
+<p>This is a big deal. Ever since Node came out in 2009, people have been running preprocessors in front of it to improve JavaScript in various ways. <a target="_blank" rel="noopener" href="https://coffeescript.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://coffeescript.org/', event);">CoffeeScript</a> was one of the first, then we started using &quot;transpilers&quot; like <a target="_blank" rel="noopener" href="https://babeljs.io/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://babeljs.io/', event);">Babel</a> to get early access to ES2015 features, and now we use TypeScript to get types. In all these cases, we&#39;re adding a tool to the stack. It has to be configured, you have to know it exists, and something might go wrong with it. In short, it adds friction.</p>
+<p>Node.js has supported ES2015 features for years now, so there&#39;s no need for a transpiler to use arrow functions, <code>async</code>, <code>Map</code>, etc. Now you don&#39;t need <code>tsc</code> to use TypeScript with node. It just works out of the box.</p>
+<p>A few things to note here:</p>
+<ol>
+<li>This is only about <em>running</em> your code. Node doesn&#39;t do type checking. It simply strips off the types. If you want type checking (and you do!) then you&#39;ll still need to run <code>tsc</code> separately.</li>
+<li>Since this works by stripping types, you can&#39;t use TypeScript&#39;s niche runtime features: enums, parameter properties, triple-slash imports, experimental decorators, and member visibility modifiers (<code>private</code>). I&#39;ve long advised against doing this (See <a target="_blank" rel="noopener" href="https://amzn.to/3UjPrsK" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://amzn.to/3UjPrsK', event);">Effective TypeScript</a> <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/avoid-non-ecma.md" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-write-run/avoid-non-ecma.md', event);">Item 72: Prefer ECMAScript Features to TypeScript Features</a>) and, as of TypeScript 5.8, there&#39;s an <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-8/#the---erasablesyntaxonly-option" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-8/#the---erasablesyntaxonly-option', event);"><code>--erasableSyntaxOnly</code> flag</a> to keep you away from these.</li>
+<li>Stripping types doesn&#39;t change line numbers, so you don&#39;t need source maps to debug.</li>
+<li>While TypeScript supports any TC39 proposal at stage 3 or later, Node.js only supports features once they&#39;ve landed in the spec. So for the few features in between those states, you&#39;ll need to hold off until they&#39;re official.</li>
+</ol>
+<p>I want to reiterate that this doesn&#39;t do any type checking! Node will happily run programs with clear type errors:</p>
+<figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// test-bad.ts</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">add</span>(<span class="hljs-params">x: <span class="hljs-built_in">number</span>, y: <span class="hljs-built_in">string</span></span>): <span class="hljs-title">Date</span> </span>&#123;<br>  <span class="hljs-keyword">return</span> x + y;<br>&#125;<br><span class="hljs-built_in">console</span>.log(add(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>));<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">&gt;</span><span class="bash"> node test-bad.ts</span><br>3<br></code></pre></td></tr></table></figure>
+
+<p><code>tsc</code> can strip type annotations, of course, but there are several other tools that do the same thing, like Bloomberg&#39;s aptly-named <a target="_blank" rel="noopener" href="https://github.com/bloomberg/ts-blank-space" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/bloomberg/ts-blank-space', event);">ts-blank-space</a>. Node uses <a target="_blank" rel="noopener" href="https://swc.rs/docs/references/wasm-typescript" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://swc.rs/docs/references/wasm-typescript', event);"><code>@swc/wasm-typescript</code></a>, which uses WASM for speed.</p>
+<p>So does this mean that TypeScript has won? On some level, yes. It&#39;s so widely adopted now that Node.js felt the need to add built-in support. But this change also opens the door to more competition in the typed JavaScript landscape. It was designed with TypeScript in mind, but it doesn&#39;t have to be <code>tsc</code> checking your code. It could be some other type checker instead.</p>
+<p>This puts JavaScript in a situation akin to Python. Python has a <a target="_blank" rel="noopener" href="https://peps.python.org/pep-0484/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://peps.python.org/pep-0484/', event);">standardized syntax</a> for type annotations but, for the most part, they have no effect on the runtime behavior of your program. There&#39;s a healthy ecosystem of type checkers for Python that all use the same syntax for type hints, but have different philosophies and provide different sorts of checking. Examples of Python type checkers include <a target="_blank" rel="noopener" href="https://mypy-lang.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://mypy-lang.org/', event);">mypy</a>, <a target="_blank" rel="noopener" href="https://github.com/microsoft/pyright" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/microsoft/pyright', event);">pyright</a> (Microsoft), <a target="_blank" rel="noopener" href="https://pyrefly.org/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://pyrefly.org/', event);">pyrefly</a> (Facebook) and <a target="_blank" rel="noopener" href="https://github.com/astral-sh/ty" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/astral-sh/ty', event);">ty</a> (Astral).</p>
+<p>By standardizing a syntax for type annotations, Node is making it easier for new entrants to bring their own take on type checking to JavaScript. Competition is a good thing, and I hope this brings some of it to the typed JavaScript ecosystem.</p>
+<p>What about browsers? There&#39;s a Microsoft-backed <a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-type-annotations" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/tc39/proposal-type-annotations', event);">TC39 proposal</a> to add type annotations to the language itself, but it&#39;s only at stage 1. I assume it would need to advance significantly before there&#39;s browser adoption. I hope Node&#39;s move gives this proposal some momentum. As it says, the motivation is to &quot;unfork JavaScript,&quot; which would be good for everyone.</p>
+<p>So long 2025! Here&#39;s hoping that 2026 brings faster build times, more responsive editors, exciting new language features, and a simpler JavaScript ecosystem.</p>
+
+      
+    </div>
+  </div>
+</div>
+
+  
     <div class="row hentry" id="advent2024-elixir">
   <div class="col-md-12">
     <h3 class="entry-title">
@@ -206,7 +274,7 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
     <div class="entry-content">
       
-        <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.6 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/" onclick="return trackOutboundLink('recent blog posts', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/', event);">released</a> on September 9th, 2024. Let&#39;s take a look.</p>
+        <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.6 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-6/', event);">released</a> on September 9th, 2024. Let&#39;s take a look.</p>
         <a class="read-more" href="/2024/09/30/ts-56/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
@@ -228,13 +296,13 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
     <div class="entry-content">
       
-        <p><em>Effective TypeScript</em> is nearly 400 pages long, but I&#39;ve received the most feedback by far on just one passage. It comes in <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md', event);">Item 7: Think of Types as Sets of Values</a>:</p>
+        <p><em>Effective TypeScript</em> is nearly 400 pages long, but I&#39;ve received the most feedback by far on just one passage. It comes in <a target="_blank" rel="noopener" href="https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/danvk/effective-typescript/blob/main/samples/ch-types/types-as-sets.md', event);">Item 7: Think of Types as Sets of Values</a>:</p>
 <blockquote>
 <figure class="highlight ts"><table><tr><td class="code"><pre><code class="hljs ts">keyof (A&amp;B) = (keyof A) | (keyof B)<br>keyof (A|B) = (keyof A) &amp; (keyof B)<br></code></pre></td></tr></table></figure>
 
 <p>If you can build an intuition for why these equations hold, you&#39;ll have come a long way toward understanding TypeScript&#39;s type system!</p>
 </blockquote>
-<p>I&#39;ll explain these equations in a moment. But before I do, head over to the <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA" onclick="return trackOutboundLink('recent blog posts', 'https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA', event);">TypeScript Playground</a> and test them out with a few types. See if you can build that intuition for why they hold.</p>
+<p>I&#39;ll explain these equations in a moment. But before I do, head over to the <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://www.typescriptlang.org/play/?#code/JYOwLgpgTgZghgYwgAgHJwLYQCYAUD2oYyA3gFDLIiYQBcyAzmFKAOYDcFyAHvSAK4YARtE6UAnn0EionAL5ki0eEmQEiAZgAipLryrTRXSQeFHKALylnZZBWQT4QTKjWwANAJoAtZAF5dSmosegByVAgAd2RPfCgAa1CAGj16AFoAdg0UiXoAFgAGHOQrZCK7TkdnYhBxBFR6dCw8QnB-V2avb3ZkAHpe5Hx4gEIHJxdahG96dXBtduCcLp7+wZGyMjBxAAcUAGlUdpI5ZAAyZHiIcXwYNDdZsE5VygA9AH5Nnf2NI5Pzy+utwe2ieA1eH0+u2QewAku0ATdkAAKJo4B5nNStMDaACUoMoyHekP2AFV2kiEbdUS0iDjkAAfZGUzGaLQ4sjPQkfIA', event);">TypeScript Playground</a> and test them out with a few types. See if you can build that intuition for why they hold.</p>
         <a class="read-more" href="/2024/08/30/keyof-puzzle/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
@@ -278,7 +346,7 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
     <div class="entry-content">
       
-        <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('recent blog posts', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.5 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/" onclick="return trackOutboundLink('recent blog posts', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/', event);">released</a> on June 20th, 2024, and it was a real blockbuster. Let&#39;s take a look.</p>
+        <p>We TypeScript developers are a lucky bunch. While some languages (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/History_of_Python" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/History_of_Python', event);">Python</a>, <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ECMAScript_version_history" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/ECMAScript_version_history', event);">JavaScript</a>) are released annually, every three years (<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/C%2B%2B#Standardization" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://en.wikipedia.org/wiki/C%2B%2B#Standardization', event);">C++</a>) or even less, we get <em>four</em> new versions of TypeScript every year. TypeScript 5.5 was <a target="_blank" rel="noopener" href="https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://devblogs.microsoft.com/typescript/announcing-typescript-5-5/', event);">released</a> on June 20th, 2024, and it was a real blockbuster. Let&#39;s take a look.</p>
         <a class="read-more" href="/2024/07/02/ts-55/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
@@ -345,33 +413,9 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
 
     <div class="entry-content">
       
-        <p>Over the past few months I became a TypeScript contributor and implemented a new feature, <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/microsoft/TypeScript/pull/57465', event);">type predicate inference</a>, that should be one of the headliners for TypeScript 5.5. This post tells the story of how that happened: why I wanted to contribute to TypeScript, the journey to implementing the feature and getting <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465" onclick="return trackOutboundLink('recent blog posts', 'https://github.com/microsoft/TypeScript/pull/57465', event);">the PR</a> merged, and what I&#39;ve learned along the way.</p>
+        <p>Over the past few months I became a TypeScript contributor and implemented a new feature, <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/microsoft/TypeScript/pull/57465', event);">type predicate inference</a>, that should be one of the headliners for TypeScript 5.5. This post tells the story of how that happened: why I wanted to contribute to TypeScript, the journey to implementing the feature and getting <a target="_blank" rel="noopener" href="https://github.com/microsoft/TypeScript/pull/57465" onclick="return trackOutboundLink('nodejs runs typescript natively', 'https://github.com/microsoft/TypeScript/pull/57465', event);">the PR</a> merged, and what I&#39;ve learned along the way.</p>
 <p>This is not a short read, but it will give you a good sense of what it&#39;s like to become a TypeScript contributor and develop a new feature.</p>
         <a class="read-more" href="/2024/04/16/inferring-a-type-predicate/">Continue&nbsp;reading&nbsp;&raquo;</a>
-      
-    </div>
-  </div>
-</div>
-
-  
-    <div class="row hentry" id="flownodes">
-  <div class="col-md-12">
-    <h3 class="entry-title">
-      <a href="/2024/03/24/flownodes/">Flow Nodes: How Type Inference Is Implemented</a>
-    </h3>
-
-    <div class="text-muted published-container">
-      <time class="published" datetime="2024-03-25T03:00:00.000Z" itemprop="datePublished">
-        Sun 24 March 2024
-      </time>
-    </div>
-
-    <div class="entry-content">
-      
-        <p>If a variable gets a type but no one looks at it, does it really get a type at all?</p>
-<p>This post looks at how type inference is implemented in the TypeScript compiler. It's of some interest to anyone who uses TypeScript and is curious how it works, but it will be most relevant to developers who want to contribute to TypeScript itself.</p>
-
-        <a class="read-more" href="/2024/03/24/flownodes/">Continue&nbsp;reading&nbsp;&raquo;</a>
       
     </div>
   </div>
@@ -385,6 +429,15 @@ _Effective TypeScript_ guides you through 62 specific ways to improve your use o
     </div>
   </div>
 
+  
+    <div class="row">
+      <div class="col-sm-2">
+        2024-03-24
+      </div>
+      <div class="col-sm-10">
+        <a href="/2024/03/24/flownodes/">Flow Nodes: How Type Inference Is Implemented</a>
+      </div>
+    </div>
   
     <div class="row">
       <div class="col-sm-2">
